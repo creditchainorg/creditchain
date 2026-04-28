@@ -42,15 +42,15 @@ help: ## Display this help.
 ##@ Build
 
 .PHONY: install
-install: ## Build and install the reth binary under `$(CARGO_HOME)/bin`.
-	cargo install --path bin/reth --bin reth --force --locked \
+install: ## Build and install the creditchaind binary under `$(CARGO_HOME)/bin`.
+	cargo install --path bin/reth --bin creditchaind --force --locked \
 		--features "$(FEATURES)" \
 		--profile "$(PROFILE)" \
 		$(CARGO_INSTALL_EXTRA_FLAGS)
 
 .PHONY: build
-build: ## Build the reth binary into `target` directory.
-	cargo build --bin reth --features "$(FEATURES)" --profile "$(PROFILE)"
+build: ## Build the creditchaind binary into `target` directory.
+	cargo build --bin creditchaind --features "$(FEATURES)" --profile "$(PROFILE)"
 
 # Environment variables for reproducible builds
 # Set timestamp from last git commit for reproducible builds
@@ -59,10 +59,10 @@ SOURCE_DATE ?= $(shell git log -1 --pretty=%ct)
 # Extra RUSTFLAGS for reproducible builds. Can be overridden via the environment.
 RUSTFLAGS_REPRODUCIBLE_EXTRA ?=
 
-# `reproducible` only supports reth on x86_64-unknown-linux-gnu
+# `reproducible` only supports creditchaind on x86_64-unknown-linux-gnu
 build-%-reproducible:
-	@if [ "$*" != "reth" ]; then \
-		echo "Error: Reproducible builds are only supported for reth, not $*"; \
+	@if [ "$*" != "creditchaind" ]; then \
+		echo "Error: Reproducible builds are only supported for creditchaind, not $*"; \
 		exit 1; \
 	fi
 	SOURCE_DATE_EPOCH=$(SOURCE_DATE) \
@@ -70,14 +70,14 @@ build-%-reproducible:
 	LC_ALL=C \
 	TZ=UTC \
 	JEMALLOC_OVERRIDE=/usr/lib/x86_64-linux-gnu/libjemalloc.a \
-	cargo build --bin reth --features "$(FEATURES)" --profile "reproducible" --locked --target x86_64-unknown-linux-gnu
+	cargo build --bin creditchaind --features "$(FEATURES)" --profile "reproducible" --locked --target x86_64-unknown-linux-gnu
 
 .PHONY: build-debug
-build-debug: ## Build the reth binary into `target/debug` directory.
-	cargo build --bin reth --features "$(FEATURES)"
-# Builds the reth binary natively.
+build-debug: ## Build the creditchaind binary into `target/debug` directory.
+	cargo build --bin creditchaind --features "$(FEATURES)"
+# Builds the creditchaind binary natively.
 build-native-%:
-	$(if $(EXTRA_RUSTFLAGS),RUSTFLAGS="$(EXTRA_RUSTFLAGS)") cargo build --bin reth --target $* --features "$(FEATURES)" --profile "$(PROFILE)"
+	$(if $(EXTRA_RUSTFLAGS),RUSTFLAGS="$(EXTRA_RUSTFLAGS)") cargo build --bin creditchaind --target $* --features "$(FEATURES)" --profile "$(PROFILE)"
 
 # The following commands use `cross` to build a cross-compile.
 #
@@ -93,7 +93,7 @@ build-native-%:
 # When cross compiling, we must compile jemalloc with a large page size,
 # otherwise it will use the current system's page size which may not work
 # on other systems. JEMALLOC_SYS_WITH_LG_PAGE=16 tells jemalloc to use 64-KiB
-# pages. See: https://github.com/paradigmxyz/reth/issues/6742
+# pages. See: https://github.com/openibank/creditchain/issues/6742
 build-aarch64-unknown-linux-gnu: export JEMALLOC_SYS_WITH_LG_PAGE=16
 build-native-aarch64-unknown-linux-gnu: export JEMALLOC_SYS_WITH_LG_PAGE=16
 
@@ -101,7 +101,7 @@ build-native-aarch64-unknown-linux-gnu: export JEMALLOC_SYS_WITH_LG_PAGE=16
 # See: https://github.com/cross-rs/cross/wiki/FAQ#undefined-reference-with-build-std
 build-%:
 	RUSTFLAGS="-C link-arg=-lgcc -Clink-arg=-static-libgcc $(EXTRA_RUSTFLAGS)" \
-		cross build --bin reth --target $* --features "$(FEATURES)" --profile "$(PROFILE)"
+		cross build --bin creditchaind --target $* --features "$(FEATURES)" --profile "$(PROFILE)"
 
 # Unfortunately we can't easily use cross to build for Darwin because of licensing issues.
 # If we wanted to, we would need to build a custom Docker image with the SDK available.
@@ -127,13 +127,13 @@ build-deb-%:
 	cargo deb --profile $(PROFILE) --no-build --no-dbgsym --no-strip \
 		--target $* \
 		$(if $(VERSION),--deb-version "1~$(VERSION)") \
-		$(if $(VERSION),--output "target/$*/$(PROFILE)/reth-$(VERSION)-$*-$(PROFILE).deb")
+		$(if $(VERSION),--output "target/$*/$(PROFILE)/creditchaind-$(VERSION)-$*-$(PROFILE).deb")
 
 # Create a `.tar.gz` containing a binary for a specific target.
 define tarball_release_binary
 	cp $(CARGO_TARGET_DIR)/$(1)/$(PROFILE)/$(2) $(BIN_DIR)/$(2)
 	cd $(BIN_DIR) && \
-		tar -czf reth-$(GIT_TAG)-$(1)$(3).tar.gz $(2) && \
+		tar -czf creditchaind-$(GIT_TAG)-$(1)$(3).tar.gz $(2) && \
 		rm $(2)
 endef
 
@@ -142,12 +142,12 @@ endef
 #
 # Note: This excludes macOS tarballs because of SDK licensing issues.
 .PHONY: build-release-tarballs
-build-release-tarballs: ## Create a series of `.tar.gz` files in the BIN_DIR directory, each containing a `reth` binary for a different target.
+build-release-tarballs: ## Create a series of `.tar.gz` files in the BIN_DIR directory, each containing a `creditchaind` binary for a different target.
 	[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
 	$(MAKE) build-x86_64-unknown-linux-gnu
-	$(call tarball_release_binary,"x86_64-unknown-linux-gnu","reth","")
+	$(call tarball_release_binary,"x86_64-unknown-linux-gnu","creditchaind","")
 	$(MAKE) build-aarch64-unknown-linux-gnu
-	$(call tarball_release_binary,"aarch64-unknown-linux-gnu","reth","")
+	$(call tarball_release_binary,"aarch64-unknown-linux-gnu","creditchaind","")
 
 ##@ Test
 
@@ -199,7 +199,7 @@ reth-bench: ## Build the reth-bench binary into the `target` directory.
 	cargo build --manifest-path bin/reth-bench/Cargo.toml --features "$(FEATURES)" --profile "$(PROFILE)"
 
 .PHONY: install-reth-bench
-install-reth-bench: ## Build and install the reth binary under `$(CARGO_HOME)/bin`.
+install-reth-bench: ## Build and install the reth-bench binary under `$(CARGO_HOME)/bin`.
 	cargo install --path bin/reth-bench --bin reth-bench --force --locked \
 		--features "$(FEATURES)" \
 		--profile "$(PROFILE)"
@@ -233,18 +233,18 @@ db-tools: ## Compile MDBX debugging tools.
 .PHONY: update-book-cli
 update-book-cli: build-debug ## Update book cli documentation.
 	@echo "Updating book cli doc..."
-	@./docs/cli/update.sh $(CARGO_TARGET_DIR)/debug/reth
+	@./docs/cli/update.sh $(CARGO_TARGET_DIR)/debug/creditchaind
 
 .PHONY: profiling
-profiling: ## Builds `reth` with optimisations, but also symbols.
+profiling: ## Builds `creditchaind` with optimisations, but also symbols.
 	RUSTFLAGS="-C target-cpu=native" cargo build --profile profiling
 
 .PHONY: maxperf
-maxperf: ## Builds `reth` with the most aggressive optimisations.
+maxperf: ## Builds `creditchaind` with the most aggressive optimisations.
 	RUSTFLAGS="-C target-cpu=native" cargo build --profile maxperf
 
 .PHONY: maxperf-no-asm
-maxperf-no-asm: ## Builds `reth` with the most aggressive optimisations, minus the "asm-keccak" feature.
+maxperf-no-asm: ## Builds `creditchaind` with the most aggressive optimisations, minus the "asm-keccak" feature.
 	RUSTFLAGS="-C target-cpu=native" cargo build --profile maxperf --no-default-features --features jemalloc,min-debug-logs,otlp,otlp-logs,reth-revm/portable,js-tracer,keccak-cache-global,rocksdb
 
 fmt:

@@ -1,0 +1,23 @@
+[environment]
+name = "local-multinode"
+display_name = "CreditChain Local Multinode"
+chain_id = 2026042402
+reset_policy = "ephemeral"
+genesis = "genesis/local-multinode.json"
+binary = "creditchaind"
+
+[rpc]
+http_addr = "127.0.0.1"
+http_port = 8645
+ws_port = 8646
+auth_port = 8651
+metrics_port = 9101
+
+[network]
+discovery = true
+bootnodes = []
+validator_count = 2
+
+[links]
+website = "https://www.creditchain.org"
+docs = "https://docs.creditchain.org"

@@ -1,18 +1,18 @@
 ---
-description: Instructions for installing Reth using pre-built binaries for Windows, macOS, and Linux, including Homebrew and Arch Linux AUR options. Explains how to verify binary signatures and provides details about the release signing key.
+description: Instructions for installing CreditChain using pre-built binaries for Windows, macOS, and Linux, including Homebrew and Arch Linux AUR options. Explains how to verify binary signatures and provides details about the release signing key.
 ---
 
 # Binaries
 
-[**Archives of precompiled binaries of reth are available for Windows, macOS and Linux.**](https://github.com/paradigmxyz/reth/releases) They are static executables. Users of platforms not explicitly listed below should download one of these archives.
+[**Archives of precompiled binaries of reth are available for Windows, macOS and Linux.**](https://github.com/openibank/creditchain/releases) They are static executables. Users of platforms not explicitly listed below should download one of these archives.
 
-If you use **macOS Homebrew** or **Linuxbrew**, you can install Reth from Paradigm's homebrew tap:
+If you use **macOS Homebrew** or **Linuxbrew**, you can install CreditChain from Paradigm's homebrew tap:
 
 ```text
 brew install paradigmxyz/brew/reth
 ```
 
-If you use **Arch Linux** you can install stable Reth from the AUR using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers) ([paru][paru] as an example here):
+If you use **Arch Linux** you can install stable CreditChain from the AUR using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers) ([paru][paru] as an example here):
 
 ```text
 paru -S reth # Stable
@@ -23,7 +23,7 @@ paru -S reth-git # Unstable (git)
 
 ## Signature Verification
 
-You can verify the integrity of a Reth release by checking the signature using GPG.
+You can verify the integrity of a CreditChain release by checking the signature using GPG.
 
 The release signing key can be fetched from the Ubuntu keyserver using the following command:
 
@@ -39,7 +39,7 @@ command like this:
 gpg --verify reth-v0.2.0-beta.9-x86_64-unknown-linux-gnu.tar.gz.asc reth-v0.1.0-beta.9-x86_64-unknown-linux-gnu.tar.gz
 ```
 
-Replace the filenames by those corresponding to the downloaded Reth release.
+Replace the filenames by those corresponding to the downloaded CreditChain release.
 
 ### Release Signing Key
 

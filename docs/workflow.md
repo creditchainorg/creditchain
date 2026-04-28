@@ -1,62 +1,20 @@
-## Workflow
+# CreditChain Workflow
 
-### Assigning issues
+Feature work should keep CreditChain-specific logic layered around owned
+modules, environment manifests, protocol contracts, and operator tooling. Avoid
+deep execution-layer divergence unless it is explicitly designed and reviewed.
 
-Before working on an issue, it should be assigned to the person who wants to work on it. For core contributors, this means assigning yourself to the issue, and for external contributors, this means asking to be assigned to the issue. This is to avoid double work.
+## Pull Requests
 
-### Pull requests
+- Keep changes scoped to the feature or fix.
+- Preserve Ethereum JSON-RPC compatibility unless the change explicitly targets
+  a CreditChain extension.
+- Update environment manifests, genesis files, docs, and smoke checks when an
+  operator-facing behavior changes.
+- Mark release-note-worthy changes for the changelog.
 
-```mermaid
----
-title: A feature or bug fix lives off of main
----
-gitGraph
-   commit
-   commit
-   branch feat/cool-feature
-   checkout feat/cool-feature
-   commit
-   commit
-   checkout main
-   merge feat/cool-feature
-   commit
-   commit
-```
+## CI
 
-- Features and bug fixes live on feature branches off of the main branch, and they are merged onto main as well.  
-  This means that the latest version of reth (which might be unstable) always lives on main.
-- Pull requests should not be merged without the review of at least one core contributor. For larger pull requests, at least two reviewers are recommended.
-- Important pull requests that should be highlighted in the changelog should be marked with the https://github.com/paradigmxyz/reth/labels/M-changelog label.
-
-### Releases
-
-Releases are commits tagged with a version number on main (see [Releases](./release.md)).
-
-```mermaid
----
-title: Releases are tags on main
----
-gitGraph
-   commit
-   commit
-   branch feat/cool-feature
-   checkout feat/cool-feature
-   commit
-   commit
-   checkout main
-   merge feat/cool-feature
-   commit tag: "v1.2.0"
-   commit
-```
-
-### CI
-
-- Every PR undergoes various checks, including:
-  - Lints ([clippy], [rustfmt], ...)
-  - Unit tests
-  - Fuzz tests
-  - Integration tests (including peering and a testnet simulation)
-- Additionally, each PR is again tested before release by being run every night on a live testnet
-
-[clippy]: https://github.com/rust-lang/rust-clippy
-[rustfmt]: https://github.com/rust-lang/rustfmt
+Every PR should run formatting, linting, unit tests, integration tests, and
+targeted smoke checks for the touched surface. Release candidates also need a
+live environment validation pass before publication.

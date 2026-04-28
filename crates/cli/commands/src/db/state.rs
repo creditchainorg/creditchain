@@ -83,7 +83,7 @@ impl Command {
                     }
                     if last_log.elapsed() >= LOG_INTERVAL {
                         info!(
-                            target: "reth::cli",
+                            target: "creditchaind::cli",
                             address = %address,
                             slots_scanned = idx,
                             "Scanning storage slots"
@@ -110,7 +110,7 @@ impl Command {
                     }
                     if last_log.elapsed() >= LOG_INTERVAL {
                         info!(
-                            target: "reth::cli",
+                            target: "creditchaind::cli",
                             address = %address,
                             slots_scanned = idx,
                             "Scanning storage slots"
@@ -158,7 +158,7 @@ impl Command {
         }
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             address = %address,
             block = block,
             total_keys = storage_keys.len(),
@@ -184,7 +184,7 @@ impl Command {
 
             if last_log.elapsed() >= LOG_INTERVAL {
                 info!(
-                    target: "reth::cli",
+                    target: "creditchaind::cli",
                     address = %address,
                     block = block,
                     keys_total = storage_keys.len(),
@@ -215,7 +215,7 @@ impl Command {
         }
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             address = %address,
             tip,
             "Scanning static file storage changesets"
@@ -237,7 +237,7 @@ impl Command {
 
             if last_log.elapsed() >= LOG_INTERVAL {
                 info!(
-                    target: "reth::cli",
+                    target: "creditchaind::cli",
                     address = %address,
                     entries_scanned = total_scanned,
                     unique_keys = keys.len(),
@@ -248,7 +248,7 @@ impl Command {
         }
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             address = %address,
             total_entries = total_scanned,
             unique_keys = keys.len(),
@@ -278,7 +278,7 @@ impl Command {
         }
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             address = %address,
             tip,
             chunk_size = CHUNK_SIZE,
@@ -352,7 +352,7 @@ impl Command {
                                 *total_entries_ref.lock() += entries_in_chunk;
 
                                 info!(
-                                    target: "reth::cli",
+                                    target: "creditchaind::cli",
                                     thread_id,
                                     chunk_start,
                                     chunk_end,
@@ -378,7 +378,7 @@ impl Command {
         let total = *total_entries_scanned.lock();
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             address = %address,
             total_entries = total,
             unique_keys = final_keys.len(),

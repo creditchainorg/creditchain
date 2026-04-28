@@ -2,9 +2,9 @@
 set -eo pipefail
 
 DOCS_ROOT="$(dirname "$(dirname "$0")")"
-RETH=${1:-"$(dirname "$DOCS_ROOT")/target/debug/reth"}
+CREDITCHAIND=${1:-"$(dirname "$DOCS_ROOT")/target/debug/creditchaind"}
 VOCS_PAGES_ROOT="$DOCS_ROOT/vocs/docs/pages"
-echo "Generating CLI documentation for reth at $RETH"
+echo "Generating CLI documentation for creditchaind at $CREDITCHAIND"
 
 echo "Using docs root: $DOCS_ROOT"
 echo "Using vocs pages root: $VOCS_PAGES_ROOT"
@@ -16,8 +16,7 @@ cmd=(
   --sidebar
   --verbose
   --out-dir "$VOCS_PAGES_ROOT/cli/"
-  "$RETH"
+  "$CREDITCHAIND"
 )
 echo "Running: $" "${cmd[*]}"
 "${cmd[@]}"
-

@@ -113,7 +113,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
 
         let mut config = Config::from_path(config_path)
             .inspect_err(
-                |err| warn!(target: "reth::cli", %err, "Failed to load config file, using default"),
+                |err| warn!(target: "creditchaind::cli", %err, "Failed to load config file, using default"),
             )
             .unwrap_or_default();
 
@@ -125,7 +125,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
             config.stages.era = config.stages.era.with_datadir(data_dir.data_dir());
         }
 
-        info!(target: "reth::cli", ?db_path, ?sf_path, "Opening storage");
+        info!(target: "creditchaind::cli", ?db_path, ?sf_path, "Opening storage");
         let genesis_block_number = self.chain.genesis().number.unwrap_or_default();
         let (db, sfp) = match access {
             AccessRights::RW => (
@@ -148,7 +148,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
             // RocksDB database doesn't exist yet (e.g. datadir restored from a snapshot
             // or created before RocksDB storage). Create an empty one so read-only
             // commands can proceed.
-            debug!(target: "reth::cli", ?rocksdb_path, "RocksDB not found, initializing empty database");
+            debug!(target: "creditchaind::cli", ?rocksdb_path, "RocksDB not found, initializing empty database");
             reth_fs_util::create_dir_all(&rocksdb_path)?;
             let mut builder = RocksDBProvider::builder(data_dir.rocksdb())
                 .with_default_tables()
@@ -171,7 +171,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
         let provider_factory =
             self.create_provider_factory(&config, db, sfp, rocksdb_provider, access, runtime)?;
         if access.is_read_write() {
-            debug!(target: "reth::cli", chain=%self.chain.chain(), genesis=?self.chain.genesis_hash(), "Initializing genesis");
+            debug!(target: "creditchaind::cli", chain=%self.chain.chain(), genesis=?self.chain.genesis_hash(), "Initializing genesis");
             init_genesis_with_settings(&provider_factory, self.storage_settings())?;
         }
 
@@ -211,7 +211,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
                 factory.static_file_provider().check_consistency(&factory.provider()?)?
         {
             if factory.db_ref().is_read_only()? {
-                warn!(target: "reth::cli", ?unwind_target, "Inconsistent storage. Restart node to heal.");
+                warn!(target: "creditchaind::cli", ?unwind_target, "Inconsistent storage. Restart node to heal.");
                 return Ok(factory)
             }
 
@@ -223,7 +223,7 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
                 "A static file <> database inconsistency was found that would trigger an unwind to block 0"
             );
 
-            info!(target: "reth::cli", unwind_target = %unwind_target, "Executing an unwind after a failed storage consistency check.");
+            info!(target: "creditchaind::cli", unwind_target = %unwind_target, "Executing an unwind after a failed storage consistency check.");
 
             let (_tip_tx, tip_rx) = watch::channel(B256::ZERO);
 

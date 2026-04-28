@@ -12,14 +12,14 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update && \
         mold
 WORKDIR /app
 COPY . .
-RUN RUSTFLAGS_REPRODUCIBLE_EXTRA="-Clink-arg=-fuse-ld=mold" make build-reth-reproducible && \
+RUN RUSTFLAGS_REPRODUCIBLE_EXTRA="-Clink-arg=-fuse-ld=mold" make build-creditchaind-reproducible && \
   PROFILE=${PROFILE:-reproducible} VERSION=$VERSION make build-deb-x86_64-unknown-linux-gnu
 
 FROM scratch AS artifacts
-COPY --from=builder /app/target/x86_64-unknown-linux-gnu/reproducible/reth /reth
+COPY --from=builder /app/target/x86_64-unknown-linux-gnu/reproducible/creditchaind /creditchaind
 COPY --from=builder /app/target/x86_64-unknown-linux-gnu/reproducible/*.deb /
 
 FROM gcr.io/distroless/cc-debian13:nonroot-239cdd2c8a6b275b6a6f6ed1428c57de2fff3e50
-COPY --from=artifacts /reth /reth
+COPY --from=artifacts /creditchaind /creditchaind
 EXPOSE 30303 30303/udp 9001 8545 8546
-ENTRYPOINT [ "/reth" ]
+ENTRYPOINT [ "/creditchaind" ]

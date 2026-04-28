@@ -54,7 +54,7 @@ This method streams notifications to the client.
 A proper way to represent the notification would be to define all fields in the schema, but it goes beyond the scope
 of this chapter.
 
-For an example of a full schema, see the [Remote ExEx](https://github.com/paradigmxyz/reth-exex-examples/blob/1f74410740ac996276a84ee72003f4f9cf041491/remote/proto/exex.proto) example.
+For an example of a full schema, see the [Remote ExEx](https://github.com/openibank/creditchain-exex-examples/blob/1f74410740ac996276a84ee72003f4f9cf041491/remote/proto/exex.proto) example.
 
 </div>
 
@@ -75,7 +75,7 @@ We will now create the ExEx and the gRPC server in our `src/exex.rs` file.
 ### gRPC server
 
 Let's create a minimal gRPC server that listens on the port `:10000`, and spawn it using
-the [NodeBuilder](https://reth.rs/docs/reth/builder/struct.NodeBuilder.html)'s [task executor](https://reth.rs/docs/reth/tasks/struct.TaskExecutor.html).
+the [NodeBuilder](https://docs.creditchain.org/docs/reth/builder/struct.NodeBuilder.html)'s [task executor](https://docs.creditchain.org/docs/reth/tasks/struct.TaskExecutor.html).
 
 ```rust
 // [!include ~/snippets/sources/exex/remote/src/exex_1.rs]

@@ -24,7 +24,7 @@ to make a PR!
 
 ## ExEx
 
-See examples in a [dedicated repository](https://github.com/paradigmxyz/reth-exex-examples).
+See examples in a [dedicated repository](https://github.com/openibank/creditchain-exex-examples).
 
 ## RPC
 

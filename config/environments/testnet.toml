@@ -1,0 +1,20 @@
+[environment]
+name = "testnet"
+display_name = "CreditChain Testnet"
+chain_id = 2026042404
+reset_policy = "stable-no-casual-resets"
+genesis = "genesis/testnet.json"
+binary = "creditchaind"
+
+[rpc]
+http_url = "https://testnet.creditchain.org"
+faucet_url = "https://faucet.creditchain.org"
+metrics_port = 9001
+
+[network]
+discovery = true
+bootnodes = []
+
+[links]
+website = "https://www.creditchain.org"
+docs = "https://docs.creditchain.org"

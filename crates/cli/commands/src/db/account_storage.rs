@@ -43,7 +43,7 @@ impl Command {
 
                     if last_log.elapsed() >= LOG_INTERVAL {
                         info!(
-                            target: "reth::cli",
+                            target: "creditchaind::cli",
                             address = %address,
                             slots = count,
                             key = %storage_entry.key,
@@ -76,7 +76,7 @@ impl Command {
 
                     if last_log.elapsed() >= LOG_INTERVAL {
                         info!(
-                            target: "reth::cli",
+                            target: "creditchaind::cli",
                             address = %address,
                             slots = count,
                             key = %storage_entry.key,

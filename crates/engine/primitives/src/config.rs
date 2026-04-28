@@ -21,7 +21,7 @@ pub const DEFAULT_INVALID_HEADER_HIT_EVICTION_THRESHOLD: u8 = 128;
 /// Gas threshold below which the small block chunk size is used.
 pub const SMALL_BLOCK_GAS_THRESHOLD: u64 = 20_000_000;
 
-/// Default number of reserved CPU cores for non-reth processes.
+/// Default number of reserved CPU cores for non-CreditChain processes.
 ///
 /// This will be deducted from the thread count of main reth global threadpool.
 pub const DEFAULT_RESERVED_CPU_CORES: usize = 1;
@@ -133,7 +133,7 @@ pub struct TreeConfig {
     has_enough_parallelism: bool,
     /// Multiproof task chunk size for proof targets.
     multiproof_chunk_size: usize,
-    /// Number of reserved CPU cores for non-reth processes
+    /// Number of reserved CPU cores for non-CreditChain processes
     reserved_cpu_cores: usize,
     /// Whether to disable the precompile cache
     precompile_cache_disabled: bool,
@@ -372,7 +372,7 @@ impl TreeConfig {
         self.multiproof_chunk_size
     }
 
-    /// Return the number of reserved CPU cores for non-reth processes
+    /// Return the number of reserved CPU cores for non-CreditChain processes
     pub const fn reserved_cpu_cores(&self) -> usize {
         self.reserved_cpu_cores
     }
@@ -557,7 +557,7 @@ impl TreeConfig {
         self
     }
 
-    /// Setter for the number of reserved CPU cores for any non-reth processes
+    /// Setter for the number of reserved CPU cores for any non-CreditChain processes
     pub const fn with_reserved_cpu_cores(mut self, reserved_cpu_cores: usize) -> Self {
         self.reserved_cpu_cores = reserved_cpu_cores;
         self

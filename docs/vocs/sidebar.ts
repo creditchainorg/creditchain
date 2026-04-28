@@ -1,5 +1,5 @@
 import { SidebarItem } from "vocs";
-import { rethCliSidebar } from "./sidebar-cli-reth";
+import { creditchaindCliSidebar } from "./sidebar-cli-creditchaind";
 export const sidebar: SidebarItem[] = [
     {
         text: "Introduction",
@@ -9,7 +9,7 @@ export const sidebar: SidebarItem[] = [
                 link: "/overview"
             },
             {
-                text: "Why Reth?",
+                text: "Reth Foundation",
                 link: "/introduction/why-reth"
             },
             {
@@ -19,7 +19,7 @@ export const sidebar: SidebarItem[] = [
         ]
     },
     {
-        text: "Reth for Node Operators",
+        text: "CreditChain for Node Operators",
         items: [
             {
                 text: "System Requirements",
@@ -71,7 +71,7 @@ export const sidebar: SidebarItem[] = [
                         // link: "/run/networks",
                         items: [
                             {
-                                text: "Ethereum",
+                                text: "CreditChain",
                                 link: "/run/ethereum",
                                 // items: [
                                 //     {
@@ -126,7 +126,7 @@ export const sidebar: SidebarItem[] = [
         ]
     },
     {
-        text: "Reth as a library",
+        text: "CreditChain as a library",
         items: [
             {
                 text: "Overview",
@@ -199,7 +199,7 @@ export const sidebar: SidebarItem[] = [
         ]
     },
     {
-        text: "Interacting with Reth over JSON-RPC",
+        text: "Interacting with CreditChain over JSON-RPC",
         
         items: [
             {
@@ -245,7 +245,7 @@ export const sidebar: SidebarItem[] = [
         link: "/cli/cli",
         collapsed: false,
         items: [
-            rethCliSidebar
+            creditchaindCliSidebar
         ]
     },
 ]

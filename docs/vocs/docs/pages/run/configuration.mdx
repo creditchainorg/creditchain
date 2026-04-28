@@ -1,16 +1,16 @@
 ---
-description: How to configure Reth using reth.toml and its options.
+description: How to configure CreditChain using creditchain.toml and its options.
 ---
 
-# Configuring Reth
+# Configuring CreditChain
 
-Reth places a configuration file named `reth.toml` in the data directory specified when starting the node. It is written in the [TOML] format.
+CreditChain places a configuration file named `creditchain.toml` in the data directory specified when starting the node. It is written in the [TOML] format.
 
 The default data directory is platform dependent:
 
--   Linux: `$XDG_DATA_HOME/reth/` or `$HOME/.local/share/reth/`
--   Windows: `{FOLDERID_RoamingAppData}/reth/`
--   macOS: `$HOME/Library/Application Support/reth/`
+-   Linux: `$XDG_DATA_HOME/creditchain/` or `$HOME/.local/share/creditchain/`
+-   Windows: `{FOLDERID_RoamingAppData}/creditchain/`
+-   macOS: `$HOME/Library/Application Support/creditchain/`
 
 The configuration file contains the following sections:
 
@@ -38,9 +38,9 @@ The configuration file contains the following sections:
 
 ## The `[stages]` section
 
-The stages section is used to configure how individual stages in reth behave, which has a direct impact on resource utilization and sync speed.
+The stages section is used to configure how individual CreditChain sync stages behave, which has a direct impact on resource utilization and sync speed.
 
-The defaults shipped with Reth try to be relatively reasonable, but may not be optimal for your specific set of hardware.
+The defaults shipped with CreditChain try to be relatively reasonable, but may not be optimal for your specific set of hardware.
 
 ### `era`
 
@@ -53,7 +53,7 @@ path = "/path/to/era1"
 # Or download ERA1 files from a host (conflicts with `path`)
 # url = "https://example.com/era1/"
 # When using `url`, specify a temporary download folder
-# folder = "/path/to/reth/era"
+# folder = "/path/to/creditchain/era"
 ```
 
 ### `headers`
@@ -263,7 +263,7 @@ An ETL (extract, transform, load) data collector. Used mainly to insert data int
 ```toml
 [stages.etl]
 # Optional directory for temporary files used by ETL. Defaults to `datadir/etl-tmp` when unset.
-# dir = "/path/to/reth/etl-tmp"
+# dir = "/path/to/creditchain/etl-tmp"
 # The maximum size in bytes of data held in memory before being flushed to disk as a file.
 #
 # Lower threshold corresponds to more frequent flushes,

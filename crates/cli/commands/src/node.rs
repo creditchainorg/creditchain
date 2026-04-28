@@ -154,7 +154,7 @@ where
     where
         L: Launcher<C, Ext>,
     {
-        tracing::info!(target: "reth::cli", version = ?version::version_metadata().short_version, "Starting {}",  version::version_metadata().name_client);
+        tracing::info!(target: "creditchaind::cli", version = ?version::version_metadata().short_version, "Starting {}",  version::version_metadata().name_client);
 
         let Self {
             datadir,
@@ -204,7 +204,7 @@ where
         let data_dir = node_config.datadir();
         let db_path = data_dir.db();
 
-        tracing::info!(target: "reth::cli", path = ?db_path, "Opening database");
+        tracing::info!(target: "creditchaind::cli", path = ?db_path, "Opening database");
         let database = init_db(db_path.clone(), self.db.database_args())?.with_metrics();
 
         if with_unused_ports {
@@ -320,20 +320,24 @@ mod tests {
 
     #[test]
     fn parse_config_path() {
-        let cmd: NodeCommand<EthereumChainSpecParser> =
-            NodeCommand::try_parse_args_from(["reth", "--config", "my/path/to/reth.toml"]).unwrap();
-        // always store reth.toml in the data dir, not the chain specific data dir
+        let cmd: NodeCommand<EthereumChainSpecParser> = NodeCommand::try_parse_args_from([
+            "creditchaind",
+            "--config",
+            "my/path/to/creditchain.toml",
+        ])
+        .unwrap();
+        // always store creditchain.toml in the data dir, not the chain specific data dir
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
         let config_path = cmd.config.unwrap_or_else(|| data_dir.config());
-        assert_eq!(config_path, Path::new("my/path/to/reth.toml"));
+        assert_eq!(config_path, Path::new("my/path/to/creditchain.toml"));
 
         let cmd: NodeCommand<EthereumChainSpecParser> =
-            NodeCommand::try_parse_args_from(["reth"]).unwrap();
+            NodeCommand::try_parse_args_from(["creditchaind"]).unwrap();
 
-        // always store reth.toml in the data dir, not the chain specific data dir
+        // always store creditchain.toml in the data dir, not the chain specific data dir
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
         let config_path = cmd.config.clone().unwrap_or_else(|| data_dir.config());
-        let end = format!("{}/reth.toml", SUPPORTED_CHAINS[0]);
+        let end = format!("{}/creditchain.toml", SUPPORTED_CHAINS[0]);
         assert!(config_path.ends_with(end), "{:?}", cmd.config);
     }
 
@@ -344,7 +348,7 @@ mod tests {
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
 
         let db_path = data_dir.db();
-        let end = format!("reth/{}/db", SUPPORTED_CHAINS[0]);
+        let end = format!("creditchain/{}/db", SUPPORTED_CHAINS[0]);
         assert!(db_path.ends_with(end), "{:?}", cmd.config);
 
         let cmd: NodeCommand<EthereumChainSpecParser> =
@@ -425,6 +429,6 @@ mod tests {
         assert_eq!(cmd.network.discovery.port, 0);
 
         // make sure the ipc path is not the default
-        assert_ne!(cmd.rpc.ipcpath, String::from("/tmp/reth.ipc"));
+        assert_ne!(cmd.rpc.ipcpath, String::from("/tmp/creditchaind.ipc"));
     }
 }

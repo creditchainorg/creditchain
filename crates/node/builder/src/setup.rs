@@ -100,7 +100,7 @@ where
     let mut builder = Pipeline::<N>::builder();
 
     if let Some(max_block) = max_block {
-        debug!(target: "reth::cli", max_block, "Configuring builder to use max block");
+        debug!(target: "creditchaind::cli", max_block, "Configuring builder to use max block");
         builder = builder.with_max_block(max_block)
     }
 

@@ -1101,7 +1101,7 @@ where
         let engine_api = engine_api_builder.build_engine_api(&ctx).await?;
         let AddOnsContext { node, config, beacon_engine_handle, jwt_secret, engine_events } = ctx;
 
-        info!(target: "reth::cli", "Engine API handler initialized");
+        info!(target: "creditchaind::cli", "Engine API handler initialized");
 
         let cache = EthStateCache::spawn_with(
             node.provider().clone(),
@@ -1126,7 +1126,7 @@ where
 
         let auth_config = config.rpc.auth_server_config(jwt_secret)?;
         let module_config = config.rpc.transport_rpc_module_config();
-        debug!(target: "reth::cli", http=?module_config.http(), ws=?module_config.ws(), "Using RPC module config");
+        debug!(target: "creditchaind::cli", http=?module_config.http(), ws=?module_config.ws(), "Using RPC module config");
 
         let (mut modules, mut auth_module, registry) = RpcModuleBuilder::default()
             .with_provider(node.provider().clone())
@@ -1191,13 +1191,13 @@ where
         let handle = server_config.start(modules).await?;
 
         if let Some(path) = handle.ipc_endpoint() {
-            info!(target: "reth::cli", %path, "RPC IPC server started");
+            info!(target: "creditchaind::cli", %path, "RPC IPC server started");
         }
         if let Some(addr) = handle.http_local_addr() {
-            info!(target: "reth::cli", url=%addr, "RPC HTTP server started");
+            info!(target: "creditchaind::cli", url=%addr, "RPC HTTP server started");
         }
         if let Some(addr) = handle.ws_local_addr() {
-            info!(target: "reth::cli", url=%addr, "RPC WS server started");
+            info!(target: "creditchaind::cli", url=%addr, "RPC WS server started");
         }
 
         Ok(handle)
@@ -1213,9 +1213,9 @@ where
             .inspect(|handle| {
                 let addr = handle.local_addr();
                 if let Some(ipc_endpoint) = handle.ipc_endpoint() {
-                    info!(target: "reth::cli", url=%addr, ipc_endpoint=%ipc_endpoint, "RPC auth server started");
+                    info!(target: "creditchaind::cli", url=%addr, ipc_endpoint=%ipc_endpoint, "RPC auth server started");
                 } else {
-                    info!(target: "reth::cli", url=%addr, "RPC auth server started");
+                    info!(target: "creditchaind::cli", url=%addr, "RPC auth server started");
                 }
             })
     }

@@ -72,7 +72,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> InitStateC
             Primitives: NodePrimitives<BlockHeader: HeaderMut>,
         >,
     {
-        info!(target: "reth::cli", "Reth init-state starting");
+        info!(target: "creditchaind::cli", "creditchaind init-state starting");
 
         let Environment { config, provider_factory, .. } =
             self.env.init::<N>(AccessRights::RW, runtime)?;
@@ -118,13 +118,13 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> InitStateC
             provider_rw.commit()?;
         }
 
-        info!(target: "reth::cli", "Initiating state dump");
+        info!(target: "creditchaind::cli", "Initiating state dump");
 
         let reader = BufReader::new(reth_fs_util::open(self.state)?);
 
         let hash = init_from_state_dump(reader, &provider_factory, config.stages.etl)?;
 
-        info!(target: "reth::cli", hash = ?hash, "Genesis block written");
+        info!(target: "creditchaind::cli", hash = ?hash, "Genesis block written");
         Ok(())
     }
 }

@@ -138,7 +138,7 @@ mod tests {
     use reth_node_api::FullNodeComponents;
     use reth_provider::BlockReader;
 
-    /// <https://github.com/paradigmxyz/reth/issues/12054>
+    /// <https://github.com/openibank/creditchain/issues/12054>
     #[test]
     const fn issue_12054() {
         #[expect(dead_code)]

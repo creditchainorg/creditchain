@@ -15,7 +15,7 @@ use std::sync::Arc;
 /// `blob_versioned_hashes` or sidecar. The transaction should be treated as EIP-1559, not
 /// EIP-4844.
 ///
-/// Reproduces <https://github.com/paradigmxyz/reth/issues/21809>
+/// Reproduces <https://github.com/openibank/creditchain/issues/21809>
 #[tokio::test]
 async fn test_simulate_v1_with_max_fee_per_blob_gas_only() -> eyre::Result<()> {
     reth_tracing::init_test_tracing();

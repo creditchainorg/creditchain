@@ -339,7 +339,7 @@ async fn test_eth_config() -> eyre::Result<()> {
     Ok(())
 }
 
-// <https://github.com/paradigmxyz/reth/issues/19765>
+// <https://github.com/openibank/creditchain/issues/19765>
 #[tokio::test]
 async fn test_admin_external_ip() -> eyre::Result<()> {
     reth_tracing::init_test_tracing();

@@ -906,7 +906,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
                 let valid_payload = verified_payload.dedup();
 
                 // todo: validate based on announced tx size/type and report peer for sending
-                // invalid response <https://github.com/paradigmxyz/reth/issues/6529>. requires
+                // invalid response <https://github.com/openibank/creditchain/issues/6529>. requires
                 // passing the rlp encoded length down from active session along with the decoded
                 // tx.
 

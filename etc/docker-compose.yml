@@ -1,29 +1,28 @@
-name: reth
+name: creditchain
 
 services:
-  reth:
+  creditchaind:
     restart: unless-stopped
-    image: ghcr.io/paradigmxyz/reth
+    image: ghcr.io/openibank/creditchain
     ports:
       - "9001:9001" # metrics
       - "30303:30303" # eth/66 peering
       - "8545:8545" # rpc
       - "8551:8551" # engine
     volumes:
-      - mainnet_data:/root/.local/share/reth/mainnet
-      - sepolia_data:/root/.local/share/reth/sepolia
-      - holesky_data:/root/.local/share/reth/holesky
-      - hoodi_data:/root/.local/share/reth/hoodi
+      - mainnet_data:/root/.local/share/creditchain/mainnet
+      - testnet_data:/root/.local/share/creditchain/testnet
+      - devnet_data:/root/.local/share/creditchain/devnet
+      - local_data:/root/.local/share/creditchain/local-single
       - logs:/root/logs
       - ./jwttoken:/root/jwt/:ro
-    # https://paradigmxyz.github.io/reth/run/troubleshooting.html#concurrent-database-access-error-using-containersdocker
+      - ../genesis:/config/genesis:ro
+    # https://docs.creditchain.org/run/troubleshooting#concurrent-database-access-error-using-containersdocker
     pid: host
-    # For Sepolia, replace `--chain mainnet` with `--chain sepolia`
-    # For Holesky, replace `--chain mainnet` with `--chain holesky`
-    # For Hoodi, replace `--chain mainnet` with `--chain hoodi`
+    # For public environments, pass an explicit CreditChain genesis file.
     command: >
       node
-      --chain mainnet
+      --chain /config/genesis/local-single.json
       --metrics 0.0.0.0:9001
       --log.file.directory /root/logs
       --authrpc.addr 0.0.0.0
@@ -36,7 +35,7 @@ services:
     restart: unless-stopped
     image: prom/prometheus
     depends_on:
-      - reth
+      - creditchaind
     ports:
       - 9090:9090
     volumes:
@@ -70,7 +69,7 @@ services:
     restart: unless-stopped
     image: grafana/grafana:latest
     depends_on:
-      - reth
+      - creditchaind
       - prometheus
       - loki
     ports:
@@ -94,11 +93,11 @@ services:
 volumes:
   mainnet_data:
     driver: local
-  sepolia_data:
+  testnet_data:
     driver: local
-  holesky_data:
+  devnet_data:
     driver: local
-  hoodi_data:
+  local_data:
     driver: local
   logs:
     driver: local

@@ -163,7 +163,7 @@ fn dry_run<N>(output_provider_factory: ProviderFactory<N>, to: u64, from: u64) -
 where
     N: ProviderNodeTypes,
 {
-    info!(target: "reth::cli", "Executing stage.");
+    info!(target: "creditchaind::cli", "Executing stage.");
     let provider = output_provider_factory.database_provider_rw()?;
 
     let mut stage = MerkleStage::Execution {
@@ -182,7 +182,7 @@ where
         }
     }
 
-    info!(target: "reth::cli", "Success");
+    info!(target: "creditchaind::cli", "Success");
 
     Ok(())
 }

@@ -1,9 +1,9 @@
 scrape_configs:
-  - job_name: reth
+  - job_name: creditchaind
     metrics_path: "/"
     scrape_interval: 5s
     static_configs:
-      - targets: ['reth:9001', 'localhost:9001', 'host.docker.internal:9001']
+      - targets: ['creditchaind:9001', 'localhost:9001', 'host.docker.internal:9001']
   - job_name: ethereum-metrics-exporter
     metrics_path: "/metrics"
     scrape_interval: 5s

@@ -38,7 +38,7 @@ pub struct Command {
     /// WARNING: this option will take a long time to run, as it needs to traverse and hash the
     /// entire database.
     ///
-    /// For individual table checksums, use the `reth db checksum` command.
+    /// For individual table checksums, use the `creditchaind db checksum` command.
     #[arg(long, default_value_t = false)]
     checksum: bool,
 }

@@ -111,7 +111,7 @@ pub(crate) fn collect_planned_archives(
         let snapshot_archives = manifest.snapshot_archives_for_distance(*ty, distance);
         let component = ty.display_name().to_string();
         if !snapshot_archives.is_empty() {
-            info!(target: "reth::cli",
+            info!(target: "creditchaind::cli",
                 component = %component,
                 archives = snapshot_archives.len(),
                 selection = %selection,

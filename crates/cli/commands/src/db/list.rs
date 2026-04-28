@@ -107,7 +107,7 @@ impl<N: NodeTypes> TableViewer<()> for ListTableViewer<'_, N> {
             let final_entry_idx = total_entries.saturating_sub(1);
             if self.args.skip > final_entry_idx {
                 error!(
-                    target: "reth::cli",
+                    target: "creditchaind::cli",
                     "Start index {start} is greater than the final entry index ({final_entry_idx}) in the table {table}",
                     start = self.args.skip,
                     final_entry_idx = final_entry_idx,

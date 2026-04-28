@@ -330,7 +330,7 @@ impl Default for DefaultLogArgs {
             log_stdout_filter: String::new(),
             log_file_format: LogFormat::Terminal,
             log_file_filter: "debug".to_string(),
-            log_file_name: "reth.log".to_string(),
+            log_file_name: "creditchaind.log".to_string(),
             log_file_max_size: 200,
             journald: false,
             journald_filter: "error".to_string(),

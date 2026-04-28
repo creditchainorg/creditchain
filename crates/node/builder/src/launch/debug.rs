@@ -217,7 +217,7 @@ where
         let config = &handle.node.config;
 
         if let Some(provider) = debug_block_provider {
-            info!(target: "reth::cli", "Using custom debug block provider");
+            info!(target: "creditchaind::cli", "Using custom debug block provider");
 
             let rpc_consensus_client = DebugConsensusClient::new(
                 handle.node.add_ons_handle.beacon_engine_handle.clone(),
@@ -231,7 +231,7 @@ where
                     rpc_consensus_client.run().await
                 });
         } else if let Some(url) = config.debug.rpc_consensus_url.clone() {
-            info!(target: "reth::cli", "Using RPC consensus client: {}", url);
+            info!(target: "creditchaind::cli", "Using RPC consensus client: {}", url);
 
             let block_provider =
                 RpcBlockProvider::<AnyNetwork, _>::new(url.as_str(), |block_response| {
@@ -252,7 +252,7 @@ where
                 rpc_consensus_client.run().await
             });
         } else if let Some(maybe_custom_etherscan_url) = config.debug.etherscan.clone() {
-            info!(target: "reth::cli", "Using etherscan as consensus client");
+            info!(target: "creditchaind::cli", "Using etherscan as consensus client");
 
             let chain = config.chain.chain();
             let etherscan_url = maybe_custom_etherscan_url.map(Ok).unwrap_or_else(|| {
@@ -285,7 +285,7 @@ where
         }
 
         if config.dev.dev {
-            info!(target: "reth::cli", "Using local payload attributes builder for dev mode");
+            info!(target: "creditchaind::cli", "Using local payload attributes builder for dev mode");
 
             let blockchain_db = handle.node.provider.clone();
             let chain_spec = config.chain.clone();

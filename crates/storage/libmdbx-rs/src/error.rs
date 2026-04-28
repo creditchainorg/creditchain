@@ -100,7 +100,7 @@ pub enum Error {
     DecodeError,
     /// The environment opened in read-only.
     #[error(
-        "the environment opened in read-only, check <https://reth.rs/run/troubleshooting.html> for more"
+        "the environment opened in read-only, check <https://docs.creditchain.org/run/troubleshooting.html> for more"
     )]
     Access,
     /// Database is too large for the current system.
@@ -265,7 +265,7 @@ mod tests {
     #[test]
     fn test_description() {
         assert_eq!(
-            "the environment opened in read-only, check <https://reth.rs/run/troubleshooting.html> for more",
+            "the environment opened in read-only, check <https://docs.creditchain.org/run/troubleshooting.html> for more",
             Error::from_err_code(13).to_string()
         );
 

@@ -73,8 +73,8 @@
           ];
         };
 
-        mkReth = overrides: craneLib.buildPackage (composeAttrOverrides {
-          pname = "reth";
+        mkCreditChain = overrides: craneLib.buildPackage (composeAttrOverrides {
+          pname = "creditchaind";
           version = packageVersion;
           src = ./.;
           inherit nativeBuildInputs;
@@ -85,14 +85,14 @@
       {
         packages = rec {
 
-          reth = mkReth ([
+          creditchaind = mkCreditChain ([
             withClang
             withMaxPerf
           ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
             withMold
           ]);
 
-          default = reth;
+          default = creditchaind;
         };
 
         devShell = let

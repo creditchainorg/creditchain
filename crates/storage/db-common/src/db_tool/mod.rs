@@ -138,17 +138,17 @@ impl<N: ProviderNodeTypes> DbTool<N> {
         exex_wal_path: P,
     ) -> Result<()> {
         let db_path = db_path.as_ref();
-        info!(target: "reth::cli", "Dropping database at {:?}", db_path);
+        info!(target: "creditchaind::cli", "Dropping database at {:?}", db_path);
         fs::remove_dir_all(db_path)?;
 
         let static_files_path = static_files_path.as_ref();
-        info!(target: "reth::cli", "Dropping static files at {:?}", static_files_path);
+        info!(target: "creditchaind::cli", "Dropping static files at {:?}", static_files_path);
         fs::remove_dir_all(static_files_path)?;
         fs::create_dir_all(static_files_path)?;
 
         if exex_wal_path.as_ref().exists() {
             let exex_wal_path = exex_wal_path.as_ref();
-            info!(target: "reth::cli", "Dropping ExEx WAL at {:?}", exex_wal_path);
+            info!(target: "creditchaind::cli", "Dropping ExEx WAL at {:?}", exex_wal_path);
             fs::remove_dir_all(exex_wal_path)?;
         }
 

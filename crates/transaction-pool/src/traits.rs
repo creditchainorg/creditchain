@@ -428,7 +428,7 @@ pub trait TransactionPool: Clone + Debug + Send + Sync {
     }
 
     /// Returns first `max` transactions that can be included in the next block.
-    /// See <https://github.com/paradigmxyz/reth/issues/12767#issuecomment-2493223579>
+    /// See <https://github.com/openibank/creditchain/issues/12767#issuecomment-2493223579>
     ///
     /// Consumer: Block production
     fn pending_transactions_max(

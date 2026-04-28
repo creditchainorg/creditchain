@@ -267,7 +267,7 @@ pub trait LoadState:
     /// Returns the state at the given [`BlockId`] enum.
     ///
     /// Note: if not [`BlockNumberOrTag::Pending`](alloy_eips::BlockNumberOrTag) then this
-    /// will only return canonical state. See also <https://github.com/paradigmxyz/reth/issues/4515>
+    /// will only return canonical state. See also <https://github.com/openibank/creditchain/issues/4515>
     fn state_at_block_id(
         &self,
         at: BlockId,

@@ -52,20 +52,20 @@ impl Command {
         >,
     {
         // === Phase 0: Preflight ===
-        info!(target: "reth::cli", "Starting v1 → v2 storage migration");
+        info!(target: "creditchaind::cli", "Starting v1 → v2 storage migration");
 
         let provider = provider_factory.provider()?;
         let current_settings = provider.storage_settings()?;
 
         if current_settings.is_some_and(|s| s.is_v2()) {
-            info!(target: "reth::cli", "Storage is already v2, nothing to do");
+            info!(target: "creditchaind::cli", "Storage is already v2, nothing to do");
             return Ok(());
         }
 
         let tip =
             provider.get_stage_checkpoint(StageId::Execution)?.map(|c| c.block_number).unwrap_or(0);
 
-        info!(target: "reth::cli", tip, "Chain tip block number");
+        info!(target: "creditchaind::cli", tip, "Chain tip block number");
 
         let sf_provider = provider_factory.static_file_provider();
 
@@ -89,13 +89,13 @@ impl Command {
         Self::migrate_receipts::<NodeTypesWithDBAdapter<N, DatabaseEnv>>(&provider_factory, tip)?;
 
         // === Phase 3: Flip metadata to v2 ===
-        info!(target: "reth::cli", "Writing StorageSettings v2 metadata");
+        info!(target: "creditchaind::cli", "Writing StorageSettings v2 metadata");
         {
             let provider_rw = provider_factory.database_provider_rw()?;
             provider_rw.write_storage_settings(StorageSettings::v2())?;
             provider_rw.commit()?;
         }
-        info!(target: "reth::cli", "Storage settings updated to v2");
+        info!(target: "creditchaind::cli", "Storage settings updated to v2");
 
         // === Phase 4: Clear recomputable tables ===
         Self::clear_recomputable_tables(&provider_factory)?;
@@ -114,7 +114,7 @@ impl Command {
         // The caller will reopen the environment and run the pipeline.
         // We return here — the pipeline step is handled in mod.rs after
         // reopening the database with the compacted copy.
-        info!(target: "reth::cli", "Migration complete. You should now restart the node and let it run the pipeline to rebuild the remaining data.");
+        info!(target: "creditchaind::cli", "Migration complete. You should now restart the node and let it run the pipeline to rebuild the remaining data.");
         Ok(())
     }
 
@@ -122,7 +122,7 @@ impl Command {
         factory: &ProviderFactory<N>,
         tip: u64,
     ) -> eyre::Result<()> {
-        info!(target: "reth::cli", "Migrating AccountChangeSets → static files");
+        info!(target: "creditchaind::cli", "Migrating AccountChangeSets → static files");
         let provider = factory.provider()?.disable_long_read_transaction_safety();
         let sf_provider = factory.static_file_provider();
 
@@ -160,7 +160,7 @@ impl Command {
 
         writer.commit()?;
 
-        info!(target: "reth::cli", count, "AccountChangeSets migrated");
+        info!(target: "creditchaind::cli", count, "AccountChangeSets migrated");
         Ok(())
     }
 
@@ -168,7 +168,7 @@ impl Command {
         factory: &ProviderFactory<N>,
         tip: u64,
     ) -> eyre::Result<()> {
-        info!(target: "reth::cli", "Migrating StorageChangeSets → static files");
+        info!(target: "creditchaind::cli", "Migrating StorageChangeSets → static files");
         let provider = factory.provider()?.disable_long_read_transaction_safety();
         let sf_provider = factory.static_file_provider();
 
@@ -210,7 +210,7 @@ impl Command {
 
         writer.commit()?;
 
-        info!(target: "reth::cli", count, "StorageChangeSets migrated");
+        info!(target: "creditchaind::cli", count, "StorageChangeSets migrated");
         Ok(())
     }
 
@@ -225,7 +225,7 @@ impl Command {
     {
         let provider = factory.provider()?;
         if !provider.prune_modes_ref().receipts_log_filter.is_empty() {
-            info!(target: "reth::cli", "Receipt log filter pruning is enabled, keeping receipts in MDBX");
+            info!(target: "creditchaind::cli", "Receipt log filter pruning is enabled, keeping receipts in MDBX");
             return Ok(());
         }
         drop(provider);
@@ -234,11 +234,11 @@ impl Command {
         let existing = sf_provider.get_highest_static_file_block(StaticFileSegment::Receipts);
 
         if existing.is_some_and(|b| b >= tip) {
-            info!(target: "reth::cli", "Receipts already in static files, skipping");
+            info!(target: "creditchaind::cli", "Receipts already in static files, skipping");
             return Ok(());
         }
 
-        info!(target: "reth::cli", "Migrating Receipts → static files");
+        info!(target: "creditchaind::cli", "Migrating Receipts → static files");
 
         let provider = factory.provider()?.disable_long_read_transaction_safety();
         let prune_start = provider
@@ -270,7 +270,7 @@ impl Command {
             .get_highest_static_file_tx(StaticFileSegment::Receipts)
             .map_or(0, |tx| tx + 1);
         let count = after - before;
-        info!(target: "reth::cli", count, "Receipts migrated");
+        info!(target: "creditchaind::cli", count, "Receipts migrated");
         Ok(())
     }
 
@@ -279,7 +279,7 @@ impl Command {
     fn clear_recomputable_tables<N: ProviderNodeTypes>(
         factory: &ProviderFactory<N>,
     ) -> eyre::Result<()> {
-        info!(target: "reth::cli", "Clearing recomputable MDBX tables");
+        info!(target: "creditchaind::cli", "Clearing recomputable MDBX tables");
         let db = factory.db_ref();
 
         macro_rules! clear_table {
@@ -287,7 +287,7 @@ impl Command {
                 let tx = db.tx_mut()?;
                 tx.clear::<$table>()?;
                 tx.commit()?;
-                info!(target: "reth::cli", table = <$table as Table>::NAME, "Cleared");
+                info!(target: "creditchaind::cli", table = <$table as Table>::NAME, "Cleared");
             }};
         }
 
@@ -312,7 +312,7 @@ impl Command {
         clear_table!(tables::StoragesTrie);
 
         // Reset stage checkpoints so the pipeline rebuilds everything
-        info!(target: "reth::cli", "Resetting stage checkpoints");
+        info!(target: "creditchaind::cli", "Resetting stage checkpoints");
         let provider_rw = factory.database_provider_rw()?;
         for stage in [
             StageId::SenderRecovery,
@@ -323,12 +323,12 @@ impl Command {
             StageId::MerkleUnwind,
         ] {
             provider_rw.save_stage_checkpoint(stage, StageCheckpoint::new(0))?;
-            info!(target: "reth::cli", %stage, "Checkpoint reset to 0");
+            info!(target: "creditchaind::cli", %stage, "Checkpoint reset to 0");
         }
         provider_rw.save_stage_checkpoint_progress(StageId::MerkleExecute, vec![])?;
         provider_rw.commit()?;
 
-        info!(target: "reth::cli", "Recomputable tables cleared");
+        info!(target: "creditchaind::cli", "Recomputable tables cleared");
         Ok(())
     }
 
@@ -339,7 +339,7 @@ impl Command {
 
         reth_fs_util::create_dir_all(&compact_path)?;
 
-        info!(target: "reth::cli", ?db_path, ?compact_path, "Compacting MDBX database");
+        info!(target: "creditchaind::cli", ?db_path, ?compact_path, "Compacting MDBX database");
 
         let compact_dest = compact_path.join("mdbx.dat");
         let dest_cstr = std::ffi::CString::new(
@@ -358,7 +358,7 @@ impl Command {
             });
         }
 
-        info!(target: "reth::cli", "MDBX compaction complete");
+        info!(target: "creditchaind::cli", "MDBX compaction complete");
         Ok(())
     }
 
@@ -369,7 +369,7 @@ impl Command {
     ) -> eyre::Result<()> {
         let backup_path = db_path.with_file_name("db_pre_compact");
 
-        info!(target: "reth::cli", ?db_path, ?compact_path, "Swapping compacted database");
+        info!(target: "creditchaind::cli", ?db_path, ?compact_path, "Swapping compacted database");
 
         std::fs::rename(db_path, &backup_path)?;
 
@@ -380,7 +380,7 @@ impl Command {
 
         std::fs::remove_dir_all(&backup_path)?;
 
-        info!(target: "reth::cli", "Database compaction swap complete");
+        info!(target: "creditchaind::cli", "Database compaction swap complete");
         Ok(())
     }
 }

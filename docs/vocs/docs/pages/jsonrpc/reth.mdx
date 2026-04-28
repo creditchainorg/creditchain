@@ -1,10 +1,10 @@
 ---
-description: Reth-specific API for balance changes and chain notifications.
+description: Reth compatibility namespace for balance changes and chain notifications.
 ---
 
 # `reth` Namespace
 
-The `reth` API provides reth-specific methods that are not part of the standard Ethereum JSON-RPC specification. These methods offer additional functionality for monitoring balance changes and subscribing to chain state notifications.
+The `reth` API is a compatibility namespace inherited from the Reth foundation. It is not part of the standard Ethereum JSON-RPC specification, but remains available for existing tooling that uses balance-change and chain-notification helpers.
 
 ## `reth_getBalanceChangesInBlock`
 

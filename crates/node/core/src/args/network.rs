@@ -424,7 +424,7 @@ impl NetworkArgs {
             return match reth_net_nat::net_if::resolve_net_if_ip(if_name) {
                 Ok(addr) => addr,
                 Err(err) => {
-                    error!(target: "reth::cli",
+                    error!(target: "creditchaind::cli",
                         if_name,
                         %err,
                         "Failed to read network interface IP"
@@ -800,7 +800,7 @@ impl DiscoveryArgs {
         }
 
         if self.disable_nat {
-            // we only check for `disable-nat` here and not for disable discovery because nat:extip can be used without discovery: <https://github.com/paradigmxyz/reth/issues/14878>
+            // we only check for `disable-nat` here and not for disable discovery because nat:extip can be used without discovery: <https://github.com/openibank/creditchain/issues/14878>
             network_config_builder = network_config_builder.disable_nat();
         }
 

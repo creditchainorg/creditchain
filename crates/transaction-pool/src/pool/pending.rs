@@ -883,7 +883,7 @@ mod tests {
         assert_eq!(pending, expected_pending);
     }
 
-    // <https://github.com/paradigmxyz/reth/issues/12340>
+    // <https://github.com/openibank/creditchain/issues/12340>
     #[test]
     fn test_eligible_updates_promoted() {
         let mut pool = PendingPool::new(MockOrdering::default());

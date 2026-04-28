@@ -31,7 +31,7 @@ The `"node"` CLI command, used to run the node itself, does the following at a h
 
 Steps 5-6 are of interest to us as they consume items from the `network` crate:
 
-[File: bin/reth/src/node/mod.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/bin/reth/src/node/mod.rs)
+[File: bin/reth/src/node/mod.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/bin/reth/src/node/mod.rs)
 ```rust,ignore
 let network = start_network(network_config(db.clone(), chain_id, genesis_hash)).await?;
 
@@ -82,7 +82,7 @@ pipeline.run(db.clone()).await?;
 
 Let's begin by taking a look at the line where the network is started, with the call, unsurprisingly, to `start_network`. Sounds important, doesn't it?
 
-[File: bin/reth/src/node/mod.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/bin/reth/src/node/mod.rs)
+[File: bin/reth/src/node/mod.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/bin/reth/src/node/mod.rs)
 ```rust,ignore
 // Method on NetworkConfig for starting the network with request handler
 pub async fn start_network(self) -> Result<NetworkHandle<N>, NetworkError>
@@ -112,7 +112,7 @@ It gets the handles for the network management, transactions, and ETH requests t
 
 The `NetworkManager::builder` constructor requires a `NetworkConfig` struct to be passed in as a parameter, which can be used as the main entrypoint for setting up the entire network layer:
 
-[File: crates/net/network/src/config.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/config.rs)
+[File: crates/net/network/src/config.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/config.rs)
 ```rust,ignore
 pub struct NetworkConfig<C, N: NetworkPrimitives = EthNetworkPrimitives> {
     /// The client type that can interact with the chain.
@@ -181,7 +181,7 @@ The `NetworkConfig` struct is generic over two parameters:
 
 The discovery task progresses as the network management task is polled, handling events regarding peer management through the `Swarm` struct which is stored as a field on the `NetworkManager`:
 
-[File: crates/net/network/src/swarm.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/swarm.rs)
+[File: crates/net/network/src/swarm.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/swarm.rs)
 ```rust,ignore
 pub(crate) struct Swarm<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Listens for new incoming connections.
@@ -207,7 +207,7 @@ Let's walk through how each is implemented, and then apply that knowledge to und
 
 The `NetworkHandle` struct is a client for the network management task that can be shared across threads. It wraps an `Arc` around the `NetworkInner` struct, defined as follows:
 
-[File: crates/net/network/src/network.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/network.rs)
+[File: crates/net/network/src/network.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/network.rs)
 ```rust,ignore
 struct NetworkInner<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Number of active peer sessions the node's currently handling.
@@ -229,7 +229,7 @@ struct NetworkInner<N: NetworkPrimitives = EthNetworkPrimitives> {
 
 The field of note here is `to_manager_tx`, which is a handle that can be used to send messages in a channel to an instance of the `NetworkManager` struct.
 
-[File: crates/net/network/src/manager.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/manager.rs)
+[File: crates/net/network/src/manager.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/manager.rs)
 ```rust,ignore
 pub struct NetworkManager<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// The type that manages the actual network part, which includes connections.
@@ -268,7 +268,7 @@ While the `NetworkManager` is meant to be spawned as a standalone [`tokio::task`
 
 In the pipeline, the `NetworkHandle` is used to instantiate the `FetchClient` - which we'll get into next - and is used in the `HeaderStage` to update the node's ["status"](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#status-0x00) (record the total difficulty, hash, and height of the last processed block).
 
-[File: crates/stages/src/stages/headers.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/stages/src/stages/headers.rs)
+[File: crates/stages/src/stages/headers.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/stages/src/stages/headers.rs)
 ```rust,ignore
 async fn update_head<DB: Database>(
     &self,
@@ -288,7 +288,7 @@ Now that we have some understanding about the internals of the network managemen
 
 The `FetchClient` struct, similar to `NetworkHandle`, can be shared across threads, and is a client for fetching data from the network. It's a fairly lightweight struct:
 
-[File: crates/net/network/src/fetch/client.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/client.rs)
+[File: crates/net/network/src/fetch/client.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/client.rs)
 ```rust,ignore
 pub struct FetchClient<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Sender half of the request channel.
@@ -306,7 +306,7 @@ The `request_tx` field is a handle to a channel that can be used to send request
 
 The fields `request_tx` and `peers_handle` are cloned off of the `StateFetcher` struct when instantiating the `FetchClient`, which is the lower-level struct responsible for managing data fetching operations over the network:
 
-[File: crates/net/network/src/fetch/mod.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/mod.rs)
+[File: crates/net/network/src/fetch/mod.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/mod.rs)
 ```rust,ignore
 pub struct StateFetcher<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Currently active [`GetBlockHeaders`] requests
@@ -330,7 +330,7 @@ pub struct StateFetcher<N: NetworkPrimitives = EthNetworkPrimitives> {
 
 This struct itself is nested deeply within the `NetworkManager`: its `Swarm` struct (shown earlier in the chapter) contains a `NetworkState` struct that has the `StateFetcher` as a field:
 
-[File: crates/net/network/src/state.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/state.rs)
+[File: crates/net/network/src/state.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/state.rs)
 ```rust,ignore
 pub struct NetworkState<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// All active peers and their state.
@@ -359,7 +359,7 @@ pub struct NetworkState<N: NetworkPrimitives = EthNetworkPrimitives> {
 
 The `FetchClient` implements the `HeadersClient` and `BodiesClient` traits, defining the functionality to get headers and block bodies from available peers.
 
-[File: crates/net/network/src/fetch/client.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/client.rs)
+[File: crates/net/network/src/fetch/client.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/client.rs)
 ```rust,ignore
 impl HeadersClient for FetchClient {
     /// Sends a `GetBlockHeaders` request to an available peer.
@@ -383,7 +383,7 @@ This functionality is used in the `HeaderStage` and `BodyStage`, respectively.
 
 In the pipeline used by the main Reth binary, the `HeaderStage` uses a `ReverseHeadersDownloader` to stream headers from the network:
 
-[File: crates/net/downloaders/src/headers/reverse_headers.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/headers/reverse_headers.rs)
+[File: crates/net/downloaders/src/headers/reverse_headers.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/headers/reverse_headers.rs)
 ```rust,ignore
 pub struct ReverseHeadersDownloader<C, H> {
     /// The consensus client
@@ -399,7 +399,7 @@ pub struct ReverseHeadersDownloader<C, H> {
 
 A `FetchClient` is passed in to the `client` field, and the `get_headers` method it implements gets used when polling the stream created by the `ReverseHeadersDownloader` in the `execute` method of the `HeaderStage`.
 
-[File: crates/net/downloaders/src/headers/reverse_headers.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/headers/reverse_headers.rs)
+[File: crates/net/downloaders/src/headers/reverse_headers.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/headers/reverse_headers.rs)
 ```rust,ignore
 fn get_or_init_fut(&mut self) -> HeadersRequestFuture {
     match self.request.take() {
@@ -425,7 +425,7 @@ fn get_or_init_fut(&mut self) -> HeadersRequestFuture {
 
 In the `BodyStage` configured by the main binary, a `BodiesDownloader` is used:
 
-[File: crates/net/downloaders/src/bodies/bodies.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/bodies/bodies.rs)
+[File: crates/net/downloaders/src/bodies/bodies.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/bodies/bodies.rs)
 ```rust,ignore
 pub struct BodiesDownloader<Client, Consensus> {
     /// The bodies client
@@ -443,7 +443,7 @@ pub struct BodiesDownloader<Client, Consensus> {
 
 Here, similarly, a `FetchClient` is passed into the `client` field, and the `get_block_bodies` method it implements is used when constructing the stream created by the `BodiesDownloader` in the `execute` method of the `BodyStage`.
 
-[File: crates/net/downloaders/src/bodies/bodies.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/bodies/bodies.rs)
+[File: crates/net/downloaders/src/bodies/bodies.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/downloaders/src/bodies/bodies.rs)
 ```rust,ignore
 async fn fetch_bodies(
     &self,
@@ -462,7 +462,7 @@ When `FetchClient.get_headers` or `FetchClient.get_block_bodies` is called, thos
 
 Every time the `StateFetcher` is polled, it finds the next idle peer available to service the current request (for either a block header, or a block body). In this context, "idle" means any peer that is not currently handling a request from the node:
 
-[File: crates/net/network/src/fetch/mod.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/mod.rs)
+[File: crates/net/network/src/fetch/mod.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/fetch/mod.rs)
 ```rust,ignore
 /// Returns the next action to return
 fn poll_action(&mut self) -> PollAction {
@@ -492,7 +492,7 @@ The ETH requests task serves _incoming_ requests related to blocks in the [`eth`
 
 Similar to the network management task, it's implemented as an endless future, but it is meant to run as a background task (on a standalone `tokio::task`) and not to be interacted with directly from the pipeline. It's represented by the following `EthRequestHandler` struct:
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/eth_requests.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
 ```rust,ignore
 pub struct EthRequestHandler<C, N: NetworkPrimitives = EthNetworkPrimitives> {
     /// The client type that can interact with the chain.
@@ -519,7 +519,7 @@ As the `NetworkManager` is polled and listens for events from peers passed throu
 
 Being an endless future, the core of the ETH requests task's functionality is in its `poll` method implementation. As the `EthRequestHandler` is polled, it listens for any ETH requests coming through the channel, and handles them accordingly. At the time of writing, the ETH requests task can handle the [`GetBlockHeaders`](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#getblockheaders-0x03) and [`GetBlockBodies`](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#getblockbodies-0x05) requests.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/eth_requests.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
 ```rust,ignore
 fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
     let this = self.get_mut();
@@ -546,7 +546,7 @@ fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
 
 The handling of these requests is fairly straightforward. The `GetBlockHeaders` payload is the following:
 
-[File: crates/net/eth-wire/src/types/blocks.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/types/blocks.rs)
+[File: crates/net/eth-wire/src/types/blocks.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/types/blocks.rs)
 ```rust,ignore
 pub struct GetBlockHeaders {
     /// The block number or hash that the peer should start returning headers from.
@@ -568,7 +568,7 @@ pub struct GetBlockHeaders {
 
 In handling this request, the ETH requests task attempts, starting with `start_block`, to fetch the associated header from the database, increment/decrement the block number to fetch by `skip` depending on the `direction` while checking for overflow/underflow, and checks that bounds specifying the maximum numbers of headers or bytes to send have not been breached.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/eth_requests.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
 ```rust,ignore
 fn get_headers_response(&self, request: GetBlockHeaders) -> Vec<Header> {
     let GetBlockHeaders { start_block, limit, skip, direction } = request;
@@ -638,7 +638,7 @@ fn get_headers_response(&self, request: GetBlockHeaders) -> Vec<Header> {
 
 The `GetBlockBodies` payload is simpler, it just contains a vector of requested block hashes:
 
-[File: crates/net/eth-wire/src/types/blocks.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/types/blocks.rs)
+[File: crates/net/eth-wire/src/types/blocks.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/types/blocks.rs)
 ```rust,ignore
 pub struct GetBlockBodies(
     /// The block hashes to request bodies for.
@@ -648,7 +648,7 @@ pub struct GetBlockBodies(
 
 In handling this request, similarly, the ETH requests task attempts, for each hash in the requested order, to fetch the block body (transactions & ommers), while checking that bounds specifying the maximum numbers of bodies or bytes to send have not been breached.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/eth_requests.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
 ```rust,ignore
 fn on_bodies_request(
     &mut self,
@@ -689,11 +689,11 @@ fn on_bodies_request(
 ## Transactions Task
 
 The transactions task listens for, requests, and propagates transactions both from the node's peers, and those that are added locally (e.g., submitted via RPC). Note that this task focuses solely on the network communication involved with Ethereum transactions, we will talk more about the structure of the transaction pool itself
-in the [transaction-pool](https://reth.rs/docs/reth_transaction_pool/index.html) chapter.
+in the [transaction-pool](https://docs.creditchain.org/docs/reth_transaction_pool/index.html) chapter.
 
 Again, like the network management and ETH requests tasks, the transactions task is implemented as an endless future that runs as a background task on a standalone `tokio::task`. It's represented by the `TransactionsManager` struct:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 pub struct TransactionsManager<Pool, N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Access to the transaction pool.
@@ -740,7 +740,7 @@ pub struct TransactionsManager<Pool, N: NetworkPrimitives = EthNetworkPrimitives
 
 Unlike the ETH requests task, but like the network management task's `NetworkHandle`, the transactions task can also be accessed via a shareable "handle" struct, the `TransactionsHandle`:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 pub struct TransactionsHandle {
     /// Command channel to the [`TransactionsManager`]
@@ -763,7 +763,7 @@ Let's get a view into the transactions task's operation by walking through the `
 The `poll` method lays out an order of operations for the transactions task. It begins by draining the `TransactionsManager.network_events`, `TransactionsManager.command_rx`, and `TransactionsManager.transaction_events` streams, in this order.
 Then, it checks on all the current `TransactionsManager.inflight_requests`, which are requests sent by the node to its peers for full transaction objects. After this, it checks on the status of completed `TransactionsManager.pool_imports` events, which are transactions that are being imported into the node's transaction pool. Finally, it drains the new `TransactionsManager.pending_transactions` events from the transaction pool.
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
     let this = self.get_mut();
@@ -838,7 +838,7 @@ The `TransactionsManager.network_events` stream is the first to have all of its 
 
 The events received in this channel are of type `NetworkEvent`:
 
-[File: crates/net/network/src/manager.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/manager.rs)
+[File: crates/net/network/src/manager.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/manager.rs)
 
 ```rust,ignore
 pub enum NetworkEvent<R = PeerRequest> {
@@ -872,7 +872,7 @@ pub enum PeerEvent {
     PeerRemoved(PeerId),
 }
 ```
-[File: crates/net/network-api/src/events.rs](https://github.com/paradigmxyz/reth/blob/c46b5fc1157d12184d1dceb4dc45e26cf74b2bc6/crates/net/network-api/src/events.rs)
+[File: crates/net/network-api/src/events.rs](https://github.com/openibank/creditchain/blob/c46b5fc1157d12184d1dceb4dc45e26cf74b2bc6/crates/net/network-api/src/events.rs)
 
 They're handled with the `on_network_event` method, which processes session events through both `NetworkEvent::Peer(PeerEvent::SessionClosed)`, `NetworkEvent::Peer(PeerEvent::SessionEstablished)`, and `NetworkEvent::ActivePeerSession` for initializing peer connections and transaction broadcasting.
 
@@ -890,7 +890,7 @@ Closes the peer session after disconnection
 **`PeerEvent::SessionEstablished`**
 Begins by inserting a `PeerMetadata` into `TransactionsManager.peers` by `peer_id`, which is a struct of the following form:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 pub struct PeerMetadata<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Optimistically keeps track of transactions that we know the peer has seen.
@@ -912,7 +912,7 @@ The `request_tx` field on the `PeerMetadata` is used as the sender end of a chan
 
 After the `PeerMetadata` is added to `TransactionsManager.peers`, the hashes of all of the transactions in the node's transaction pool are sent to the peer in a [`NewPooledTransactionHashes` message](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#newpooledtransactionhashes-0x08).
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn on_network_event(&mut self, event_result: NetworkEvent) {
     match event_result {
@@ -946,7 +946,7 @@ fn on_network_event(&mut self, event_result: NetworkEvent) {
 
 Next in the `poll` method, `TransactionsCommand`s sent through the `TransactionsManager.command_rx` stream are handled. These are the next to be handled as they are those sent manually via the `TransactionsHandle`, giving them precedence over transactions-related requests picked up from the network. The `TransactionsCommand` enum has the following form:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 enum TransactionsCommand {
     PropagateHash(B256),
@@ -957,7 +957,7 @@ enum TransactionsCommand {
 
 `on_new_transactions` propagates the full transaction object, with the signer attached, to a small random sample of peers using the `propagate_transactions` method. Then, it notifies all other peers of the hash of the new transaction, so that they can request the full transaction object if they don't already have it.
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn on_new_transactions(&mut self, hashes: impl IntoIterator<Item = TxHash>) {
     trace!(target: "net::tx", "Start propagating transactions");
@@ -1017,7 +1017,7 @@ fn propagate_transactions(
 
 After `TransactionsCommand`s, it's time to take care of transactions-related requests sent by peers in the network, so the `poll` method handles `NetworkTransactionEvent`s received through the `TransactionsManager.transaction_events` stream. `NetworkTransactionEvent` has the following form:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 pub enum NetworkTransactionEvent<N: NetworkPrimitives = EthNetworkPrimitives> {
     /// Received list of transactions from the given peer.
@@ -1047,7 +1047,7 @@ To understand this a bit better, let's double back and examine what `Transaction
 
 `TransactionsManager.pool_imports` is a set of futures representing the transactions which are currently in the process of being imported to the node's transaction pool. This process is asynchronous due to the validation of the transaction that must occur, thus we need to keep a handle on the generated future.
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn import_transactions(&mut self, peer_id: PeerId, transactions: Vec<TransactionSigned>) {
     let mut has_bad_transactions = false;
@@ -1097,7 +1097,7 @@ This event is generated from the [`NewPooledTransactionHashes` protocol message]
 
 Here, it begins by adding the transaction hashes included in the `NewPooledTransactionHashes` payload to the LRU cache for the `PeerMetadata` identified by `peer_id` in `TransactionsManager.peers`. Next, it filters the list of hashes to those that are not already present in the transaction pool, and for each such hash, requests its full transaction object from the peer by sending it a [`GetPooledTransactions` protocol message](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#getpooledtransactions-0x09) through the `PeerMetadata.request_tx` channel. If the request was successfully sent, a `GetPooledTxRequest` gets added to `TransactionsManager.inflight_requests` vector:
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 struct GetPooledTxRequest {
     peer_id: PeerId,
@@ -1107,7 +1107,7 @@ struct GetPooledTxRequest {
 
 As you can see, this struct also contains a `response` channel from which the peer's response can later be polled.
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn on_new_pooled_transactions(&mut self, peer_id: PeerId, msg: NewPooledTransactionHashes) {
     if let Some(peer) = self.peers.get_mut(&peer_id) {
@@ -1143,7 +1143,7 @@ This event is generated from the [`GetPooledTransactions` protocol message](http
 
 Here, it collects _all_ the transactions in the node's transaction pool, recovers their signers, adds their hashes to the LRU cache of the requesting peer, and sends them to the peer in a [`PooledTransactions` protocol message](https://github.com/ethereum/devp2p/blob/master/caps/eth.md#pooledtransactions-0x0a). This is sent through the `response` channel that's stored as a field of the `NetworkTransaction::GetPooledTransactions` variant itself.
 
-[File: crates/net/network/src/transactions.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
+[File: crates/net/network/src/transactions.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/transactions.rs)
 ```rust,ignore
 fn on_get_pooled_transactions(
     &mut self,

@@ -53,14 +53,14 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ImportComm
         N: CliNodeTypes<ChainSpec = C::ChainSpec>,
         Comp: CliNodeComponents<N>,
     {
-        info!(target: "reth::cli", "reth {} starting", version_metadata().short_version);
+        info!(target: "creditchaind::cli", "creditchaind {} starting", version_metadata().short_version);
 
         let Environment { provider_factory, config, .. } =
             self.env.init::<N>(AccessRights::RW, runtime.clone())?;
 
         let components = components(provider_factory.chain_spec());
 
-        info!(target: "reth::cli", "Starting import of {} file(s)", self.paths.len());
+        info!(target: "creditchaind::cli", "Starting import of {} file(s)", self.paths.len());
 
         let import_config = ImportConfig {
             no_state: self.no_state,
@@ -78,7 +78,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ImportComm
 
         // Import each file sequentially
         for (index, path) in self.paths.iter().enumerate() {
-            info!(target: "reth::cli", "Importing file {} of {}: {}", index + 1, self.paths.len(), path.display());
+            info!(target: "creditchaind::cli", "Importing file {} of {}: {}", index + 1, self.paths.len(), path.display());
 
             let result = import_blocks_from_file(
                 path,
@@ -98,7 +98,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ImportComm
 
             // Check if we stopped due to an invalid block
             if result.stopped_on_invalid_block {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                       "Stopped at last valid block {} due to invalid block {} in file: {}. Imported {} blocks, {} transactions",
                       result.last_valid_block.unwrap_or(0),
                       result.bad_block.unwrap_or(0),
@@ -120,12 +120,12 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ImportComm
                 ));
             }
 
-            info!(target: "reth::cli",
+            info!(target: "creditchaind::cli",
                   "Successfully imported file {}: {} blocks, {} transactions",
                   path.display(), result.total_imported_blocks, result.total_imported_txns);
         }
 
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
               "Import complete. Total: {}/{} blocks, {}/{} transactions",
               total_imported_blocks, total_decoded_blocks, total_imported_txns, total_decoded_txns);
 

@@ -1,12 +1,12 @@
-## reth Contributor Documentation
+## CreditChain Documentation
 
-This directory contains documentation for contributors.
+This directory contains implementation and operator documentation for the
+CreditChain chain-core workspace.
 
-- [Repository and Project Structure](./repo)
-- [Design](./design)
-- [Crates](./crates)
+- [Operator runbook](./operators/runbook.md)
+- [Repository and project structure](./repo)
+- [Workflow](./workflow.md)
+- [Releases](./release.md)
 
-### Meta
-
-- [Workflow](./workflow.md): The lifecycle of PRs
-- [Releases](./release.md): How reth is released and when (for maintainers)
+Public documentation should use `https://docs.creditchain.org`. The official
+website is `https://www.creditchain.org`.

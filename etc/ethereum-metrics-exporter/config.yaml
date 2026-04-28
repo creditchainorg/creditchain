@@ -4,8 +4,8 @@ consensus:
   name: "consensus-client"
 execution:
   enabled: true
-  url: "http://reth:8545"
-  name: "execution-client"
+  url: "http://creditchaind:8545"
+  name: "creditchaind"
   modules:
     - "eth"
     - "net"

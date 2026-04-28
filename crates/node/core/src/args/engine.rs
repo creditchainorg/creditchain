@@ -377,7 +377,7 @@ pub struct EngineArgs {
     #[arg(long = "engine.multiproof-chunk-size", default_value_t = DefaultEngineValues::get_global().multiproof_chunk_size)]
     pub multiproof_chunk_size: usize,
 
-    /// Configure the number of reserved CPU cores for non-reth processes
+    /// Configure the number of reserved CPU cores for non-CreditChain processes
     #[arg(long = "engine.reserved-cpu-cores", default_value_t = DefaultEngineValues::get_global().reserved_cpu_cores)]
     pub reserved_cpu_cores: usize,
 

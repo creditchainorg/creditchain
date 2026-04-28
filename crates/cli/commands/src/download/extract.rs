@@ -234,14 +234,14 @@ fn record_extracted_file_bytes(
 fn extract_from_file(path: &Path, format: CompressionFormat, target_dir: &Path) -> Result<()> {
     let file = std::fs::File::open(path)?;
     let total_size = file.metadata()?.len();
-    info!(target: "reth::cli",
+    info!(target: "creditchaind::cli",
         file = %path.display(),
         size = %DownloadProgress::format_size(total_size),
         "Extracting local archive"
     );
     let start = Instant::now();
     extract_archive(file, total_size, format, target_dir, CancellationToken::new())?;
-    info!(target: "reth::cli",
+    info!(target: "creditchaind::cli",
         file = %path.display(),
         elapsed = %DownloadProgress::format_duration(start.elapsed()),
         "Local extraction complete"
@@ -264,7 +264,7 @@ pub(crate) fn streaming_download_and_extract(
 
     for attempt in 1..=MAX_DOWNLOAD_RETRIES {
         if attempt > 1 {
-            info!(target: "reth::cli",
+            info!(target: "creditchaind::cli",
                 url = %url,
                 attempt,
                 max = MAX_DOWNLOAD_RETRIES,
@@ -283,7 +283,7 @@ pub(crate) fn streaming_download_and_extract(
             Err(error) => {
                 let err = eyre::Error::from(error);
                 if attempt < MAX_DOWNLOAD_RETRIES {
-                    warn!(target: "reth::cli",
+                    warn!(target: "creditchaind::cli",
                         url = %url,
                         attempt,
                         max = MAX_DOWNLOAD_RETRIES,
@@ -300,7 +300,7 @@ pub(crate) fn streaming_download_and_extract(
         };
 
         if !quiet && let Some(size) = response.content_length() {
-            info!(target: "reth::cli",
+            info!(target: "creditchaind::cli",
                 url = %url,
                 size = %DownloadProgress::format_size(size),
                 "Streaming archive"
@@ -325,7 +325,7 @@ pub(crate) fn streaming_download_and_extract(
             Ok(()) => return Ok(()),
             Err(error) => {
                 if attempt < MAX_DOWNLOAD_RETRIES {
-                    warn!(target: "reth::cli",
+                    warn!(target: "creditchaind::cli",
                         url = %url,
                         attempt,
                         max = MAX_DOWNLOAD_RETRIES,
@@ -361,7 +361,7 @@ fn download_and_extract(
         downloaded_path.file_name().map(|f| f.to_string_lossy().to_string()).unwrap_or_default();
 
     if !quiet {
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             file = %file_name,
             size = %DownloadProgress::format_size(total_size),
             "Extracting archive"
@@ -373,7 +373,7 @@ fn download_and_extract(
         extract_archive_raw(file, format, target_dir, None)?;
     } else {
         extract_archive(file, total_size, format, target_dir, session.cancel_token().clone())?;
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             file = %file_name,
             "Extraction complete"
         );

@@ -157,7 +157,7 @@ impl Command {
                             let se: reth_primitives_traits::StorageEntry = entry;
                             println!("{}", serde_json::to_string_pretty(&se)?);
                         } else {
-                            error!(target: "reth::cli", "No content for the given table key.");
+                            error!(target: "creditchaind::cli", "No content for the given table key.");
                         }
                         return Ok(());
                     }
@@ -230,7 +230,7 @@ impl Command {
                     if let Some(account) = account {
                         println!("{}", serde_json::to_string_pretty(&account)?);
                     } else {
-                        error!(target: "reth::cli", "No content for the given table key.");
+                        error!(target: "creditchaind::cli", "No content for the given table key.");
                     }
 
                     return Ok(())
@@ -289,7 +289,7 @@ impl Command {
                         }
                     }
                     None => {
-                        error!(target: "reth::cli", "No content for the given table key.");
+                        error!(target: "creditchaind::cli", "No content for the given table key.");
                     }
                 };
             }
@@ -387,7 +387,7 @@ fn get_rocksdb_account_history(
                         }
                     }
                     _ => {
-                        error!(target: "reth::cli", "No content for the given table key.");
+                        error!(target: "creditchaind::cli", "No content for the given table key.");
                     }
                 }
             }
@@ -459,7 +459,7 @@ fn get_rocksdb_storage_history(
                         }
                     }
                     _ => {
-                        error!(target: "reth::cli", "No content for the given table key.");
+                        error!(target: "creditchaind::cli", "No content for the given table key.");
                     }
                 }
             }
@@ -488,13 +488,13 @@ fn get_rocksdb_table<T: Table>(
         let content = rocksdb.get_raw::<T>(key)?;
         match content {
             Some(bytes) => println!("{}", hex::encode_prefixed(&bytes)),
-            None => error!(target: "reth::cli", "No content for the given table key."),
+            None => error!(target: "creditchaind::cli", "No content for the given table key."),
         }
     } else {
         let content = rocksdb.get::<T>(key)?;
         match content {
             Some(value) => println!("{}", serde_json::to_string_pretty(&value)?),
-            None => error!(target: "reth::cli", "No content for the given table key."),
+            None => error!(target: "creditchaind::cli", "No content for the given table key."),
         }
     }
 
@@ -579,7 +579,7 @@ impl<N: ProviderNodeTypes> TableViewer<()> for GetValueViewer<'_, N> {
                     println!("{content}");
                 }
                 None => {
-                    error!(target: "reth::cli", "No content for the given table key.");
+                    error!(target: "creditchaind::cli", "No content for the given table key.");
                 }
             };
         }
@@ -674,7 +674,7 @@ impl<N: ProviderNodeTypes> TableViewer<()> for GetValueViewer<'_, N> {
                     println!("{content}");
                 }
                 None => {
-                    error!(target: "reth::cli", "No content for the given table subkey.");
+                    error!(target: "creditchaind::cli", "No content for the given table subkey.");
                 }
             };
         }

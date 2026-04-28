@@ -1,0 +1,13 @@
+[Unit]
+Description=CreditChain EVM-compatible execution client
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=exec
+DynamicUser=yes
+StateDirectory=creditchain
+ExecStart=/usr/bin/creditchaind node --datadir %S/creditchain --log.file.max-files 0
+
+[Install]
+WantedBy=multi-user.target

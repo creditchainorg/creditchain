@@ -2,8 +2,22 @@ use reth_chainspec::{ChainSpec, DEV, HOLESKY, HOODI, MAINNET, SEPOLIA};
 use reth_cli::chainspec::{parse_genesis, ChainSpecParser};
 use std::sync::Arc;
 
-/// Chains supported by reth. First value should be used as the default.
-pub const SUPPORTED_CHAINS: &[&str] = &["mainnet", "sepolia", "holesky", "hoodi", "dev"];
+/// Chains supported by CreditChain.
+///
+/// The upstream Ethereum aliases remain available so compatibility testing and shallow-fork
+/// maintenance can continue without bespoke tooling.
+pub const SUPPORTED_CHAINS: &[&str] = &[
+    "mainnet",
+    "sepolia",
+    "holesky",
+    "hoodi",
+    "dev",
+    "local-single",
+    "local-multinode",
+    "devnet",
+    "testnet",
+    "creditchain-mainnet",
+];
 
 /// Clap value parser for [`ChainSpec`]s.
 ///
@@ -16,11 +30,28 @@ pub fn chain_value_parser(s: &str) -> eyre::Result<Arc<ChainSpec>, eyre::Error> 
         "holesky" => HOLESKY.clone(),
         "hoodi" => HOODI.clone(),
         "dev" => DEV.clone(),
+        "local-single" => creditchain_genesis("local-single")?,
+        "local-multinode" => creditchain_genesis("local-multinode")?,
+        "devnet" => creditchain_genesis("devnet")?,
+        "testnet" => creditchain_genesis("testnet")?,
+        "creditchain-mainnet" => creditchain_genesis("mainnet")?,
         _ => Arc::new(parse_genesis(s)?.into()),
     })
 }
 
-/// Ethereum chain specification parser.
+fn creditchain_genesis(environment: &str) -> eyre::Result<Arc<ChainSpec>> {
+    let raw = match environment {
+        "local-single" => include_str!("../../../../genesis/local-single.json"),
+        "local-multinode" => include_str!("../../../../genesis/local-multinode.json"),
+        "devnet" => include_str!("../../../../genesis/devnet.json"),
+        "testnet" => include_str!("../../../../genesis/testnet.json"),
+        "mainnet" => include_str!("../../../../genesis/mainnet.json"),
+        _ => unreachable!("unknown built-in CreditChain environment"),
+    };
+    Ok(Arc::new(parse_genesis(raw)?.into()))
+}
+
+/// CreditChain chain specification parser.
 #[derive(Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct EthereumChainSpecParser;

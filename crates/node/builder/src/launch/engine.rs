@@ -105,17 +105,17 @@ impl EngineNodeLauncher {
             // Create the provider factory with changeset cache
             .with_provider_factory::<_, <CB::Components as NodeComponents<T>>::Evm>(changeset_cache.clone(), rocksdb_provider).await?
             .inspect(|_| {
-                info!(target: "reth::cli", "Database opened");
+                info!(target: "creditchaind::cli", "Database opened");
             })
             .with_prometheus_server().await?
             .inspect(|this| {
-                debug!(target: "reth::cli", chain=%this.chain_id(), genesis=?this.genesis_hash(), "Initializing genesis");
+                debug!(target: "creditchaind::cli", chain=%this.chain_id(), genesis=?this.genesis_hash(), "Initializing genesis");
             })
             .with_genesis()?
             .inspect(|this: &LaunchContextWith<Attached<WithConfigs<<T::Types as NodeTypes>::ChainSpec>, _>>| {
-                info!(target: "reth::cli", "\n{}", this.chain_spec().display_hardforks());
+                info!(target: "creditchaind::cli", "\n{}", this.chain_spec().display_hardforks());
                 let settings = this.provider_factory().cached_storage_settings();
-                info!(target: "reth::cli", ?settings, "Loaded storage settings");
+                info!(target: "creditchaind::cli", ?settings, "Loaded storage settings");
             })
             .with_metrics_task()
             // passing FullNodeTypes as type parameter here so that we can build
@@ -142,7 +142,7 @@ impl EngineNodeLauncher {
 
         let static_file_producer = ctx.static_file_producer();
         let static_file_producer_events = static_file_producer.lock().events();
-        info!(target: "reth::cli", "StaticFileProducer initialized");
+        info!(target: "creditchaind::cli", "StaticFileProducer initialized");
 
         let consensus = Arc::new(ctx.components().consensus().clone());
 
@@ -173,7 +173,7 @@ impl EngineNodeLauncher {
         }
         let pruner = pruner_builder.build_with_provider_factory(ctx.provider_factory().clone());
         let pruner_events = pruner.events();
-        info!(target: "reth::cli", prune_config=?ctx.prune_config(), "Pruner initialized");
+        info!(target: "creditchaind::cli", prune_config=?ctx.prune_config(), "Pruner initialized");
 
         let event_sender = EventSender::default();
 
@@ -247,7 +247,7 @@ impl EngineNodeLauncher {
             ctx.task_executor().clone(),
         );
 
-        info!(target: "reth::cli", "Consensus engine initialized");
+        info!(target: "creditchaind::cli", "Consensus engine initialized");
 
         #[expect(clippy::needless_continue)]
         let events = stream_select!(
@@ -295,10 +295,10 @@ impl EngineNodeLauncher {
         let terminate_after_backfill = ctx.terminate_after_initial_backfill();
         let startup_sync_state_idle = ctx.node_config().debug.startup_sync_state_idle;
 
-        info!(target: "reth::cli", "Starting consensus engine");
+        info!(target: "creditchaind::cli", "Starting consensus engine");
         let consensus_engine = move |mut on_graceful_shutdown| async move {
             if let Some(initial_target) = initial_target {
-                debug!(target: "reth::cli", %initial_target,  "start backfill sync");
+                debug!(target: "creditchaind::cli", %initial_target,  "start backfill sync");
                 // network_handle's sync state is already initialized at Syncing
                 orchestrator.start_backfill_sync(initial_target);
             } else if startup_sync_state_idle {
@@ -315,11 +315,11 @@ impl EngineNodeLauncher {
                 tokio::select! {
                     event = orchestrator.next() => {
                         let Some(event) = event else { break };
-                        debug!(target: "reth::cli", "Event: {event}");
+                        debug!(target: "creditchaind::cli", "Event: {event}");
                         match event {
                             ChainEvent::BackfillSyncFinished => {
                                 if terminate_after_backfill {
-                                    debug!(target: "reth::cli", "Terminating after initial backfill");
+                                    debug!(target: "creditchaind::cli", "Terminating after initial backfill");
                                     break
                                 }
                                 if startup_sync_state_idle {
@@ -330,7 +330,7 @@ impl EngineNodeLauncher {
                                 network_handle.update_sync_state(SyncState::Syncing);
                             }
                             ChainEvent::FatalError => {
-                                error!(target: "reth::cli", "Fatal error in consensus engine");
+                                error!(target: "creditchaind::cli", "Fatal error in consensus engine");
                                 res = Err(eyre::eyre!("Fatal error in consensus engine"));
                                 break
                             }
@@ -362,13 +362,13 @@ impl EngineNodeLauncher {
                     }
                     payload = built_payloads.select_next_some(), if !built_payloads.is_terminated() => {
                         if let Some(executed_block) = payload.executed_block() {
-                            debug!(target: "reth::cli", block=?executed_block.recovered_block.num_hash(),  "inserting built payload");
+                            debug!(target: "creditchaind::cli", block=?executed_block.recovered_block.num_hash(),  "inserting built payload");
                             orchestrator.handler_mut().handler_mut().on_event(EngineApiRequest::InsertExecutedBlock(executed_block.into_executed_payload()).into());
                         }
                     }
                     shutdown_req = &mut shutdown_rx => {
                         if let Ok(req) = shutdown_req {
-                            debug!(target: "reth::cli", "received engine shutdown request");
+                            debug!(target: "creditchaind::cli", "received engine shutdown request");
                             orchestrator.handler_mut().handler_mut().on_event(
                                 FromOrchestrator::Terminate { tx: req.done_tx }.into()
                             );
@@ -378,7 +378,7 @@ impl EngineNodeLauncher {
                         // Shutdown signal received.
                         // Send Terminate so the engine OS thread can exit cleanly before we
                         // drop the orchestrator.
-                        debug!(target: "reth::cli", "shutdown signal received, terminating engine");
+                        debug!(target: "creditchaind::cli", "shutdown signal received, terminating engine");
                         let (done_tx, done_rx) = oneshot::channel();
                         orchestrator.handler_mut().handler_mut().on_event(
                             FromOrchestrator::Terminate { tx: done_tx }.into()

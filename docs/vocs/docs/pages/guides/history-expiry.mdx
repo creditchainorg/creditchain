@@ -39,7 +39,7 @@ If enabled, importing blocks from ERA1 files can be done automatically with no m
 
 #### Enabling the ERA stage
 
-The import from ERA1 files within the pre-merge block range is included in the [reth node](/cli/reth/node) synchronization pipeline. It is disabled by default. To enable it, pass the `--era.enable` flag when running the [`node`](/cli/reth/node) command.
+The import from ERA1 files within the pre-merge block range is included in the [creditchaind node](/cli/creditchaind/node) synchronization pipeline. It is disabled by default. To enable it, pass the `--era.enable` flag when running the [`node`](/cli/creditchaind/node) command.
 
 The benefit of using this option is significant increase in the synchronization speed for the headers and mainly bodies stage of the pipeline within the ERA1 block range. We encourage you to use it! Eventually, it will become enabled by default.
 
@@ -49,7 +49,7 @@ When enabled, the import from ERA1 files runs as its own separate stage before a
 
 ### Manual import
 
-If you want to import block headers and transactions from ERA1 files without running the synchronization pipeline, you may use the [`import-era`](/cli/reth/import-era) command.
+If you want to import block headers and transactions from ERA1 files without running the synchronization pipeline, you may use the [`import-era`](/cli/creditchaind/import-era) command.
 
 ### Options
 
@@ -68,7 +68,7 @@ Both options cannot be used at the same time. If no option is specified, the rem
 In this section we discuss how to export blocks data into ERA1 files.
 
 ### Manual export
-You can manually export block data from your database to ERA1 files using the [`export-era`](/cli/reth/export-era) command.
+You can manually export block data from your database to ERA1 files using the [`export-era`](/cli/creditchaind/export-era) command.
 
 The CLI reads block headers, bodies, and receipts from your local database and packages them into the standardized ERA1 format with up to 8,192 blocks per file.
 

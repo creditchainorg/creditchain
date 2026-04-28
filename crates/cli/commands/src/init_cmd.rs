@@ -22,7 +22,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> InitComman
         self,
         runtime: reth_tasks::Runtime,
     ) -> eyre::Result<()> {
-        info!(target: "reth::cli", "reth init starting");
+        info!(target: "creditchaind::cli", "creditchaind init starting");
 
         let Environment { provider_factory, .. } = self.env.init::<N>(AccessRights::RW, runtime)?;
 
@@ -31,7 +31,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> InitComman
             .block_hash(genesis_block_number)?
             .ok_or_else(|| eyre::eyre!("Genesis hash not found."))?;
 
-        info!(target: "reth::cli", hash = ?hash, "Genesis block written");
+        info!(target: "creditchaind::cli", hash = ?hash, "Genesis block written");
         Ok(())
     }
 }

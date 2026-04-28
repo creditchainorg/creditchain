@@ -22,7 +22,7 @@ use tracing::{info, warn};
 #[derive(Parser, Debug)]
 /// The arguments for the `reth db diff` command
 pub struct Command {
-    /// The path to the data dir for all reth files and subdirectories.
+    /// The path to the data dir for all CreditChain files and subdirectories.
     #[arg(long, verbatim_doc_comment)]
     secondary_datadir: PlatformPath<DataDirPath>,
 

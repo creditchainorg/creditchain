@@ -200,7 +200,7 @@ impl PrefixSet {
     ///
     /// This optimization was inspired by Silkworm's implementation and significantly improves
     /// incremental state root calculation performance
-    /// ([see PR #2417](https://github.com/paradigmxyz/reth/pull/2417)).
+    /// ([see PR #2417](https://github.com/openibank/creditchain/pull/2417)).
     #[inline]
     pub fn contains(&mut self, prefix: &Nibbles) -> bool {
         if self.all {

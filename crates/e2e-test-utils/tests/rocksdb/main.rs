@@ -714,7 +714,7 @@ async fn test_rocksdb_historical_account_queries() -> Result<()> {
 }
 
 /// Reproduces the race condition between `save_blocks` and `RocksDB` pruning described in
-/// <https://github.com/paradigmxyz/reth/pull/23081>.
+/// <https://github.com/openibank/creditchain/pull/23081>.
 ///
 /// Both `save_blocks` and the pruner push to `pending_rocksdb_batches` before a single
 /// `commit()`. The pruner reads committed (stale) state that doesn't include `save_blocks`'

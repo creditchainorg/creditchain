@@ -1,16 +1,16 @@
 ---
-description: Experimental hot/cold storage architecture in Reth v1.11.
+description: Experimental hot/cold storage architecture in CreditChain v1.11.
 ---
 
 # Storage V2 (Experimental)
 
 :::warning
 `--storage.v2` is **experimental**. It is stable enough for testing and non-critical workloads,
-but may change in future releases. Please report issues on [GitHub](https://github.com/paradigmxyz/reth/issues)
+but may change in future releases. Please report issues on [GitHub](https://github.com/openibank/creditchain/issues)
 or in the [Telegram group](https://t.me/paradigm_reth).
 :::
 
-Reth v1.11 introduces an experimental hot/cold storage architecture behind the `--storage.v2` flag.
+CreditChain v1.11 introduces an experimental hot/cold storage architecture behind the `--storage.v2` flag.
 It routes history indices and transaction hash lookups to RocksDB, writes changesets to static files,
 and drops the legacy plain state tables — resulting in significantly lower disk usage.
 
@@ -31,7 +31,7 @@ Measured at block `24,396,823` on Ethereum mainnet:
 `--storage.v2` is a **genesis-initialization-only** setting. You must start a fresh sync — it cannot be enabled on an existing database.
 
 ```bash
-reth node \
+creditchaind node \
     --storage.v2 \
     --authrpc.jwtsecret /path/to/secret
 ```
@@ -39,7 +39,7 @@ reth node \
 Combine with other flags as usual (`--full`, `--minimal`, `--http`, etc.):
 
 ```bash
-reth node \
+creditchaind node \
     --storage.v2 \
     --full \
     --http --http.api eth,trace \
@@ -49,14 +49,14 @@ reth node \
 ### Using snapshots
 
 To avoid syncing from genesis, download a pre-built snapshot from
-[snapshots.reth.rs](https://snapshots.reth.rs) and start from there:
+[snapshots.creditchain.org](https://snapshots.creditchain.org) and start from there:
 
 ```bash
-# Download and extract a v2 snapshot (see snapshots.reth.rs for available options)
-reth download --chain mainnet
+# Download and extract a v2 snapshot (see snapshots.creditchain.org for available options)
+creditchaind download --chain mainnet
 
 # Then start the node
-reth node \
+creditchaind node \
     --authrpc.jwtsecret /path/to/secret
 ```
 
@@ -68,6 +68,6 @@ reth node \
 
 ## Further reading
 
-- [v1.11.0 release notes](https://github.com/paradigmxyz/reth/releases/tag/v1.11.0) — full details on storage v2 and other changes
+- [v1.11.0 release notes](https://github.com/openibank/creditchain/releases/tag/v1.11.0) — full details on storage v2 and other changes
 - [Pruning & Full Node](/run/faq/pruning) — configure pruning modes alongside storage v2
 - [Configuration](/run/configuration) — general node configuration reference

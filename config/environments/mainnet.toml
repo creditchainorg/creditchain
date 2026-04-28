@@ -1,0 +1,19 @@
+[environment]
+name = "mainnet"
+display_name = "CreditChain Mainnet"
+chain_id = 2026042405
+reset_policy = "production-no-resets"
+genesis = "genesis/mainnet.json"
+binary = "creditchaind"
+
+[rpc]
+http_url = "https://rpc.creditchain.org"
+metrics_port = 9001
+
+[network]
+discovery = true
+bootnodes = []
+
+[links]
+website = "https://www.creditchain.org"
+docs = "https://docs.creditchain.org"

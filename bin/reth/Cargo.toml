@@ -1,27 +1,32 @@
 [package]
-name = "reth"
+name = "cc-cli"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
-description = "Reth node implementation"
-default-run = "reth"
+description = "CreditChain node implementation"
+default-run = "creditchaind"
 
 [package.metadata.deb]
-maintainer = "reth team"
+name = "creditchaind"
+maintainer = "CreditChain Research Team"
 depends = "$auto"
 section = "network"
 priority = "optional"
-maintainer-scripts = "../../pkg/reth/debian/"
+maintainer-scripts = "../../packaging/debian/"
 assets = [
     "$auto",
-    ["../../README.md", "usr/share/doc/reth/", "644"],
-    ["../../LICENSE-APACHE", "usr/share/doc/reth/", "644"],
-    ["../../LICENSE-MIT", "usr/share/doc/reth/", "644"],
+    ["../../README.md", "usr/share/doc/creditchaind/", "644"],
+    ["../../LICENSE-APACHE", "usr/share/doc/creditchaind/", "644"],
+    ["../../LICENSE-MIT", "usr/share/doc/creditchaind/", "644"],
 ]
-systemd-units = { enable = false, start = false, unit-name = "reth", unit-scripts = "../../pkg/reth/debian" }
+systemd-units = { enable = false, start = false, unit-name = "creditchaind", unit-scripts = "../../packaging/debian" }
+
+[lib]
+name = "cc_cli"
+path = "src/lib.rs"
 
 [lints]
 workspace = true
@@ -187,5 +192,5 @@ min-trace-logs = [
 trie-debug = ["reth-node-builder/trie-debug", "reth-node-core/trie-debug"]
 
 [[bin]]
-name = "reth"
+name = "creditchaind"
 path = "src/main.rs"

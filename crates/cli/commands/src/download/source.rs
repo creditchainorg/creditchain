@@ -38,7 +38,7 @@ pub(crate) async fn discover_manifest_url(chain_id: u64) -> Result<String> {
     let defaults = DownloadDefaults::get_global();
     let api_url = &*defaults.snapshot_api_url;
 
-    info!(target: "reth::cli", %api_url, %chain_id, "Discovering latest snapshot manifest");
+    info!(target: "creditchaind::cli", %api_url, %chain_id, "Discovering latest snapshot manifest");
 
     let entries = fetch_snapshot_api_entries(chain_id).await?;
     let entry =
@@ -54,7 +54,7 @@ pub(crate) async fn discover_manifest_url(chain_id: u64) -> Result<String> {
             )
         })?;
 
-    info!(target: "reth::cli",
+    info!(target: "creditchaind::cli",
         block = entry.block,
         url = %entry.metadata_url,
         "Found latest snapshot manifest"

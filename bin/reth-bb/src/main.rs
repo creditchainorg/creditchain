@@ -357,7 +357,7 @@ fn main() {
     let pending: BigBlockMap = Arc::new(Mutex::new(HashMap::new()));
 
     if let Err(err) = Cli::<EthereumChainSpecParser>::parse().run(async move |builder, _| {
-        info!(target: "reth::cli", "Launching big block node");
+        info!(target: "creditchaind::cli", "Launching big block node");
         let handle = builder.launch_node(BbNode::new(pending.clone())).await?;
 
         handle.wait_for_node_exit().await

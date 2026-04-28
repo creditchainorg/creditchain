@@ -132,10 +132,11 @@ impl LaunchContext {
         LaunchContextWith { inner: self, attachment }
     }
 
-    /// Loads the reth config with the configured `data_dir` and overrides settings according to the
-    /// `config`.
+    /// Loads the CreditChain config with the configured `data_dir` and overrides settings
+    /// according to the `config`.
     ///
-    /// Attaches both the `NodeConfig` and the loaded `reth.toml` config to the launch context.
+    /// Attaches both the `NodeConfig` and the loaded `creditchain.toml` config to the launch
+    /// context.
     pub fn with_loaded_toml_config<ChainSpec>(
         self,
         config: NodeConfig<ChainSpec>,
@@ -147,8 +148,8 @@ impl LaunchContext {
         Ok(self.with(WithConfigs { config, toml_config }))
     }
 
-    /// Loads the reth config with the configured `data_dir` and overrides settings according to the
-    /// `config`.
+    /// Loads the CreditChain config with the configured `data_dir` and overrides settings
+    /// according to the `config`.
     ///
     /// This is async because the trusted peers may have to be resolved.
     pub fn load_toml_config<ChainSpec>(
@@ -165,7 +166,7 @@ impl LaunchContext {
 
         Self::save_pruning_config(&mut toml_config, config, &config_path)?;
 
-        info!(target: "reth::cli", path = ?config_path, "Configuration loaded");
+        info!(target: "creditchaind::cli", path = ?config_path, "Configuration loaded");
 
         // Update the config with the command line arguments. Only override when the CLI flag is
         // set, so the TOML value is preserved when the flag is not passed.
@@ -196,11 +197,11 @@ impl LaunchContext {
                 should_save = true;
             }
         } else if !reth_config.prune.is_default() {
-            info!(target: "reth::cli", "Pruning configuration is present in the config file, but no CLI arguments are provided. Using config from file.");
+            info!(target: "creditchaind::cli", "Pruning configuration is present in the config file, but no CLI arguments are provided. Using config from file.");
         }
 
         if should_save {
-            info!(target: "reth::cli", "Saving prune config to toml file");
+            info!(target: "creditchaind::cli", "Saving prune config to toml file");
             reth_config.save(config_path.as_ref())?;
         }
 
@@ -303,7 +304,7 @@ impl<ChainSpec> LaunchContextWith<WithConfigs<ChainSpec>> {
     /// Resolves the trusted peers and adds them to the toml config.
     pub fn with_resolved_peers(mut self) -> eyre::Result<Self> {
         if !self.attachment.config.network.trusted_peers.is_empty() {
-            info!(target: "reth::cli", "Adding trusted nodes");
+            info!(target: "creditchaind::cli", "Adding trusted nodes");
 
             self.attachment
                 .toml_config
@@ -353,7 +354,7 @@ impl<R, ChainSpec: EthChainSpec> LaunchContextWith<Attached<WithConfigs<ChainSpe
             if etl_path.exists() {
                 // Remove etl-path files on launch
                 if let Err(err) = fs::remove_dir_all(&etl_path) {
-                    warn!(target: "reth::cli", ?etl_path, %err, "Failed to remove ETL path on launch");
+                    warn!(target: "creditchaind::cli", ?etl_path, %err, "Failed to remove ETL path on launch");
                 }
             }
             self.toml_config_mut().stages.etl.dir = Some(etl_path);
@@ -539,7 +540,7 @@ where
 
             let unwind_target = PipelineTarget::Unwind(unwind_block);
 
-            info!(target: "reth::cli", %unwind_target, %inconsistency_source, "Executing unwind after consistency check.");
+            info!(target: "creditchaind::cli", %unwind_target, %inconsistency_source, "Executing unwind after consistency check.");
 
             let (_tip_tx, tip_rx) = watch::channel(B256::ZERO);
 
@@ -570,7 +571,7 @@ where
                 let _ = tx.send(result);
             });
             rx.await?.inspect_err(|err| {
-                error!(target: "reth::cli", %unwind_target, %inconsistency_source, %err, "failed to run unwind")
+                error!(target: "creditchaind::cli", %unwind_target, %inconsistency_source, %err, "failed to run unwind")
             })?;
         }
 
@@ -682,7 +683,7 @@ where
         let with_metrics =
             WithMeteredProvider { provider_factory: self.right().clone(), metrics_sender };
 
-        debug!(target: "reth::cli", "Spawning stages metrics listener task");
+        debug!(target: "creditchaind::cli", "Spawning stages metrics listener task");
         let sync_metrics_listener = reth_stages::MetricsListener::new(metrics_receiver);
         self.task_executor()
             .spawn_critical_task("stages metrics listener task", sync_metrics_listener);
@@ -804,7 +805,7 @@ where
             self.configs().clone(),
         );
 
-        debug!(target: "reth::cli", "creating components");
+        debug!(target: "creditchaind::cli", "creating components");
         let components = components_builder.build_components(&builder_ctx).await?;
 
         let blockchain_db = self.blockchain_db().clone();
@@ -815,7 +816,7 @@ where
             provider: blockchain_db,
         };
 
-        debug!(target: "reth::cli", "calling on_component_initialized hook");
+        debug!(target: "creditchaind::cli", "calling on_component_initialized hook");
         on_component_initialized.on_event(node_adapter.clone())?;
 
         let components_container = WithComponents {
@@ -929,7 +930,7 @@ where
             // bedrock height
             if latest < 105235063 {
                 error!(
-                    "Op-mainnet has been launched without importing the pre-Bedrock state. The chain can't progress without this. See also https://reth.rs/run/sync-op-mainnet.html?minimal-bootstrap-recommended"
+                    "Op-mainnet has been launched without importing the pre-Bedrock state. The chain can't progress without this. See also https://docs.creditchain.org/run/sync-op-mainnet.html?minimal-bootstrap-recommended"
                 );
                 return Err(ProviderError::BestBlockNotFound);
             }
@@ -1105,7 +1106,7 @@ where
         let pool = self.components().pool().clone();
         let provider = self.node_adapter().provider.clone();
 
-        info!(target: "reth::cli", "Starting EthStats service at {}", url);
+        info!(target: "creditchaind::cli", "Starting EthStats service at {}", url);
 
         let ethstats = EthStatsService::new(url, network, provider, pool).await?;
 
@@ -1199,12 +1200,12 @@ impl<L, R> Attached<L, R> {
 }
 
 /// Helper container type to bundle the initial [`NodeConfig`] and the loaded settings from the
-/// reth.toml config
+/// creditchain.toml config
 #[derive(Debug)]
 pub struct WithConfigs<ChainSpec> {
     /// The configured, usually derived from the CLI.
     pub config: NodeConfig<ChainSpec>,
-    /// The loaded reth.toml config.
+    /// The loaded creditchain.toml config.
     pub toml_config: reth_config::Config,
 }
 

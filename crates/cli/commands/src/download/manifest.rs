@@ -597,7 +597,7 @@ pub fn generate_manifest(
             let chunk_output_files =
                 packaged_chunks.into_iter().map(|chunk| chunk.output_files).collect::<Vec<_>>();
             let total_size: u64 = chunk_sizes.iter().sum();
-            info!(target: "reth::cli",
+            info!(target: "creditchaind::cli",
                 component = ty.display_name(),
                 chunks = chunk_sizes.len(),
                 total_blocks = block,

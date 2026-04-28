@@ -1,5 +1,5 @@
 ---
-description: Troubleshooting common Reth node and database issues.
+description: Troubleshooting common CreditChain node and database issues.
 ---
 
 # Troubleshooting
@@ -49,7 +49,7 @@ If you're:
     2023-11-08T15:17:24.789731Z  WARN providers::db: Transaction insertion took too long block_number=18528075 tx_num=2150227643 hash=0xb7de1d6620efbdd3aa8547c47a0ff09a7fd3e48ba3fd2c53ce94c6683ed66e7c elapsed=6.793759034s
     ```
 
-then most likely you're experiencing issues with the [database freelist](https://github.com/paradigmxyz/reth/issues/5228).
+then most likely you're experiencing issues with the [database freelist](https://github.com/openibank/creditchain/issues/5228).
 To confirm it, check if the values on the `Freelist` chart on [Grafana dashboard](/run/monitoring#prometheus--grafana)
 is greater than 10M.
 
@@ -60,9 +60,9 @@ Currently, there are two main ways to fix this issue.
 It will take around 5-6 hours and require **additional** disk space located on the same or different drive
 equal to the [freshly synced node](/run/system-requirements).
 
-1. Clone Reth
+1. Clone CreditChain
     ```bash
-    git clone https://github.com/paradigmxyz/reth
+    git clone https://github.com/openibank/creditchain
     cd reth
     ```
 2. Build database debug tools
@@ -71,18 +71,18 @@ equal to the [freshly synced node](/run/system-requirements).
     ```
 3. Run compaction (this step will take 5-6 hours, depending on the I/O speed)
     ```bash
-    ./db-tools/mdbx_copy -c $(reth db path) reth_compact.dat
+    ./db-tools/mdbx_copy -c $(creditchaind db path) reth_compact.dat
     ```
-4. Stop Reth
+4. Stop CreditChain
 5. Backup original database
     ```bash
-    mv $(reth db path)/mdbx.dat reth_old.dat
+    mv $(creditchaind db path)/mdbx.dat reth_old.dat
     ```
 6. Move compacted database in place of the original database
     ```bash
-    mv reth_compact.dat $(reth db path)/mdbx.dat
+    mv reth_compact.dat $(creditchaind db path)/mdbx.dat
     ```
-7. Start Reth
+7. Start CreditChain
 8. Confirm that the values on the `Freelist` chart are near zero and the values on the `Canonical Commit Latency Time` chart
    is less than 1 second.
 9. Delete original database
@@ -94,8 +94,8 @@ equal to the [freshly synced node](/run/system-requirements).
 
 It will take the same time as initial sync.
 
-1. Stop Reth
-2. Drop the database using [`reth db drop`](/cli/reth/db/drop)
+1. Stop CreditChain
+2. Drop the database using [`creditchaind db drop`](/cli/creditchaind/db/drop)
 3. Start reth
 
 ### Database write error
@@ -123,12 +123,12 @@ Caused by:
 1. Check your memory health: use [memtest86+](https://www.memtest.org/) or [memtester](https://linux.die.net/man/8/memtester). If your memory is faulty, it's better to resync the node on different hardware.
 2. Check database integrity:
     ```bash
-    git clone https://github.com/paradigmxyz/reth
+    git clone https://github.com/openibank/creditchain
     cd reth
     make db-tools
-    ./db-tools/mdbx_chk $(reth db path)/mdbx.dat | tee mdbx_chk.log
+    ./db-tools/mdbx_chk $(creditchaind db path)/mdbx.dat | tee mdbx_chk.log
     ```
-    If `mdbx_chk` has detected any errors, please [open an issue](https://github.com/paradigmxyz/reth/issues) and post the output from the `mdbx_chk.log` file.
+    If `mdbx_chk` has detected any errors, please [open an issue](https://github.com/openibank/creditchain/issues) and post the output from the `mdbx_chk.log` file.
 
 ### Concurrent database access error (using containers/Docker)
 

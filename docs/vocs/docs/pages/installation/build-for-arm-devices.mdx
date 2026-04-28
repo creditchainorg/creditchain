@@ -1,10 +1,10 @@
 ---
-description: Building and troubleshooting Reth on ARM devices.
+description: Building and troubleshooting CreditChain on ARM devices.
 ---
 
 # Building for ARM devices
 
-Reth can be built for and run on ARM devices, but there are a few things to take into consideration before.
+CreditChain can be built for and run on ARM devices, but there are a few things to take into consideration before.
 
 ## CPU Architecture
 
@@ -13,7 +13,7 @@ First, you must have a 64-bit CPU and Operating System, otherwise some of the pr
 ## Memory Layout on AArch64
 
 Then, you must set up the virtual memory layout in such that the user space is sufficiently large.
-From [the Linux Kernel documentation](https://www.kernel.org/doc/html/v5.3/arm64/memory.html#:~:text=AArch64%20Linux%20uses%20either%203,for%20both%20user%20and%20kernel.), you can see that the memory layout with 4KB pages and a level-3 translation table limits the user space to 512GB, which is too low for Reth to sync on Ethereum mainnet.
+From [the Linux Kernel documentation](https://www.kernel.org/doc/html/v5.3/arm64/memory.html#:~:text=AArch64%20Linux%20uses%20either%203,for%20both%20user%20and%20kernel.), you can see that the memory layout with 4KB pages and a level-3 translation table limits the user space to 512GB, which is too low for CreditChain to sync on Ethereum mainnet.
 
 ## ARM Board Virtual Memory Limitation
 
@@ -44,9 +44,9 @@ Some newer versions of ARM architecture offer support for Large Virtual Address 
 -   [ARM developer documentation](https://developer.arm.com/documentation/ddi0406/cb/Appendixes/ARMv4-and-ARMv5-Differences/System-level-memory-model/Virtual-memory-support)
 -   [ARM Community Forums](https://community.arm.com)
 
-## Build Reth
+## Build CreditChain
 
-If both your CPU architecture and the memory layout are valid, the instructions for building Reth will not differ from [the standard process](https://reth.rs/installation/source/).
+If both your CPU architecture and the memory layout are valid, the instructions for building CreditChain will not differ from [the standard process](https://docs.creditchain.org/installation/source/).
 
 ## Troubleshooting
 
@@ -54,7 +54,7 @@ If both your CPU architecture and the memory layout are valid, the instructions 
 
 ### Failed to open database
 
-> This error is documented [here](https://github.com/paradigmxyz/reth/issues/2211).
+> This error is documented [here](https://github.com/openibank/creditchain/issues/2211).
 
 This error is raised whenever MDBX can not open a database due to the limitations imposed by the memory layout of your kernel. If the user space is limited to 512GB, the database will not be able to grow below this size.
 
@@ -85,4 +85,4 @@ CARD_DEVICE="/dev/sdX" # Replace sdX with your own storage device
 ```
 
 -   From there, you will be able to select the target board, the OS release and branch. Then, once you get in the **Kernel Configuration** screen, select the **Kernel Features options** and set the previous values accordingly.
--   Wait for the process to finish, plug your storage device into your board and start it. You can now download or install Reth and it should work properly.
+-   Wait for the process to finish, plug your storage device into your board and start it. You can now download or install CreditChain and it should work properly.

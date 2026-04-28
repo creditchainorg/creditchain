@@ -27,7 +27,7 @@ mod rocksdb;
 const PROGRESS_LOG_INTERVAL: usize = 100_000;
 
 #[derive(Parser, Debug)]
-/// The arguments for the `reth db checksum` command
+/// The arguments for the `creditchaind db checksum` command
 pub struct Command {
     #[command(subcommand)]
     subcommand: Subcommand,

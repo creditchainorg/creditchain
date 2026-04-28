@@ -78,7 +78,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
             return Ok(None)
         }
 
-        info!(target: "reth::cli", "Loading ExEx Write-Ahead Log...");
+        info!(target: "creditchaind::cli", "Loading ExEx Write-Ahead Log...");
         let exex_wal = Wal::new(
             config_container
                 .config
@@ -114,7 +114,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
 
             let executor = components.task_executor().clone();
             exexes.push(async move {
-                debug!(target: "reth::cli", id, "spawning exex");
+                debug!(target: "creditchaind::cli", id, "spawning exex");
                 let span = reth_tracing::tracing::info_span!("exex", id);
 
                 // init the exex
@@ -124,7 +124,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
                 executor.spawn_critical_task(
                     "exex",
                     async move {
-                        info!(target: "reth::cli", "ExEx started");
+                        info!(target: "creditchaind::cli", "ExEx started");
                         match exex.await {
                             Ok(_) => panic!("ExEx {id} finished. ExExes should run indefinitely"),
                             Err(err) => panic!("ExEx {id} crashed: {err}"),
@@ -140,7 +140,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
         future::try_join_all(exexes).await?;
 
         // spawn exex manager
-        debug!(target: "reth::cli", "spawning exex manager");
+        debug!(target: "creditchaind::cli", "spawning exex manager");
         let exex_manager = ExExManager::new(
             components.provider().clone(),
             exex_handles,
@@ -169,7 +169,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
             },
         );
 
-        info!(target: "reth::cli", "ExEx Manager started");
+        info!(target: "creditchaind::cli", "ExEx Manager started");
 
         Ok(Some(exex_manager_handle))
     }

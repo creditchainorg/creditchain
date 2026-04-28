@@ -2,34 +2,34 @@
 
 use std::process::Command;
 
-const RETH: &str = env!("CARGO_BIN_EXE_reth");
+const CREDITCHAIND: &str = env!("CARGO_BIN_EXE_creditchaind");
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/// Runs `reth <args>` and returns stdout, asserting exit code 0.
+/// Runs `creditchaind <args>` and returns stdout, asserting exit code 0.
 ///
 /// Tracing is suppressed via `RUST_LOG=off` so that log lines emitted during
 /// binary startup don't pollute stdout-based assertions.
 #[track_caller]
-fn reth_ok(args: &[&str]) -> String {
-    let output = Command::new(RETH).env("RUST_LOG", "off").args(args).output().unwrap();
+fn creditchaind_ok(args: &[&str]) -> String {
+    let output = Command::new(CREDITCHAIND).env("RUST_LOG", "off").args(args).output().unwrap();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(output.status.success(), "args {args:?} failed.\nstdout: {stdout}\nstderr: {stderr}");
     stdout.into_owned()
 }
 
-/// Spawns an isolated dev-mode reth node.
+/// Spawns an isolated dev-mode CreditChain node.
 ///
 /// Discovery is disabled and peer limits are zeroed so the node is fully
 /// isolated.  Each call gets a unique temporary data directory so that
-/// concurrent test runs never collide on the default `reth/dev/` path.
+/// concurrent test runs never collide on the default `creditchain/dev/` path.
 fn spawn_dev() -> (alloy_node_bindings::RethInstance, tempfile::TempDir) {
     use alloy_node_bindings::Reth;
 
     let datadir = tempfile::tempdir().expect("failed to create temp dir");
 
-    let instance = Reth::at(RETH)
+    let instance = Reth::at(CREDITCHAIND)
         .dev()
         .disable_discovery()
         .data_dir(datadir.path())
@@ -44,33 +44,33 @@ fn spawn_dev() -> (alloy_node_bindings::RethInstance, tempfile::TempDir) {
 
 #[test]
 fn help() {
-    let stdout = reth_ok(&["--help"]);
+    let stdout = creditchaind_ok(&["--help"]);
     assert!(stdout.contains("Usage"), "stdout: {stdout}");
     assert!(stdout.contains("node"), "stdout: {stdout}");
 }
 
 #[test]
 fn version() {
-    let stdout = reth_ok(&["--version"]);
-    assert!(stdout.to_lowercase().contains("reth"), "stdout: {stdout}");
+    let stdout = creditchaind_ok(&["--version"]);
+    assert!(stdout.to_lowercase().contains("creditchain"), "stdout: {stdout}");
 }
 
 #[test]
 fn node_help() {
-    let stdout = reth_ok(&["node", "--help"]);
+    let stdout = creditchaind_ok(&["node", "--help"]);
     assert!(stdout.contains("--dev"), "stdout: {stdout}");
     assert!(stdout.contains("--http"), "stdout: {stdout}");
 }
 
 #[test]
 fn unknown_subcommand() {
-    let output = Command::new(RETH).arg("definitely-not-a-cmd").output().unwrap();
+    let output = Command::new(CREDITCHAIND).arg("definitely-not-a-cmd").output().unwrap();
     assert!(!output.status.success());
 }
 
 #[test]
 fn unknown_flag() {
-    let output = Command::new(RETH).args(["node", "--no-such-flag"]).output().unwrap();
+    let output = Command::new(CREDITCHAIND).args(["node", "--no-such-flag"]).output().unwrap();
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(!output.status.success());
     assert!(stderr.contains("--no-such-flag"), "stderr: {stderr}");
@@ -97,79 +97,79 @@ async fn dev_node_eth_syncing() {
 
 #[test]
 fn init_help() {
-    let stdout = reth_ok(&["init", "--help"]);
+    let stdout = creditchaind_ok(&["init", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn init_state_help() {
-    let stdout = reth_ok(&["init-state", "--help"]);
+    let stdout = creditchaind_ok(&["init-state", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn import_help() {
-    let stdout = reth_ok(&["import", "--help"]);
+    let stdout = creditchaind_ok(&["import", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn import_era_help() {
-    let stdout = reth_ok(&["import-era", "--help"]);
+    let stdout = creditchaind_ok(&["import-era", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn export_era_help() {
-    let stdout = reth_ok(&["export-era", "--help"]);
+    let stdout = creditchaind_ok(&["export-era", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn dump_genesis_help() {
-    let stdout = reth_ok(&["dump-genesis", "--help"]);
+    let stdout = creditchaind_ok(&["dump-genesis", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn db_help() {
-    let stdout = reth_ok(&["db", "--help"]);
+    let stdout = creditchaind_ok(&["db", "--help"]);
     assert!(stdout.contains("stats"), "stdout: {stdout}");
 }
 
 #[test]
 fn stage_help() {
-    let stdout = reth_ok(&["stage", "--help"]);
+    let stdout = creditchaind_ok(&["stage", "--help"]);
     assert!(stdout.contains("run"), "stdout: {stdout}");
 }
 
 #[test]
 fn p2p_help() {
-    let stdout = reth_ok(&["p2p", "--help"]);
+    let stdout = creditchaind_ok(&["p2p", "--help"]);
     assert!(stdout.contains("header"), "stdout: {stdout}");
 }
 
 #[test]
 fn config_help() {
-    let stdout = reth_ok(&["config", "--help"]);
+    let stdout = creditchaind_ok(&["config", "--help"]);
     assert!(stdout.contains("--default"), "stdout: {stdout}");
 }
 
 #[test]
 fn prune_help() {
-    let stdout = reth_ok(&["prune", "--help"]);
+    let stdout = creditchaind_ok(&["prune", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn download_help() {
-    let stdout = reth_ok(&["download", "--help"]);
+    let stdout = creditchaind_ok(&["download", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
 #[test]
 fn re_execute_help() {
-    let stdout = reth_ok(&["re-execute", "--help"]);
+    let stdout = creditchaind_ok(&["re-execute", "--help"]);
     assert!(stdout.contains("--chain"), "stdout: {stdout}");
 }
 
@@ -177,7 +177,7 @@ fn re_execute_help() {
 
 #[test]
 fn config_default_valid_toml() {
-    let stdout = reth_ok(&["config", "--default"]);
+    let stdout = creditchaind_ok(&["config", "--default"]);
 
     let parsed: toml::Value =
         toml::from_str(&stdout).expect("config --default did not produce valid TOML");
@@ -192,7 +192,7 @@ fn config_default_valid_toml() {
 
 #[test]
 fn dump_genesis_mainnet_valid_json() {
-    let stdout = reth_ok(&["dump-genesis"]);
+    let stdout = creditchaind_ok(&["dump-genesis"]);
 
     let genesis: serde_json::Value =
         serde_json::from_str(&stdout).expect("dump-genesis did not produce valid JSON");
@@ -203,7 +203,7 @@ fn dump_genesis_mainnet_valid_json() {
 
 #[test]
 fn dump_genesis_sepolia_valid_json() {
-    let stdout = reth_ok(&["dump-genesis", "--chain", "sepolia"]);
+    let stdout = creditchaind_ok(&["dump-genesis", "--chain", "sepolia"]);
 
     let genesis: serde_json::Value = serde_json::from_str(&stdout)
         .expect("dump-genesis --chain sepolia did not produce valid JSON");

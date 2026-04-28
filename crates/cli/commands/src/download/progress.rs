@@ -726,7 +726,7 @@ pub(crate) fn spawn_progress_display(progress: Arc<SharedProgress>) -> tokio::ta
             let active_download_phase = active_downloads > 0 || active_requests > 0;
 
             if active_download_phase {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     archives = format_args!("{done}/{all}"),
                     progress = %format_percent(downloaded, download_total),
                     elapsed = %elapsed,
@@ -735,7 +735,7 @@ pub(crate) fn spawn_progress_display(progress: Arc<SharedProgress>) -> tokio::ta
                     "Downloading snapshot archives"
                 );
             } else if active_extractions > 0 {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     archives = format_args!("{done}/{all}"),
                     progress = %format_percent(extracted, output_total),
                     elapsed = %elapsed,
@@ -744,7 +744,7 @@ pub(crate) fn spawn_progress_display(progress: Arc<SharedProgress>) -> tokio::ta
                     "Extracting snapshot archives"
                 );
             } else if active_verifications > 0 {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     archives = format_args!("{done}/{all}"),
                     progress = %format_percent(verified, output_total),
                     elapsed = %elapsed,
@@ -760,7 +760,7 @@ pub(crate) fn spawn_progress_display(progress: Arc<SharedProgress>) -> tokio::ta
         let completed = progress.verified_output_bytes();
         let completed_display = DownloadProgress::format_size(completed);
         let output_total = DownloadProgress::format_size(progress.total_output_bytes);
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             archives = format_args!("{}/{}", progress.total_archives, progress.total_archives),
             progress = "100.0%",
             elapsed = %DownloadProgress::format_duration(progress.started_at.elapsed()),

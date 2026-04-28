@@ -47,7 +47,7 @@ where
         + Sync
         + 'static,
 {
-    info!(target: "reth::cli", new_tip = ?header.num_hash(), "Setting up dummy EVM chain before importing state.");
+    info!(target: "creditchaind::cli", new_tip = ?header.num_hash(), "Setting up dummy EVM chain before importing state.");
 
     let static_file_provider = provider_rw.static_file_provider();
     // Write EVM dummy data up to `header - 1` block. Skip when the supplied
@@ -58,7 +58,7 @@ where
         append_dummy_chain(&static_file_provider, header.number() - 1, header_factory)?;
     }
 
-    info!(target: "reth::cli", "Appending first valid block.");
+    info!(target: "creditchaind::cli", "Appending first valid block.");
 
     append_first_block(provider_rw, &header)?;
 
@@ -66,7 +66,7 @@ where
         provider_rw.save_stage_checkpoint(stage, StageCheckpoint::new(header.number()))?;
     }
 
-    info!(target: "reth::cli", "Set up finished.");
+    info!(target: "creditchaind::cli", "Set up finished.");
 
     Ok(())
 }
@@ -163,7 +163,7 @@ where
     // Catches any StaticFileWriter error.
     while let Ok(append_result) = rx.recv() {
         if let Err(err) = append_result {
-            tracing::error!(target: "reth::cli", "Error appending dummy chain: {err}");
+            tracing::error!(target: "creditchaind::cli", "Error appending dummy chain: {err}");
             return Err(err)
         }
     }

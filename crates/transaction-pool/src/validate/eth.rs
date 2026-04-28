@@ -1463,7 +1463,7 @@ mod tests {
         EthPooledTransaction::from_pooled(tx.try_into_recovered().unwrap())
     }
 
-    // <https://github.com/paradigmxyz/reth/issues/5178>
+    // <https://github.com/openibank/creditchain/issues/5178>
     #[tokio::test]
     async fn validate_transaction() {
         let transaction = get_transaction();
@@ -1507,7 +1507,7 @@ mod tests {
         assert!(tx.is_some());
     }
 
-    // <https://github.com/paradigmxyz/reth/issues/8550>
+    // <https://github.com/openibank/creditchain/issues/8550>
     #[tokio::test]
     async fn invalid_on_gas_limit_too_high() {
         let transaction = get_transaction();

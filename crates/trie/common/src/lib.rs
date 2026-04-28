@@ -1,9 +1,9 @@
 //! Commonly used types for trie usage.
 
 #![doc(
-    html_logo_url = "https://raw.githubusercontent.com/paradigmxyz/reth/main/assets/reth-docs.png",
+    html_logo_url = "https://www.creditchain.org",
     html_favicon_url = "https://avatars0.githubusercontent.com/u/97369466?s=256",
-    issue_tracker_base_url = "https://github.com/paradigmxyz/reth/issues/"
+    issue_tracker_base_url = "https://github.com/openibank/creditchain/issues/"
 )]
 #![cfg_attr(not(test), warn(unused_crate_dependencies))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
@@ -88,7 +88,7 @@ mod utils;
 /// `bincode` crate allows for more efficient serialization of trie types, because it allows
 /// non-string map keys.
 ///
-/// Read more: <https://github.com/paradigmxyz/reth/issues/11370>
+/// Read more: <https://github.com/openibank/creditchain/issues/11370>
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub mod serde_bincode_compat {
     pub use super::{

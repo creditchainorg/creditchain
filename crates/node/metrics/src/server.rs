@@ -130,7 +130,7 @@ impl MetricServer {
             .await
             .wrap_err("Could not bind to address")?;
 
-        tracing::info!(target: "reth::cli", "Starting metrics endpoint at {}", listener.local_addr().unwrap());
+        tracing::info!(target: "creditchaind::cli", "Starting metrics endpoint at {}", listener.local_addr().unwrap());
 
         task_executor.spawn_with_graceful_shutdown_signal(async move |mut signal| loop {
             let io = tokio::select! {
@@ -494,8 +494,8 @@ mod tests {
 
         // Check the response body
         let body = response.text().await.unwrap();
-        assert!(body.contains("reth_process_cpu_seconds_total"));
-        assert!(body.contains("reth_process_start_time_seconds"));
+        assert!(body.contains("creditchain_process_cpu_seconds_total"));
+        assert!(body.contains("creditchain_process_start_time_seconds"));
         assert!(body.contains("process_cli_args"), "expected process_cli_args metric in output");
 
         // Make sure the runtime is dropped after the test runs.

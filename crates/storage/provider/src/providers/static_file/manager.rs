@@ -1270,7 +1270,7 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
         // range.
         //
         // If we detect an OVM import was done (block #1 <https://optimistic.etherscan.io/block/1>), skip it.
-        // More on [#11099](https://github.com/paradigmxyz/reth/pull/11099).
+        // More on [#11099](https://github.com/openibank/creditchain/pull/11099).
         if provider.chain_spec().is_optimism() &&
             reth_chainspec::Chain::optimism_mainnet() == provider.chain_spec().chain_id()
         {
@@ -1278,14 +1278,14 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
             const OVM_HEADER_1_HASH: B256 =
                 b256!("0xbee7192e575af30420cae0c7776304ac196077ee72b048970549e4f08e875453");
             if provider.block_number(OVM_HEADER_1_HASH)?.is_some() {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     "Skipping storage verification for OP mainnet, expected inconsistency in OVM chain"
                 );
                 return Ok(None);
             }
         }
 
-        info!(target: "reth::cli", "Verifying storage consistency.");
+        info!(target: "creditchaind::cli", "Verifying storage consistency.");
 
         let mut unwind_target: Option<BlockNumber> = None;
 
@@ -1398,7 +1398,7 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
     where
         Provider: DBProvider + ChainSpecProvider + StorageSettingsCache + PruneCheckpointReader,
     {
-        info!(target: "reth::cli", "Healing static file inconsistencies.");
+        info!(target: "creditchaind::cli", "Healing static file inconsistencies.");
 
         for segment in self.segments_to_check(provider) {
             let _guard = info_span!("healing_static_file_segment", ?segment).entered();

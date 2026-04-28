@@ -1,27 +1,27 @@
 ---
-description: Pruning and full node options in Reth.
+description: Pruning and full node options in CreditChain.
 ---
 
 # Pruning & Full Node
 
 :::info
-Pruning and full node are new features of Reth,
+Pruning and full node are new features of CreditChain,
 and we will be happy to hear about your experience using them either
-on [GitHub](https://github.com/paradigmxyz/reth/issues) or in the [Telegram group](https://t.me/paradigm_reth).
+on [GitHub](https://github.com/openibank/creditchain/issues) or in the [Telegram group](https://t.me/paradigm_reth).
 :::
 
-By default, Reth runs as an archive node. Such nodes have all historical blocks and the state at each of these blocks
+By default, CreditChain runs as an archive node. Such nodes have all historical blocks and the state at each of these blocks
 available for querying and tracing.
 
-Reth also supports pruning of historical data and running as a full node. This chapter will walk through
-the steps for running Reth as a full node, what caveats to expect and how to configure your own pruned node.
+CreditChain also supports pruning of historical data and running as a full node. This chapter will walk through
+the steps for running CreditChain as a full node, what caveats to expect and how to configure your own pruned node.
 
 ## Basic concepts
 
--   Archive node – Reth node that has all historical data from genesis.
--   Pruned node – Reth node that has its historical data pruned partially or fully through
+-   Archive node – CreditChain node that has all historical data from genesis.
+-   Pruned node – CreditChain node that has its historical data pruned partially or fully through
     a [custom configuration](/run/configuration#the-prune-section).
--   Full Node – Reth node that has the latest state and historical data for only the last 10064 blocks available
+-   Full Node – CreditChain node that has the latest state and historical data for only the last 10064 blocks available
     for querying in the same way as an archive node.
 
 The node type that was chosen when first [running a node](/run/overview) **cannot** be changed after
@@ -35,17 +35,17 @@ Default mode, follow the steps from the previous chapter on [how to run on mainn
 
 ### Pruned Node
 
-To run Reth as a pruned node configured through a [custom configuration](/run/configuration#the-prune-section),
-modify the `reth.toml` file and run Reth in the same way as archive node by following the steps from
+To run CreditChain as a pruned node configured through a [custom configuration](/run/configuration#the-prune-section),
+modify the `creditchain.toml` file and run CreditChain in the same way as archive node by following the steps from
 the previous chapter on [how to run on mainnet or official testnets](/run/ethereum).
 
 ### Full Node
 
-To run Reth as a full node, follow the steps from the previous chapter on
+To run CreditChain as a full node, follow the steps from the previous chapter on
 [how to run on mainnet or official testnets](/run/ethereum), and add a `--full` flag. For example:
 
 ```bash
-reth node \
+creditchaind node \
     --full \
     --authrpc.jwtsecret /path/to/secret \
     --authrpc.addr 127.0.0.1 \
@@ -54,11 +54,11 @@ reth node \
 
 ### Minimal Storage Mode
 
-To run Reth in minimal storage mode, follow the steps from the previous chapter on
+To run CreditChain in minimal storage mode, follow the steps from the previous chapter on
 [how to run on mainnet or official testnets](/run/ethereum), and add a `--minimal` flag. For example:
 
 ```bash
-reth node \
+creditchaind node \
     --minimal \
     --authrpc.jwtsecret /path/to/secret \
     --authrpc.addr 127.0.0.1 \
@@ -77,7 +77,7 @@ All numbers are as of April 2024 at block number 19.6M for mainnet.
 
 Archive node occupies at least 2.14TB.
 
-You can track the growth of Reth archive node size with our
+You can track the growth of CreditChain archive node size with our
 [public Ethereum Grafana dashboard](https://reth.ithaca.xyz/public-dashboards/a49fa110dc9149298fa6763d5c89c8c0).
 [public Base Grafana dashboard](https://reth.ithaca.xyz/public-dashboards/b3e9f2e668ee4b86960b7fac691b5e64).
 

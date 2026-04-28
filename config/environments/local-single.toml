@@ -1,0 +1,22 @@
+[environment]
+name = "local-single"
+display_name = "CreditChain Local Single"
+chain_id = 2026042401
+reset_policy = "ephemeral"
+genesis = "genesis/local-single.json"
+binary = "creditchaind"
+
+[rpc]
+http_addr = "127.0.0.1"
+http_port = 8545
+ws_port = 8546
+auth_port = 8551
+metrics_port = 9001
+
+[network]
+discovery = false
+bootnodes = []
+
+[links]
+website = "https://www.creditchain.org"
+docs = "https://docs.creditchain.org"

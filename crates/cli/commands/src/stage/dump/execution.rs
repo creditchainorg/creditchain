@@ -174,7 +174,7 @@ where
     E: ConfigureEvm<Primitives = N::Primitives> + 'static,
     C: FullConsensus<E::Primitives> + 'static,
 {
-    info!(target: "reth::cli", "Executing stage. [dry-run]");
+    info!(target: "creditchaind::cli", "Executing stage. [dry-run]");
 
     let mut exec_stage = ExecutionStage::new_with_executor(evm_config, Arc::new(consensus));
 
@@ -182,7 +182,7 @@ where
         reth_stages::ExecInput { target: Some(to), checkpoint: Some(StageCheckpoint::new(from)) };
     exec_stage.execute(&output_provider_factory.database_provider_rw()?, input)?;
 
-    info!(target: "reth::cli", "Success");
+    info!(target: "creditchaind::cli", "Success");
 
     Ok(())
 }

@@ -11,8 +11,8 @@ use reth_cli_util::allocator::tikv_jemalloc_sys as _;
 #[unsafe(export_name = "malloc_conf")]
 static MALLOC_CONF: &[u8] = b"prof:true,prof_active:true,lg_prof_sample:19\0";
 
+use cc_cli::cli::Cli;
 use clap::Parser;
-use reth::cli::Cli;
 use reth_ethereum_cli::chainspec::EthereumChainSpecParser;
 use reth_node_ethereum::EthereumNode;
 use tracing::info;
@@ -26,7 +26,7 @@ fn main() {
     }
 
     if let Err(err) = Cli::<EthereumChainSpecParser>::parse().run(async move |builder, _| {
-        info!(target: "reth::cli", "Launching node");
+        info!(target: "creditchaind::cli", "Launching CreditChain node");
         let handle = builder.node(EthereumNode::default()).launch_with_debug_capabilities().await?;
 
         handle.wait_for_node_exit().await

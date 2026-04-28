@@ -5,7 +5,7 @@ Each label in the repository has a description attached that describes what the 
 There are 7 label categories in the repository:
 
 - **Area labels**: These labels denote the general area of the project that an issue or PR affects. These start with [`A-`][area].
-- **Category labels**: These labels denote the type of issue or change being made, for example https://github.com/paradigmxyz/reth/labels/C-bug or https://github.com/paradigmxyz/reth/labels/C-enhancement. These start with [`C-`][category].
+- **Category labels**: These labels denote the type of issue or change being made, for example https://github.com/openibank/creditchain/labels/C-bug or https://github.com/openibank/creditchain/labels/C-enhancement. These start with [`C-`][category].
 - **Difficulty labels**: These are reserved for the very easy or very hard issues. Any issue without one of these labels can be considered to be of "average difficulty". They start with [`D-`][difficulty].
 - **Meta labels**: These start with [`M-`][meta] and convey meaning to the core contributors, usually about the release process.
 - **Platform labels**: These describe the platform an issue is present on. They start with [`O-`][platform].
@@ -19,27 +19,27 @@ For easier at-a-glance communication of the status of issues and PRs the followi
 
 **Needs work**
 
-- https://github.com/paradigmxyz/reth/labels/S-blocked
-- https://github.com/paradigmxyz/reth/labels/S-needs-benchmark
-- https://github.com/paradigmxyz/reth/labels/S-needs-design
-- https://github.com/paradigmxyz/reth/labels/S-needs-investigation
-- https://github.com/paradigmxyz/reth/labels/S-needs-rebase
+- https://github.com/openibank/creditchain/labels/S-blocked
+- https://github.com/openibank/creditchain/labels/S-needs-benchmark
+- https://github.com/openibank/creditchain/labels/S-needs-design
+- https://github.com/openibank/creditchain/labels/S-needs-investigation
+- https://github.com/openibank/creditchain/labels/S-needs-rebase
 
 **Closure reasons**
 
-- https://github.com/paradigmxyz/reth/labels/S-duplicate
-- https://github.com/paradigmxyz/reth/labels/S-wontfix
+- https://github.com/openibank/creditchain/labels/S-duplicate
+- https://github.com/openibank/creditchain/labels/S-wontfix
 
 **Miscellaneous**
 
-- https://github.com/paradigmxyz/reth/labels/S-needs-triage
-- https://github.com/paradigmxyz/reth/labels/S-controversial
+- https://github.com/openibank/creditchain/labels/S-needs-triage
+- https://github.com/openibank/creditchain/labels/S-controversial
 
-[area]: https://github.com/paradigmxyz/reth/labels?q=a-
-[category]: https://github.com/paradigmxyz/reth/labels?q=c-
-[difficulty]: https://github.com/paradigmxyz/reth/labels?q=d-
-[meta]: https://github.com/paradigmxyz/reth/labels?q=m-
-[platform]: https://github.com/paradigmxyz/reth/labels?q=o-
-[priority]: https://github.com/paradigmxyz/reth/labels?q=p-
-[status]: https://github.com/paradigmxyz/reth/labels?q=s-
-[eip]: https://github.com/paradigmxyz/reth/labels?q=e-
+[area]: https://github.com/openibank/creditchain/labels?q=a-
+[category]: https://github.com/openibank/creditchain/labels?q=c-
+[difficulty]: https://github.com/openibank/creditchain/labels?q=d-
+[meta]: https://github.com/openibank/creditchain/labels?q=m-
+[platform]: https://github.com/openibank/creditchain/labels?q=o-
+[priority]: https://github.com/openibank/creditchain/labels?q=p-
+[status]: https://github.com/openibank/creditchain/labels?q=s-
+[eip]: https://github.com/openibank/creditchain/labels?q=e-

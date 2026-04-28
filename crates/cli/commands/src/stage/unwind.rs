@@ -60,11 +60,11 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> Command<C>
         let components = components(provider_factory.chain_spec());
 
         if self.offline {
-            info!(target: "reth::cli", "Performing an unwind for offline-only data!");
+            info!(target: "creditchaind::cli", "Performing an unwind for offline-only data!");
         }
 
         let highest_static_file_block = provider_factory.provider()?.last_block_number()?;
-        info!(target: "reth::cli", ?target, ?highest_static_file_block, prune_config=?config.prune,  "Executing a pipeline unwind.");
+        info!(target: "creditchaind::cli", ?target, ?highest_static_file_block, prune_config=?config.prune,  "Executing a pipeline unwind.");
 
         // This will build an offline-only pipeline if the `offline` flag is enabled
         let mut pipeline =
@@ -75,7 +75,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> Command<C>
 
         pipeline.unwind(target, None)?;
 
-        info!(target: "reth::cli", ?target, "Unwound blocks");
+        info!(target: "creditchaind::cli", ?target, "Unwound blocks");
 
         Ok(())
     }

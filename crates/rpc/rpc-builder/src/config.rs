@@ -188,14 +188,14 @@ impl RethRpcServerConfig for RpcServerArgs {
 
         if self.http_api.is_some() && !self.http {
             warn!(
-                target: "reth::cli",
+                target: "creditchaind::cli",
                 "The --http.api flag is set but --http is not enabled. HTTP RPC API will not be exposed."
             );
         }
 
         if self.ws_api.is_some() && !self.ws {
             warn!(
-                target: "reth::cli",
+                target: "creditchaind::cli",
                 "The --ws.api flag is set but --ws is not enabled. WS RPC API will not be exposed."
             );
         }
@@ -241,7 +241,7 @@ impl RethRpcServerConfig for RpcServerArgs {
     fn auth_jwt_secret(&self, default_jwt_path: PathBuf) -> Result<JwtSecret, JwtError> {
         match self.auth_jwtsecret.as_ref() {
             Some(fpath) => {
-                debug!(target: "reth::cli", user_path=?fpath, "Reading JWT auth secret file");
+                debug!(target: "creditchaind::cli", user_path=?fpath, "Reading JWT auth secret file");
                 JwtSecret::from_file(fpath)
             }
             None => get_or_create_jwt_secret_from_path(&default_jwt_path),

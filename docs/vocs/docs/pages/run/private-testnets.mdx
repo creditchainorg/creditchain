@@ -1,10 +1,10 @@
 ---
-description: Running Reth in a private testnet using Kurtosis.
+description: Running CreditChain in a private testnet using Kurtosis.
 ---
 
-# Run Reth in a private testnet using Kurtosis
+# Run CreditChain in a private testnet using Kurtosis
 
-For those who need a private testnet to validate functionality or scale with Reth.
+For those who need a private testnet to validate functionality or scale with CreditChain.
 
 ## Using Docker locally
 
@@ -13,7 +13,7 @@ This guide uses [Kurtosis' ethereum-package](https://github.com/ethpandaops/ethe
 -   Go [here](https://docs.kurtosis.com/install/) to install Kurtosis
 -   Go [here](https://docs.docker.com/get-docker/) to install Docker
 
-The [`ethereum-package`](https://github.com/ethpandaops/ethereum-package) is a [package](https://docs.kurtosis.com/advanced-concepts/packages) for a general purpose Ethereum testnet definition used for instantiating private testnets at any scale over Docker or Kubernetes, locally or in the cloud. This guide will go through how to spin up a local private testnet with Reth and various CL clients locally. Specifically, you will instantiate a 2-node network over Docker with Reth/Lighthouse and Reth/Teku client combinations.
+The [`ethereum-package`](https://github.com/ethpandaops/ethereum-package) is a [package](https://docs.kurtosis.com/advanced-concepts/packages) for a general purpose Ethereum testnet definition used for instantiating private testnets at any scale over Docker or Kubernetes, locally or in the cloud. This guide will go through how to spin up a local private testnet with CreditChain and various CL clients locally. Specifically, you will instantiate a 2-node network over Docker with CreditChain/Lighthouse and CreditChain/Teku client combinations.
 
 To see all possible configurations and flags you can use, including metrics and observability tools (e.g. Grafana, Prometheus, etc), go [here](https://github.com/ethpandaops/ethereum-package#configuration).
 
@@ -26,17 +26,17 @@ First, in your home directory, create a file with the name `network_params.yaml`
 ```yaml
 participants:
     - el_type: reth
-      el_image: ghcr.io/paradigmxyz/reth
+      el_image: ghcr.io/openibank/creditchain
       cl_type: lighthouse
       cl_image: sigp/lighthouse:latest
     - el_type: reth
-      el_image: ghcr.io/paradigmxyz/reth
+      el_image: ghcr.io/openibank/creditchain
       cl_type: teku
       cl_image: consensys/teku:latest
 ```
 
 > [!TIP]
-> If you would like to use a modified reth node, you can build an image locally with a custom tag. The tag can then be used in the `el_image` field in the `network_params.yaml` file.
+> If you would like to use a modified creditchaind node, you can build an image locally with a custom tag. The tag can then be used in the `el_image` field in the `network_params.yaml` file.
 
 ### Step 2: Spin up your network
 
@@ -97,7 +97,7 @@ e234b3b4a440   el-2-reth-teku                                   engine-rpc: 8551
 f0a7d5343346   vc-1-reth-lighthouse                             metrics: 8080/tcp -> http://127.0.0.1:32817   RUNNING
 ```
 
-Great! You now have a private network with 2 full Ethereum nodes on your local machine over Docker - one that is a Reth/Lighthouse pair and another that is Reth/Teku. Check out the [Kurtosis docs](https://docs.kurtosis.com/cli) to learn about the various ways you can interact with and inspect your network.
+Great! You now have a private network with 2 full Ethereum nodes on your local machine over Docker - one that is a CreditChain/Lighthouse pair and another that is CreditChain/Teku. Check out the [Kurtosis docs](https://docs.kurtosis.com/cli) to learn about the various ways you can interact with and inspect your network.
 
 ## Using Kurtosis on Kubernetes
 

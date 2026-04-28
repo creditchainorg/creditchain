@@ -155,12 +155,12 @@ fn main() -> io::Result<()> {
     let mut existing_files = HashSet::new();
     for (cmd, _) in &output {
         let cmd_name = cmd.command_name();
-        // Collect the top-level command file (e.g. reth.mdx)
+        // Collect the top-level command file (e.g. creditchaind.mdx)
         let top_level = out_dir.join(cmd_name).with_extension("mdx");
         if top_level.exists() {
             existing_files.insert(top_level);
         }
-        // Collect all .mdx files in the command's subdirectory (e.g. reth/)
+        // Collect all .mdx files in the command's subdirectory (e.g. creditchaind/)
         existing_files.extend(collect_mdx_files(&out_dir.join(cmd_name)));
     }
     // Also track SUMMARY.mdx
@@ -359,7 +359,7 @@ fn generate_sidebar_files(
         let root_help = help_map.get(&root_name).map(|s| s.as_str());
         let sidebar_content = generate_sidebar_ts(&root_name, cmds, root_help, &help_map)?;
         let file_name = match root_name.as_str() {
-            "reth" => "sidebar-cli-reth.ts",
+            "creditchaind" => "sidebar-cli-creditchaind.ts",
             _ => {
                 if verbose {
                     println!("Skipping unknown command: {}", root_name);
@@ -410,7 +410,7 @@ fn generate_sidebar_ts(
 
     // Generate TypeScript code
     let var_name = match root_name {
-        "reth" => "rethCliSidebar",
+        "creditchaind" => "creditchaindCliSidebar",
         _ => "cliSidebar",
     };
 
@@ -527,17 +527,17 @@ fn preprocess_help(s: &str) -> Cow<'_, str> {
     static REPLACEMENTS: LazyLock<Vec<(Regex, &str)>> = LazyLock::new(|| {
         let patterns: &[(&str, &str)] = &[
             // Remove the user-specific paths.
-            (r"default: /.*/reth", "default: <CACHE_DIR>"),
+            (r"default: /.*/creditchain", "default: <CACHE_DIR>"),
             // Remove the commit SHA and target architecture triple or fourth
             //  rustup available targets:
             //    aarch64-apple-darwin
             //    x86_64-unknown-linux-gnu
             (
-                r"default: reth/.*-[0-9A-Fa-f]{6,10}/([_\w]+)-(\w+)-(\w+)(-\w+)?",
-                "default: reth/<VERSION>-<SHA>/<ARCH>",
+                r"default: creditchaind/.*-[0-9A-Fa-f]{6,10}/([_\w]+)-(\w+)-(\w+)(-\w+)?",
+                "default: creditchaind/<VERSION>-<SHA>/<ARCH>",
             ),
             // Remove the OS
-            (r"default: reth/.*/\w+", "default: reth/<VERSION>/<OS>"),
+            (r"default: creditchaind/.*/\w+", "default: creditchaind/<VERSION>/<OS>"),
             // Remove rpc.max-tracing-requests default value
             (
                 r"(rpc.max-tracing-requests <COUNT>\n.*\n.*\n.*\n.*\n.*)\[default: \d+\]",
@@ -566,7 +566,7 @@ fn preprocess_help(s: &str) -> Cow<'_, str> {
 
 #[derive(Hash, Debug, PartialEq, Eq)]
 struct Cmd<'a> {
-    /// path to binary (e.g. ./target/debug/reth)
+    /// path to binary (e.g. ./target/debug/creditchaind)
     cmd: &'a Path,
     /// subcommands (e.g. [db, stats])
     subcommands: Vec<String>,

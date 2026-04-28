@@ -1,7 +1,7 @@
-// Docker Bake configuration for reth images
+// Docker Bake configuration for CreditChain images
 
 variable "REGISTRY" {
-  default = "ghcr.io/paradigmxyz"
+  default = "ghcr.io/openibank"
 }
 
 variable "TAG" {
@@ -31,11 +31,11 @@ variable "VERGEN_GIT_DIRTY" {
 
 // Common settings for all targets
 group "default" {
-  targets = ["ethereum"]
+  targets = ["creditchain"]
 }
 
 group "nightly" {
-  targets = ["ethereum", "ethereum-profiling"]
+  targets = ["creditchain", "creditchain-profiling"]
 }
 
 // Base target with shared configuration
@@ -61,25 +61,25 @@ target "_base_profiling" {
   platforms  = ["linux/amd64"]
 }
 
-// Ethereum (reth)
-target "ethereum" {
+// CreditChain
+target "creditchain" {
   inherits = ["_base"]
   args = {
-    BINARY        = "reth"
+    BINARY        = "creditchaind"
     MANIFEST_PATH = "bin/reth"
   }
-  tags = ["${REGISTRY}/reth:${TAG}"]
+  tags = ["${REGISTRY}/creditchain:${TAG}"]
 }
 
-target "ethereum-profiling" {
+target "creditchain-profiling" {
   inherits = ["_base_profiling"]
   args = {
-    BINARY        = "reth"
+    BINARY        = "creditchaind"
     MANIFEST_PATH = "bin/reth"
     BUILD_PROFILE = "profiling"
     FEATURES      = "jemalloc-prof"
   }
-  tags = ["${REGISTRY}/reth:nightly-profiling"]
+  tags = ["${REGISTRY}/creditchain:nightly-profiling"]
 }
 
 // Hive test targets — single-platform, hivetests profile, tar output
@@ -98,20 +98,20 @@ variable "HIVE_OUTPUT_DIR" {
 target "hive" {
   inherits = ["_base_hive"]
   args = {
-    BINARY        = "reth"
+    BINARY        = "creditchaind"
     MANIFEST_PATH = "bin/reth"
   }
-  tags   = ["ghcr.io/paradigmxyz/reth:latest"]
-  output = ["type=docker,dest=${HIVE_OUTPUT_DIR}/reth_image.tar"]
+  tags   = ["creditchain:local"]
+  output = ["type=docker,dest=${HIVE_OUTPUT_DIR}/creditchain_image.tar"]
 }
 
 // Kurtosis test target
 target "kurtosis" {
   inherits  = ["_base_hive"]
   args = {
-    BINARY        = "reth"
+    BINARY        = "creditchaind"
     MANIFEST_PATH = "bin/reth"
   }
-  tags   = ["ghcr.io/paradigmxyz/reth:kurtosis-ci"]
-  output = ["type=docker,dest=${HIVE_OUTPUT_DIR}/reth_image.tar"]
+  tags   = ["ghcr.io/openibank/creditchain:kurtosis-ci"]
+  output = ["type=docker,dest=${HIVE_OUTPUT_DIR}/creditchain_image.tar"]
 }

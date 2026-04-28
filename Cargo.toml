@@ -3,8 +3,8 @@ version = "2.1.0"
 edition = "2024"
 rust-version = "1.93"
 license = "MIT OR Apache-2.0"
-homepage = "https://paradigmxyz.github.io/reth"
-repository = "https://github.com/paradigmxyz/reth"
+homepage = "https://www.creditchain.org"
+repository = "https://github.com/openibank/creditchain"
 exclude = [".github/"]
 
 [workspace]
@@ -315,8 +315,10 @@ codegen-units = 1
 incremental = false
 
 [workspace.dependencies]
-# reth
-reth = { path = "bin/reth" }
+# CreditChain
+cc-cli = { path = "bin/reth" }
+
+# Upstream Reth implementation crates kept as shallow-fork internals.
 reth-storage-rpc-provider = { path = "crates/storage/rpc-provider" }
 reth-basic-payload-builder = { path = "crates/payload/basic" }
 reth-bench = { path = "bin/reth-bench" }

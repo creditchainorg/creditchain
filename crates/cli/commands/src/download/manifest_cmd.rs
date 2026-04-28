@@ -56,7 +56,7 @@ impl SnapshotManifestCommand {
             None => infer_blocks_per_file(&self.source_datadir)?,
         };
 
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             dir = ?self.source_datadir,
             output = ?self.output_dir,
             block,
@@ -77,7 +77,7 @@ impl SnapshotManifestCommand {
         let json = serde_json::to_string_pretty(&manifest)?;
         let output = self.output_dir.join("manifest.json");
         reth_fs_util::write(&output, &json)?;
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             path = ?output,
             components = num_components,
             block = manifest.block,
@@ -97,7 +97,7 @@ fn infer_snapshot_block(source_datadir: &std::path::Path) -> Result<u64> {
 
     let block = infer_snapshot_block_from_headers(source_datadir)?;
     warn!(
-        target: "reth::cli",
+        target: "creditchaind::cli",
         block,
         "Could not read Finish stage checkpoint from source DB, using header static-file tip"
     );

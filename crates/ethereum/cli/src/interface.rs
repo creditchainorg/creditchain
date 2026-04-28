@@ -26,11 +26,11 @@ use reth_tracing::{FileWorkerGuard, Layers};
 use std::{ffi::OsString, fmt, future::Future, marker::PhantomData, sync::Arc};
 use tracing::{info, warn};
 
-/// The main reth cli interface.
+/// The main CreditChain CLI interface.
 ///
 /// This is the entrypoint to the executable.
 #[derive(Debug, Parser)]
-#[command(author, name = version_metadata().name_client.as_ref(), version = version_metadata().short_version.as_ref(), long_version = version_metadata().long_version.as_ref(), about = "Reth", long_about = None)]
+#[command(author, name = "creditchaind", version = version_metadata().short_version.as_ref(), long_version = version_metadata().long_version.as_ref(), about = "CreditChain", long_about = None)]
 pub struct Cli<
     C: ChainSpecParser = EthereumChainSpecParser,
     Ext: clap::Args + fmt::Debug = NoArgs,
@@ -226,24 +226,24 @@ impl<
         // Enable reload support if debug RPC namespace is available
         let enable_reload = self.command.debug_namespace_enabled();
         let file_guard = self.logs.init_tracing_with_layers(layers, enable_reload)?;
-        info!(target: "reth::cli", "Initialized tracing, debug log directory: {}", self.logs.log_file_directory);
+        info!(target: "creditchaind::cli", "Initialized tracing, debug log directory: {}", self.logs.log_file_directory);
 
         match otlp_status {
             OtlpInitStatus::Started(endpoint) => {
-                info!(target: "reth::cli", "Started OTLP {:?} tracing export to {endpoint}", self.traces.protocol);
+                info!(target: "creditchaind::cli", "Started OTLP {:?} tracing export to {endpoint}", self.traces.protocol);
             }
             OtlpInitStatus::NoFeature => {
-                warn!(target: "reth::cli", "Provided OTLP tracing arguments do not have effect, compile with the `otlp` feature")
+                warn!(target: "creditchaind::cli", "Provided OTLP tracing arguments do not have effect, compile with the `otlp` feature")
             }
             OtlpInitStatus::Disabled => {}
         }
 
         match otlp_logs_status {
             OtlpLogsStatus::Started(endpoint) => {
-                info!(target: "reth::cli", "Started OTLP {:?} logs export to {endpoint}", self.traces.protocol);
+                info!(target: "creditchaind::cli", "Started OTLP {:?} logs export to {endpoint}", self.traces.protocol);
             }
             OtlpLogsStatus::NoFeature => {
-                warn!(target: "reth::cli", "Provided OTLP logs arguments do not have effect, compile with the `otlp-logs` feature")
+                warn!(target: "creditchaind::cli", "Provided OTLP logs arguments do not have effect, compile with the `otlp-logs` feature")
             }
             OtlpLogsStatus::Disabled => {}
         }

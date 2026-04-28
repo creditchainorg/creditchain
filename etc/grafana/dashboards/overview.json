@@ -10606,7 +10606,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "reth_process_resident_memory_bytes{$instance_label=\"$instance\"}",
+          "expr": "creditchain_process_resident_memory_bytes{$instance_label=\"$instance\"}",
           "instant": false,
           "legendFormat": "Resident",
           "range": true,
@@ -10707,7 +10707,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "avg(rate(reth_process_cpu_seconds_total{$instance_label=\"$instance\"}[1m]))",
+          "expr": "avg(rate(creditchain_process_cpu_seconds_total{$instance_label=\"$instance\"}[1m]))",
           "instant": false,
           "legendFormat": "Process",
           "range": true,
@@ -10807,7 +10807,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "reth_process_open_fds{$instance_label=\"$instance\"}",
+          "expr": "creditchain_process_open_fds{$instance_label=\"$instance\"}",
           "instant": false,
           "legendFormat": "Open",
           "range": true,

@@ -187,7 +187,7 @@ impl ArchiveFetcher {
         let quiet = self.quiet();
 
         if !quiet {
-            info!(target: "reth::cli", file = %self.paths.file_name(), "Connecting to download server");
+            info!(target: "creditchaind::cli", file = %self.paths.file_name(), "Connecting to download server");
         }
 
         let client = BlockingClient::builder().timeout(Duration::from_secs(30)).build()?;
@@ -205,7 +205,7 @@ impl ArchiveFetcher {
             }
 
             if attempt > 1 {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     file = %self.paths.file_name(),
                     "Retry attempt {}/{} - resuming from {} bytes",
                     attempt, max_download_retries, existing_size
@@ -216,7 +216,7 @@ impl ArchiveFetcher {
             if existing_size > 0 {
                 request = request.header(RANGE, format!("bytes={existing_size}-"));
                 if !quiet && attempt == 1 {
-                    info!(target: "reth::cli", file = %self.paths.file_name(), "Resuming from {} bytes", existing_size);
+                    info!(target: "creditchaind::cli", file = %self.paths.file_name(), "Resuming from {} bytes", existing_size);
                 }
             }
 
@@ -233,7 +233,7 @@ impl ArchiveFetcher {
                 Err(error) => {
                     last_error = Some(error.into());
                     if attempt < max_download_retries {
-                        info!(target: "reth::cli",
+                        info!(target: "creditchaind::cli",
                             file = %self.paths.file_name(),
                             "Download failed, retrying in {RETRY_BACKOFF_SECS}s..."
                         );
@@ -258,7 +258,7 @@ impl ArchiveFetcher {
             if total_size.is_none() {
                 total_size = size;
                 if !quiet && let Some(size) = size {
-                    info!(target: "reth::cli",
+                    info!(target: "creditchaind::cli",
                         file = %self.paths.file_name(),
                         size = %DownloadProgress::format_size(size),
                         "Downloading"
@@ -314,7 +314,7 @@ impl ArchiveFetcher {
             if let Err(error) = copy_result.and(flush_result) {
                 last_error = Some(error.into());
                 if attempt < max_download_retries {
-                    info!(target: "reth::cli",
+                    info!(target: "creditchaind::cli",
                         file = %self.paths.file_name(),
                         "Download interrupted, retrying in {RETRY_BACKOFF_SECS}s..."
                     );
@@ -339,7 +339,7 @@ impl ArchiveFetcher {
         download_progress: Option<&mut ArchiveDownloadProgress<'_>>,
     ) -> Result<DownloadedArchive> {
         let request_limiter = self.session.require_request_limiter()?;
-        info!(target: "reth::cli",
+        info!(target: "creditchaind::cli",
             total_size = %DownloadProgress::format_size(total_size),
             piece_size = %DownloadProgress::format_size(plan.piece_size),
             pieces = plan.piece_count,
@@ -363,13 +363,13 @@ impl ArchiveFetcher {
     fn log_sequential_fallback(&self, reason: SequentialDownloadFallback, total_size: u64) {
         match reason {
             SequentialDownloadFallback::NoRangeSupport => {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     file = %self.paths.file_name(),
                     "Server does not support Range requests, falling back to sequential download"
                 );
             }
             SequentialDownloadFallback::EmptyFile => {
-                info!(target: "reth::cli",
+                info!(target: "creditchaind::cli",
                     file = %self.paths.file_name(),
                     "Remote archive is empty, falling back to sequential download"
                 );
@@ -384,7 +384,7 @@ impl ArchiveFetcher {
     fn finalize_download(&self, size: u64) -> Result<DownloadedArchive> {
         self.paths.finalize()?;
         if !self.quiet() {
-            info!(target: "reth::cli", file = %self.paths.file_name(), "Download complete");
+            info!(target: "creditchaind::cli", file = %self.paths.file_name(), "Download complete");
         }
         Ok(DownloadedArchive { path: self.paths.final_path().to_path_buf(), size })
     }
@@ -613,7 +613,7 @@ impl SegmentedDownload {
         }
 
         paths.finalize()?;
-        info!(target: "reth::cli", file = %paths.file_name(), "Download complete");
+        info!(target: "creditchaind::cli", file = %paths.file_name(), "Download complete");
         Ok(DownloadedArchive { path: paths.final_path().to_path_buf(), size: total_size })
     }
 

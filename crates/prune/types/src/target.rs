@@ -126,7 +126,7 @@ impl PruneModes {
     ///
     /// This is only relevant for certain tables that are required by other stages
     ///
-    /// See also <https://github.com/paradigmxyz/reth/issues/16579>
+    /// See also <https://github.com/openibank/creditchain/issues/16579>
     pub fn ensure_unwind_target_unpruned(
         &self,
         latest_block: u64,

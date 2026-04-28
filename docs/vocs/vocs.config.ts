@@ -4,11 +4,11 @@ import { sidebar } from './sidebar'
 import { basePath } from './redirects.config'
 
 export default defineConfig({
-  title: 'Reth',
-  description: 'Reth is a secure, performant, and modular Ethereum execution client built in Rust.',
+  title: 'CreditChain',
+  description: 'CreditChain is a Rust-first, Reth-based, EVM-compatible public chain for AI-native financial infrastructure.',
   logoUrl: '/logo.png',
   iconUrl: '/logo.png',
-  ogImageUrl: '/reth-prod.png',
+  ogImageUrl: '/logo.png',
   sidebar,
   basePath,
   search: {
@@ -20,17 +20,17 @@ export default defineConfig({
     {
       element: React.createElement('a', { href: '/docs', target: '_self' }, 'Rustdocs')
     },
-    { text: 'GitHub', link: 'https://github.com/paradigmxyz/reth' },
+    { text: 'GitHub', link: 'https://github.com/openibank/creditchain' },
     {
       text: 'v2.1.0',
       items: [
         {
           text: 'Releases',
-          link: 'https://github.com/paradigmxyz/reth/releases'
+          link: 'https://github.com/openibank/creditchain/releases'
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/paradigmxyz/reth/blob/main/CONTRIBUTING.md'
+          link: 'https://github.com/openibank/creditchain/blob/main/CONTRIBUTING.md'
         }
       ]
     }
@@ -38,11 +38,11 @@ export default defineConfig({
   socials: [
     {
       icon: 'github',
-      link: 'https://github.com/paradigmxyz/reth',
+      link: 'https://github.com/openibank/creditchain',
     },
     {
       icon: 'telegram',
-      link: 'https://t.me/paradigm_reth',
+      link: 'https://docs.creditchain.org',
     },
   ],
   sponsors: [
@@ -52,14 +52,14 @@ export default defineConfig({
       items: [
         [
           {
-            name: 'Paradigm',
-            link: 'https://paradigm.xyz',
-            image: 'https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/paradigm-light.svg',
+            name: 'OpeniBank',
+            link: 'https://www.openibank.com',
+            image: '/logo.png',
           },
           {
-            name: 'Ithaca',
-            link: 'https://ithaca.xyz',
-            image: 'https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/ithaca-light.svg',
+            name: 'CreditChain',
+            link: 'https://www.creditchain.org',
+            image: '/logo.png',
           }
         ]
       ]
@@ -72,7 +72,7 @@ export default defineConfig({
     }
   },
   editLink: {
-    pattern: "https://github.com/paradigmxyz/reth/edit/main/docs/vocs/docs/pages/:path",
+    pattern: "https://github.com/openibank/creditchain/edit/main/docs/vocs/docs/pages/:path",
   },
   vite: {
     plugins: [

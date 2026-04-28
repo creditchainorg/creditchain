@@ -553,7 +553,7 @@ where
             let kzg_settings = validator.validator().kzg_settings().clone();
             ctx.task_executor().spawn_blocking_task(async move {
                 let _ = kzg_settings.get();
-                debug!(target: "reth::cli", "Initialized KZG settings");
+                debug!(target: "creditchaind::cli", "Initialized KZG settings");
             });
         }
 
@@ -561,8 +561,8 @@ where
             .with_validator(validator)
             .build_and_spawn_maintenance_task(blob_store, pool_config)?;
 
-        info!(target: "reth::cli", "Transaction pool initialized");
-        debug!(target: "reth::cli", "Spawned txpool maintenance task");
+        info!(target: "creditchaind::cli", "Transaction pool initialized");
+        debug!(target: "creditchaind::cli", "Spawned txpool maintenance task");
 
         Ok(transaction_pool)
     }
@@ -591,7 +591,7 @@ where
     ) -> eyre::Result<Self::Network> {
         let network = ctx.network_builder().await?;
         let handle = ctx.start_network(network, pool);
-        info!(target: "reth::cli", enode=%handle.local_node_record(), "P2P networking initialized");
+        info!(target: "creditchaind::cli", enode=%handle.local_node_record(), "P2P networking initialized");
         Ok(handle)
     }
 }

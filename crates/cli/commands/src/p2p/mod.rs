@@ -40,9 +40,9 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>
 
                 let header = (move || get_single_header(fetch_client.clone(), id))
                     .retry(backoff)
-                    .notify(|err, _| tracing::warn!(target: "reth::cli", error = %err, "Error requesting header. Retrying..."))
+                    .notify(|err, _| tracing::warn!(target: "creditchaind::cli", error = %err, "Error requesting header. Retrying..."))
                     .await?;
-                tracing::info!(target: "reth::cli", ?header, "Successfully downloaded header");
+                tracing::info!(target: "creditchaind::cli", ?header, "Successfully downloaded header");
             }
 
             Subcommands::Body { args, id } => {
@@ -53,13 +53,13 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>
                 let hash = match id {
                     BlockHashOrNumber::Hash(hash) => hash,
                     BlockHashOrNumber::Number(number) => {
-                        tracing::info!(target: "reth::cli", "Block number provided. Downloading header first...");
+                        tracing::info!(target: "creditchaind::cli", "Block number provided. Downloading header first...");
                         let client = fetch_client.clone();
                         let header = (move || {
                             get_single_header(client.clone(), BlockHashOrNumber::Number(number))
                         })
                         .retry(backoff)
-                        .notify(|err, _| tracing::warn!(target: "reth::cli", error = %err, "Error requesting header. Retrying..."))
+                        .notify(|err, _| tracing::warn!(target: "creditchaind::cli", error = %err, "Error requesting header. Retrying..."))
                         .await?;
                         header.hash()
                     }
@@ -69,7 +69,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>
                     client.get_block_bodies(vec![hash])
                 })
                 .retry(backoff)
-                .notify(|err, _| tracing::warn!(target: "reth::cli", error = %err, "Error requesting block. Retrying..."))
+                .notify(|err, _| tracing::warn!(target: "creditchaind::cli", error = %err, "Error requesting block. Retrying..."))
                 .await?
                 .split();
                 if result.len() != 1 {
@@ -79,7 +79,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>
                     )
                 }
                 let body = result.into_iter().next().unwrap();
-                tracing::info!(target: "reth::cli", ?body, "Successfully downloaded body")
+                tracing::info!(target: "creditchaind::cli", ?body, "Successfully downloaded body")
             }
             Subcommands::Rlpx(command) => {
                 command.execute().await?;

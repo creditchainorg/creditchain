@@ -9,13 +9,13 @@ use std::path::PathBuf;
 #[derive(Debug, Args, PartialEq, Eq, Default, Clone)]
 #[command(next_help_heading = "Datadir")]
 pub struct DatadirArgs {
-    /// The path to the data dir for all reth files and subdirectories.
+    /// The path to the data dir for all CreditChain files and subdirectories.
     ///
     /// Defaults to the OS-specific data directory:
     ///
-    /// - Linux: `$XDG_DATA_HOME/reth/` or `$HOME/.local/share/reth/`
-    /// - Windows: `{FOLDERID_RoamingAppData}/reth/`
-    /// - macOS: `$HOME/Library/Application Support/reth/`
+    /// - Linux: `$XDG_DATA_HOME/creditchain/` or `$HOME/.local/share/creditchain/`
+    /// - Windows: `{FOLDERID_RoamingAppData}/creditchain/`
+    /// - macOS: `$HOME/Library/Application Support/creditchain/`
     #[arg(long, value_name = "DATA_DIR", verbatim_doc_comment, default_value_t)]
     pub datadir: MaybePlatformPath<DataDirPath>,
 

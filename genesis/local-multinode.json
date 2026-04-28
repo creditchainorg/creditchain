@@ -1,0 +1,39 @@
+{
+  "config": {
+    "chainId": 2026042402,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "terminalTotalDifficulty": 0,
+    "terminalTotalDifficultyPassed": true,
+    "shanghaiTime": 0,
+    "cancunTime": 0,
+    "pragueTime": 0
+  },
+  "nonce": "0x0",
+  "timestamp": "0x0",
+  "extraData": "0x437265646974436861696e206c6f63616c2d6d756c74696e6f6465",
+  "gasLimit": "0x1c9c380",
+  "difficulty": "0x0",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
+      "balance": "0x3635c9adc5dea00000"
+    },
+    "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc": {
+      "balance": "0x3635c9adc5dea00000"
+    }
+  },
+  "baseFeePerGas": "0x3b9aca00",
+  "blobGasUsed": "0x0",
+  "excessBlobGas": "0x0",
+  "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}

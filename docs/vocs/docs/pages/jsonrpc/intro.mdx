@@ -1,12 +1,12 @@
 ---
-description: Overview of Reth's JSON-RPC API and namespaces.
+description: Overview of CreditChain's JSON-RPC API and namespaces.
 ---
 
 # JSON-RPC
 
-You can interact with Reth over JSON-RPC. Reth supports all standard Ethereum JSON-RPC API methods.
+You can interact with CreditChain over JSON-RPC. CreditChain supports all standard Ethereum JSON-RPC API methods.
 
-JSON-RPC is provided on multiple transports. Reth supports HTTP, WebSocket and IPC (both UNIX sockets and Windows named pipes). Transports must be enabled through command-line flags.
+JSON-RPC is provided on multiple transports. CreditChain supports HTTP, WebSocket and IPC (both UNIX sockets and Windows named pipes). Transports must be enabled through command-line flags.
 
 The JSON-RPC APIs are grouped into namespaces, depending on their purpose. All method names are composed of their namespace and their name, separated by an underscore.
 
@@ -26,7 +26,7 @@ The methods are grouped into namespaces, which are listed below:
 | [`trace`](/jsonrpc/trace)   | The `trace` API provides several methods to inspect the Ethereum state, including Parity-style traces. | No        |
 | [`admin`](/jsonrpc/admin)   | The `admin` API allows you to configure your node.                                                     | **Yes**   |
 | [`rpc`](/jsonrpc/rpc)       | The `rpc` API provides information about the RPC server and its modules.                               | No        |
-| [`reth`](/jsonrpc/reth)     | The `reth` API provides reth-specific methods like balance changes and chain notifications.            | No        |
+| [`reth`](/jsonrpc/reth)     | Compatibility namespace inherited from the Reth foundation for balance changes and chain notifications. | No        |
 | `ots`                       | The `ots` API provides Otterscan-compatible methods for block exploration.                             | No        |
 | `flashbots`                 | The `flashbots` API provides block submission validation methods for builders.                         | No        |
 | `miner`                     | The `miner` API allows you to configure miner/builder settings like extra data and gas limits.         | **Yes**   |
@@ -39,7 +39,7 @@ Generally, it is advisable to not expose any JSONRPC namespace publicly, unless 
 
 ## Transports
 
-Reth supports HTTP, WebSockets and IPC.
+CreditChain supports HTTP, WebSockets and IPC.
 
 ### HTTP
 
@@ -47,10 +47,10 @@ Using the HTTP transport, clients send a request to the server and immediately g
 
 Because HTTP is unidirectional, subscriptions are not supported.
 
-To start an HTTP server, pass `--http` to `reth node`:
+To start an HTTP server, pass `--http` to `creditchaind node`:
 
 ```bash
-reth node --http
+creditchaind node --http
 ```
 
 The default port is `8545`, and the default listen address is localhost.
@@ -58,29 +58,29 @@ The default port is `8545`, and the default listen address is localhost.
 You can configure the listen address and port using `--http.addr` and `--http.port` respectively:
 
 ```bash
-reth node --http --http.addr 127.0.0.1 --http.port 12345
+creditchaind node --http --http.addr 127.0.0.1 --http.port 12345
 ```
 
 To enable JSON-RPC namespaces on the HTTP server, pass each namespace separated by a comma to `--http.api`:
 
 ```bash
-reth node --http --http.api eth,net,trace
+creditchaind node --http --http.api eth,net,trace
 ```
 
 You can pass the `all` option, which is a convenient wrapper for all the JSON-RPC namespaces `admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,miner,mev,testing` on the HTTP server:
 
 ```bash
-reth node --http --http.api all
+creditchaind node --http --http.api all
 ```
 
 ```bash
-reth node --http --http.api All
+creditchaind node --http --http.api All
 ```
 
 Similarly, you can pass the `none` option (also case-insensitive) to start the HTTP server without exposing any JSON-RPC namespaces on that transport:
 
 ```bash
-reth node --http --http.api none
+creditchaind node --http --http.api none
 ```
 
 The same options (`all` and `none`) are supported for the WebSocket transport via `--ws.api`.
@@ -88,13 +88,13 @@ The same options (`all` and `none`) are supported for the WebSocket transport vi
 You can also restrict who can access the HTTP server by specifying a domain for Cross-Origin requests. This is important, since any application local to your node will be able to access the RPC server:
 
 ```bash
-reth node --http --http.corsdomain https://mycoolapp.rs
+creditchaind node --http --http.corsdomain https://mycoolapp.rs
 ```
 
 Alternatively, if you want to allow any domain, you can pass `*`:
 
 ```bash
-reth node --http --http.corsdomain "*"
+creditchaind node --http --http.corsdomain "*"
 ```
 
 ### WebSockets
@@ -118,7 +118,7 @@ IPC is a simpler transport protocol for use in local environments where the node
 
 The IPC transport is enabled by default and has access to all namespaces, unless explicitly disabled with `--ipcdisable`.
 
-Reth creates a UNIX socket on Linux and macOS at `/tmp/reth.ipc`. On Windows, IPC is provided using named pipes at `\\.\pipe\reth.ipc`.
+CreditChain creates a UNIX socket on Linux and macOS at `/tmp/creditchaind.ipc`. On Windows, IPC is provided using named pipes at `\\.\pipe\creditchaind.ipc`.
 
 You can configure the IPC path using `--ipcpath`.
 
@@ -131,7 +131,7 @@ You can use `curl`, a programming language with a low-level library, or a tool l
 As a reminder, you need to run the command below to enable all of these APIs using an HTTP transport:
 
 ```bash
-reth node --http --http.api "admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,miner,mev,testing"
+creditchaind node --http --http.api "admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,miner,mev,testing"
 ```
 
 This allows you to then call:

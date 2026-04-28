@@ -1,0 +1,20 @@
+[environment]
+name = "devnet"
+display_name = "CreditChain Devnet"
+chain_id = 2026042403
+reset_policy = "resettable-by-release"
+genesis = "genesis/devnet.json"
+binary = "creditchaind"
+
+[rpc]
+http_url = "https://devnet.creditchain.org"
+faucet_url = "https://faucet.creditchain.org"
+metrics_port = 9001
+
+[network]
+discovery = true
+bootnodes = []
+
+[links]
+website = "https://www.creditchain.org"
+docs = "https://docs.creditchain.org"

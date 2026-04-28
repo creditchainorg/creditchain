@@ -78,7 +78,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ExportEraC
         export_config.validate()?;
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             "Starting ERA1 block export: blocks {}-{} to {}",
             export_config.first_block_number,
             export_config.last_block_number,
@@ -91,7 +91,7 @@ impl<C: ChainSpecParser<ChainSpec: EthChainSpec + EthereumHardforks>> ExportEraC
         let exported_files = era1::export(&provider, &export_config)?;
 
         info!(
-            target: "reth::cli",
+            target: "creditchaind::cli",
             "Successfully exported {} ERA1 files to {}",
             exported_files.len(),
             export_config.dir.display()
