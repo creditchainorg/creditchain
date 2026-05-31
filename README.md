@@ -18,6 +18,20 @@ The upstream Reth implementation remains the execution-client foundation. Keep
 CreditChain-specific behavior layered around owned crates, manifests, and
 configuration so upstream sync remains practical.
 
+## Agent Finance
+
+CreditChain's differentiating protocol layer is Agent Finance: AgentID,
+SpendPermit, PaymentIntent, TaskReceipt, SettlementReceipt, and CreditObject
+events for AI-native financial trust.
+
+The first event-first MVP lives in:
+
+```text
+contracts/agent-finance/
+```
+
+See `docs/agent-finance.md`.
+
 ## Build
 
 ```sh

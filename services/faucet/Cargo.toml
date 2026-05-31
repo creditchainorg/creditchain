@@ -1,0 +1,49 @@
+[package]
+name = "creditchain-faucet"
+version = "0.1.0"
+edition = "2021"
+description = "Public faucet for CreditChain Devnet / Testnet. Drips CCC to any requested address under per-IP + per-recipient rate limits."
+license = "MIT OR Apache-2.0"
+
+# Standalone crate — not a member of the creditchain Reth workspace.
+[workspace]
+
+[[bin]]
+name = "creditchain-faucet"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "sync", "time"] }
+axum = { version = "0.7", features = ["macros", "tokio"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "limit", "timeout"] }
+hyper = { version = "1", features = ["server"] }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# alloy 0.5 — matches openibank workspace pin for ABI / signature compatibility.
+alloy-primitives = { version = "0.8", features = ["serde", "k256"] }
+alloy-signer = "0.5"
+alloy-signer-local = "0.5"
+alloy-network = "0.5"
+alloy-provider = { version = "0.5", default-features = false, features = ["reqwest"] }
+alloy-rpc-types-eth = "0.5"
+alloy-transport-http = { version = "0.5", default-features = false, features = ["reqwest"] }
+alloy-consensus = "0.5"
+
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+url = "2"
+
+thiserror = "1"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

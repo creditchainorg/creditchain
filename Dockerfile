@@ -53,6 +53,10 @@ RUN cp /app/target/$BUILD_PROFILE/creditchaind /app/creditchaind
 FROM ubuntu AS runtime
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates wget && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy creditchaind over from the build stage
 COPY --from=builder /app/creditchaind /usr/local/bin
 

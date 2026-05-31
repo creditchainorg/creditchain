@@ -4,6 +4,7 @@
 # include source files
 !/bin
 !/crates
+!/genesis
 !/pkg
 !/testing
 !book.toml

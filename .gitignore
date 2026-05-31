@@ -75,3 +75,10 @@ __pycache__/
 # direnv
 .envrc
 .direnv/
+
+# creditchain local
+.creditchain/
+
+# CreditChain deploy runtime state and secrets
+deploy/**/.env
+deploy/**/secrets/
