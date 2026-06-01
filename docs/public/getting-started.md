@@ -6,6 +6,9 @@ public **Devnet** and **Testnet** as a developer, wallet user, or node
 operator. Anything not on this page lives at
 [docs.creditchain.org](https://docs.creditchain.org).
 
+For the fuller end-user and enterprise-adoption guide, see
+[`docs/public/user-manual.md`](./user-manual.md).
+
 ## Networks at a glance
 
 | Network                    | Chain ID    | RPC URL                              | WS URL                                  | Faucet                                            | Status |
@@ -14,8 +17,13 @@ operator. Anything not on this page lives at
 | **CreditChain Testnet**    | `2026042404` | `https://testnet.creditchain.org`    | `wss://testnet.creditchain.org/ws`      | `https://faucet.creditchain.org/testnet`          | active |
 | **CreditChain Mainnet**    | `2026042405` | `https://rpc.creditchain.org`        | `wss://rpc.creditchain.org/ws`          | n/a                                                | planned (G5) |
 
-Native currency on every network: **`CCC`**, 18 decimals. Symbol displayed
-in MetaMask / Frame / Rabby as `CCC`.
+Native gas currency on every public CreditChain network: **`CCC`**, 18
+decimals. CCC pays transaction fees and is displayed in MetaMask / Frame /
+Rabby as `CCC`.
+
+Institutional forks can customize the native token metadata in
+`deploy/shared/networks.json` and the two typed mirrors. See
+[`docs/native-token-and-wallet.md`](../native-token-and-wallet.md).
 
 > **Devnet** resets at each release tag. **Testnet** is stable — never
 > wiped except via an explicit hard fork.
@@ -73,7 +81,7 @@ Success response:
   "tx": "0x9f…",
   "to":  "0xYOUR_ADDRESS",
   "amount":     "1.0 CCC",
-  "amount_wei": "1000000000000000000"
+  "amount_base_units": "1000000000000000000"
 }
 ```
 
@@ -182,8 +190,11 @@ to deploy under a different prefunded address.
 
 ## 6. Use iWallet
 
-iWallet is the OpeniBank multi-chain custody surface. It ships built-in
-support for all five CreditChain networks via the canonical registry.
+iWallet is the OpeniBank self-custody wallet surface. Users generate or import
+their own BIP-39 mnemonic, private keys stay on the user's device or
+institution-controlled signing environment, and the wallet signs locally before
+broadcasting to the selected CreditChain RPC. It ships built-in support for all
+five CreditChain networks via the canonical registry.
 
 ```bash
 # list networks

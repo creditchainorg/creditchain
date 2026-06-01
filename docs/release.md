@@ -3,6 +3,10 @@
 CreditChain releases produce signed `creditchaind` artifacts, Docker images,
 environment manifests, and operator notes.
 
+Current release-prep notes:
+
+- [v2.1.0 Enterprise Readiness](./releases/v2.1.0-enterprise-readiness.md)
+
 ## Release PR
 
 - Create a branch such as `release/vx.y.z`.

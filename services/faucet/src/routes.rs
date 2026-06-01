@@ -6,7 +6,7 @@
 
 use std::net::SocketAddr;
 
-use alloy_network::{TransactionBuilder, EthereumWallet};
+use alloy_network::{EthereumWallet, TransactionBuilder};
 use alloy_primitives::{Address, U256};
 use alloy_provider::Provider;
 use alloy_rpc_types_eth::TransactionRequest;
@@ -34,12 +34,20 @@ pub fn router(state: FaucetState) -> Router {
 struct InfoResponse {
     network: String,
     chain_id: u64,
+    native_currency: NativeCurrencyResponse,
     rpc_url: String,
     faucet_address: String,
     drip_amount: String,
-    drip_amount_wei: String,
+    drip_amount_base_units: String,
     per_ip_limit_per_hour: u32,
     per_address_cooldown_seconds: u64,
+}
+
+#[derive(Serialize)]
+struct NativeCurrencyResponse {
+    name: String,
+    symbol: String,
+    decimals: u8,
 }
 
 async fn info(State(s): State<FaucetState>) -> Json<InfoResponse> {
@@ -47,10 +55,15 @@ async fn info(State(s): State<FaucetState>) -> Json<InfoResponse> {
     Json(InfoResponse {
         network: cfg.network_name.clone(),
         chain_id: cfg.chain_id,
+        native_currency: NativeCurrencyResponse {
+            name: cfg.native_token_name.clone(),
+            symbol: cfg.native_token_symbol.clone(),
+            decimals: cfg.native_token_decimals,
+        },
         rpc_url: cfg.rpc_url.to_string(),
         faucet_address: format!("{:#x}", s.faucet_address()),
-        drip_amount: format!("{} CCC", cfg.drip_amount_ccc),
-        drip_amount_wei: cfg.drip_amount_wei.to_string(),
+        drip_amount: format!("{} {}", cfg.drip_amount, cfg.native_token_symbol),
+        drip_amount_base_units: cfg.drip_amount_base_units.to_string(),
         per_ip_limit_per_hour: cfg.per_ip_limit,
         per_address_cooldown_seconds: cfg.per_address_cooldown.as_secs(),
     })
@@ -60,18 +73,25 @@ async fn info(State(s): State<FaucetState>) -> Json<InfoResponse> {
 struct HealthResponse {
     ok: bool,
     chain_id: u64,
+    native_currency: NativeCurrencyResponse,
     faucet_address: String,
     balance: String,
 }
 
 async fn health(State(s): State<FaucetState>) -> Result<Json<HealthResponse>, ErrorResponse> {
     let balance = s
-        .balance_ccc()
+        .balance_native()
         .await
         .map_err(|e| ErrorResponse::internal(format!("balance lookup failed: {e}")))?;
+    let cfg = s.cfg();
     Ok(Json(HealthResponse {
         ok: true,
-        chain_id: s.cfg().chain_id,
+        chain_id: cfg.chain_id,
+        native_currency: NativeCurrencyResponse {
+            name: cfg.native_token_name.clone(),
+            symbol: cfg.native_token_symbol.clone(),
+            decimals: cfg.native_token_decimals,
+        },
         faucet_address: format!("{:#x}", s.faucet_address()),
         balance,
     }))
@@ -89,7 +109,7 @@ struct DripResponse {
     tx: String,
     to: String,
     amount: String,
-    amount_wei: String,
+    amount_base_units: String,
 }
 
 async fn drip(
@@ -106,12 +126,9 @@ async fn drip(
     }
 
     let ip = addr.ip();
-    s.limiter()
-        .check_and_record(ip, to)
-        .await
-        .map_err(ErrorResponse::from_limiter)?;
+    s.limiter().check_and_record(ip, to).await.map_err(ErrorResponse::from_limiter)?;
 
-    let value: U256 = s.cfg().drip_amount_wei;
+    let value: U256 = s.cfg().drip_amount_base_units;
     let chain_id = s.cfg().chain_id;
 
     // Build, sign, broadcast.
@@ -138,7 +155,8 @@ async fn drip(
         %ip,
         to = %req.address,
         tx = %tx_hash,
-        amount = %s.cfg().drip_amount_ccc,
+        amount = %s.cfg().drip_amount,
+        symbol = %s.cfg().native_token_symbol,
         "drip sent"
     );
 
@@ -147,8 +165,8 @@ async fn drip(
         chain_id,
         tx: format!("{:#x}", tx_hash),
         to: format!("{:#x}", to),
-        amount: format!("{} CCC", s.cfg().drip_amount_ccc),
-        amount_wei: value.to_string(),
+        amount: format!("{} {}", s.cfg().drip_amount, s.cfg().native_token_symbol),
+        amount_base_units: value.to_string(),
     }))
 }
 
@@ -196,7 +214,9 @@ impl ErrorResponse {
                 status: StatusCode::TOO_MANY_REQUESTS,
                 body: ErrorBody {
                     code: "faucet.ip_rate_limited",
-                    message: format!("ip rate limit exceeded: {hits} drips in last hour (max {max})"),
+                    message: format!(
+                        "ip rate limit exceeded: {hits} drips in last hour (max {max})"
+                    ),
                     retry_after_seconds: Some(60 * 60),
                 },
             },

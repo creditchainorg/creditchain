@@ -2,7 +2,7 @@
 name = "creditchain-faucet"
 version = "0.1.0"
 edition = "2021"
-description = "Public faucet for CreditChain Devnet / Testnet. Drips CCC to any requested address under per-IP + per-recipient rate limits."
+description = "Public faucet for CreditChain Devnet / Testnet. Drips the native gas token under per-IP + per-recipient rate limits."
 license = "MIT OR Apache-2.0"
 
 # Standalone crate — not a member of the creditchain Reth workspace.

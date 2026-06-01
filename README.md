@@ -32,6 +32,12 @@ contracts/agent-finance/
 
 See `docs/agent-finance.md`.
 
+## Public Manuals
+
+- [User manual](docs/public/user-manual.md)
+- [Enterprise Ubuntu deployment](deploy/REMOTE_UBUNTU.md)
+- [Native token and self-custody wallet model](docs/native-token-and-wallet.md)
+
 ## Build
 
 ```sh

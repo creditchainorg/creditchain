@@ -1,7 +1,9 @@
 //! CreditChain Faucet
 //!
-//! Drips CCC to any requested EVM address under per-IP + per-recipient rate
-//! limits. The faucet validates the configured chain id matches the RPC's
+//! Drips the configured native token to any requested EVM address under per-IP
+//! + per-recipient rate limits. CreditChain defaults to CCC; enterprise forks
+//! can set FAUCET_NATIVE_TOKEN_* env vars without changing faucet code. The
+//! faucet validates the configured chain id matches the RPC's
 //! advertised chain id at startup so misconfigured deploys fail loudly
 //! rather than dripping to the wrong network.
 //!
@@ -14,7 +16,11 @@
 //!   FAUCET_RPC_URL               — JSON-RPC HTTP URL of a CreditChain node
 //!   FAUCET_CHAIN_ID              — decimal chain id (must match RPC's eth_chainId)
 //!   FAUCET_PRIVATE_KEY_FILE      — path to a file containing the 32-byte hex private key (no `0x`)
-//!   FAUCET_DRIP_AMOUNT_CCC       — decimal CCC per drip (default "1.0")
+//!   FAUCET_NATIVE_TOKEN_NAME     — display name (default "CreditChain Token")
+//!   FAUCET_NATIVE_TOKEN_SYMBOL   — gas token symbol (default "CCC")
+//!   FAUCET_NATIVE_TOKEN_DECIMALS — native token decimals (default 18)
+//!   FAUCET_DRIP_AMOUNT           — decimal native token per drip (default "1.0")
+//!   FAUCET_DRIP_AMOUNT_CCC       — backwards-compatible alias
 //!   FAUCET_PER_IP_LIMIT          — drips per IP per hour (default 5)
 //!   FAUCET_PER_ADDRESS_COOLDOWN  — seconds before the same recipient may drip again (default 86400)
 //!   FAUCET_BIND                  — listen address (default 0.0.0.0:8080)
@@ -35,6 +41,7 @@ mod state;
 use std::net::SocketAddr;
 use std::time::Duration;
 
+use axum::http::StatusCode;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::limit::RequestBodyLimitLayer;
 use tower_http::timeout::TimeoutLayer;
@@ -61,31 +68,27 @@ async fn main() -> anyhow::Result<()> {
 
     tracing::info!(
         faucet = %state.faucet_address(),
-        balance_ccc = %state.balance_ccc().await?,
+        balance = %state.balance_native().await?,
+        symbol = %state.cfg().native_token_symbol,
         "faucet ready"
     );
 
     let app = routes::router(state)
         .layer(RequestBodyLimitLayer::new(1024 * 1024))
-        .layer(TimeoutLayer::new(Duration::from_secs(30)))
-        .layer(
-            CorsLayer::new()
-                .allow_methods(Any)
-                .allow_headers(Any)
-                .allow_origin(Any),
-        )
+        .layer(TimeoutLayer::with_status_code(
+            StatusCode::REQUEST_TIMEOUT,
+            Duration::from_secs(30),
+        ))
+        .layer(CorsLayer::new().allow_methods(Any).allow_headers(Any).allow_origin(Any))
         .layer(TraceLayer::new_for_http());
 
     let bind: SocketAddr = cfg.bind.parse()?;
     let listener = tokio::net::TcpListener::bind(bind).await?;
     tracing::info!(%bind, "listening");
 
-    axum::serve(
-        listener,
-        app.into_make_service_with_connect_info::<SocketAddr>(),
-    )
-    .with_graceful_shutdown(shutdown_signal())
-    .await?;
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+        .with_graceful_shutdown(shutdown_signal())
+        .await?;
 
     Ok(())
 }
@@ -94,11 +97,7 @@ fn init_tracing() {
     use tracing_subscriber::EnvFilter;
     let filter = EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| EnvFilter::new("info,tower_http=info,creditchain_faucet=debug"));
-    tracing_subscriber::fmt()
-        .with_env_filter(filter)
-        .with_target(false)
-        .compact()
-        .init();
+    tracing_subscriber::fmt().with_env_filter(filter).with_target(false).compact().init();
 }
 
 async fn shutdown_signal() {

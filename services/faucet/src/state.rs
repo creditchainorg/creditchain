@@ -9,7 +9,7 @@ use alloy_primitives::{Address, U256};
 use alloy_provider::{Provider, ProviderBuilder};
 use alloy_signer_local::PrivateKeySigner;
 
-use crate::config::Config;
+use crate::config::{format_base_units, Config};
 use crate::limiter::RateLimiter;
 
 #[derive(Clone)]
@@ -26,22 +26,15 @@ struct Inner {
 
 impl FaucetState {
     pub async fn connect(cfg: Config) -> anyhow::Result<Self> {
-        let signer: PrivateKeySigner = cfg.private_key_hex.parse().map_err(|e| {
-            anyhow::anyhow!("private key parse failed: {e}")
-        })?;
+        let signer: PrivateKeySigner = cfg
+            .private_key_hex
+            .parse()
+            .map_err(|e| anyhow::anyhow!("private key parse failed: {e}"))?;
 
-        let provider = ProviderBuilder::new()
-            .on_http(cfg.rpc_url.clone());
+        let provider = ProviderBuilder::new().on_http(cfg.rpc_url.clone());
 
         let limiter = RateLimiter::new(cfg.per_ip_limit, cfg.per_address_cooldown);
-        Ok(Self {
-            inner: Arc::new(Inner {
-                cfg,
-                signer,
-                provider,
-                limiter,
-            }),
-        })
+        Ok(Self { inner: Arc::new(Inner { cfg, signer, provider, limiter }) })
     }
 
     pub fn cfg(&self) -> &Config {
@@ -50,10 +43,6 @@ impl FaucetState {
 
     pub fn faucet_address(&self) -> Address {
         self.inner.signer.address()
-    }
-
-    pub fn signer(&self) -> &PrivateKeySigner {
-        &self.inner.signer
     }
 
     pub fn wallet(&self) -> EthereumWallet {
@@ -91,57 +80,43 @@ impl FaucetState {
         Ok(())
     }
 
-    /// Faucet balance in decimal CCC, for the /health and /info endpoints.
-    pub async fn balance_ccc(&self) -> anyhow::Result<String> {
+    /// Faucet balance in decimal native-token units, for /health and /info.
+    pub async fn balance_native(&self) -> anyhow::Result<String> {
         let bal: U256 = self
             .inner
             .provider
             .get_balance(self.faucet_address())
             .await
             .map_err(|e| anyhow::anyhow!("eth_getBalance failed: {e}"))?;
-        Ok(wei_to_ccc_decimal(bal))
-    }
-}
-
-/// Format wei → "N.MMMMMM CCC" decimal string for human display.
-pub fn wei_to_ccc_decimal(wei: U256) -> String {
-    let one_ccc = U256::from(10u64).pow(U256::from(18u64));
-    let int_part = wei / one_ccc;
-    let frac_part = wei % one_ccc;
-    let frac_str = format!("{:018}", frac_part);
-    // Trim trailing zeros, but keep at least one digit.
-    let trimmed = frac_str.trim_end_matches('0');
-    if trimmed.is_empty() {
-        format!("{int_part}.0")
-    } else {
-        format!("{int_part}.{trimmed}")
+        Ok(format_base_units(bal, self.inner.cfg.native_token_decimals))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::format_base_units;
 
     #[test]
-    fn format_one_ccc() {
+    fn format_one_native_token() {
         let one = U256::from(10u64).pow(U256::from(18u64));
-        assert_eq!(wei_to_ccc_decimal(one), "1.0");
+        assert_eq!(format_base_units(one, 18), "1.0");
     }
 
     #[test]
-    fn format_half_ccc() {
+    fn format_half_native_token() {
         let half = U256::from(5u64) * U256::from(10u64).pow(U256::from(17u64));
-        assert_eq!(wei_to_ccc_decimal(half), "0.5");
+        assert_eq!(format_base_units(half, 18), "0.5");
     }
 
     #[test]
     fn format_zero() {
-        assert_eq!(wei_to_ccc_decimal(U256::ZERO), "0.0");
+        assert_eq!(format_base_units(U256::ZERO, 18), "0.0");
     }
 
     #[test]
     fn format_large() {
         let v = U256::from(123_456_789u64) * U256::from(10u64).pow(U256::from(18u64));
-        assert_eq!(wei_to_ccc_decimal(v), "123456789.0");
+        assert_eq!(format_base_units(v, 18), "123456789.0");
     }
 }

@@ -7,6 +7,8 @@ CreditChain chain-core workspace.
 - [Repository and project structure](./repo)
 - [Workflow](./workflow.md)
 - [Releases](./release.md)
+- [Public user manual](./public/user-manual.md)
+- [Native token and self-custody wallet model](./native-token-and-wallet.md)
 
 Public documentation should use `https://docs.creditchain.org`. The official
 website is `https://www.creditchain.org`.
