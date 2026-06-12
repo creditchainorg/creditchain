@@ -131,12 +131,30 @@ async fn drip(
     let value: U256 = s.cfg().drip_amount_base_units;
     let chain_id = s.cfg().chain_id;
 
-    // Build, sign, broadcast.
+    // Build, sign, broadcast. The provider has no fillers, so nonce/gas/fees
+    // must be set explicitly or TransactionBuilder::build refuses the request.
+    let nonce = s
+        .provider()
+        .get_transaction_count(s.faucet_address())
+        .pending()
+        .await
+        .map_err(|e| ErrorResponse::internal(format!("nonce fetch failed: {e}")))?;
+    let fees = s
+        .provider()
+        .estimate_eip1559_fees(None)
+        .await
+        .map_err(|e| ErrorResponse::internal(format!("fee estimate failed: {e}")))?;
+
     let tx = TransactionRequest::default()
         .with_from(s.faucet_address())
         .with_to(to)
         .with_value(value)
-        .with_chain_id(chain_id);
+        .with_chain_id(chain_id)
+        .with_nonce(nonce)
+        // Plain value transfer costs exactly 21k gas.
+        .with_gas_limit(21_000)
+        .with_max_fee_per_gas(fees.max_fee_per_gas)
+        .with_max_priority_fee_per_gas(fees.max_priority_fee_per_gas);
 
     let wallet: EthereumWallet = s.wallet();
     let envelope = tx

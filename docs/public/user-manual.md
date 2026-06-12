@@ -52,7 +52,7 @@ For app-based onboarding:
 await window.ethereum.request({
   method: "wallet_addEthereumChain",
   params: [{
-    chainId: "0x78c1644",
+    chainId: "0x78c2f424",
     chainName: "CreditChain Testnet",
     nativeCurrency: {
       name: "CreditChain Token",

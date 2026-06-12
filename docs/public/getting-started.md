@@ -48,7 +48,7 @@ Open MetaMask → *Networks* → *Add a network manually* → fill in:
 await window.ethereum.request({
   method: "wallet_addEthereumChain",
   params: [{
-    chainId: "0x78c1643",                          // devnet (0x78c1644 for testnet)
+    chainId: "0x78c2f423",                          // devnet (0x78c2f424 for testnet)
     chainName: "CreditChain Devnet",
     nativeCurrency: { name: "CreditChain Token", symbol: "CCC", decimals: 18 },
     rpcUrls: ["https://devnet.creditchain.org"],
@@ -212,7 +212,25 @@ iwallet balance --address 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 --network t
 export IWALLET_NETWORK=testnet
 iwallet balance --address 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 iwallet status   0xYOUR_TX_HASH
+
+# send real CCC — builds an EIP-1559 tx, signs locally, broadcasts.
+# The private key never leaves your machine.
+iwallet send \
+  --network devnet \
+  --to 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 \
+  --amount 0.5 \
+  --mnemonic "test test test test test test test test test test test junk"
+# ✓ Broadcast. tx: 0x...
+# Explorer: https://explorer.creditchain.org/devnet/tx/0x...
 ```
+
+iWallet is self-custody and AI-era-native: keys are sealed at rest with
+argon2id + AES-256-GCM, EVM transactions are signed with a recoverable
+secp256k1 signature (the recovered signer is proven to equal the derived
+address in CI), and every signing request passes a policy gate (spend limits
++ allowlists + SpendPermit) before a single byte is signed. See
+[`iwallet/docs/WALLET-COMPETITIVE-AUDIT.md`](https://github.com/openibank/iwallet/blob/main/docs/WALLET-COMPETITIVE-AUDIT.md)
+for the full feature matrix vs Trust Wallet, MetaMask, and TokenPocket.
 
 ## 7. Use the Browser
 
