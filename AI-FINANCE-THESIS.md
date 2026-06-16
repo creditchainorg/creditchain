@@ -125,7 +125,10 @@ Ours writes itself because nobody else can run it:
    Ship as a copy-paste quickstart + a hosted playground.
 3. **The "grant a mandate, not your keys" message.** A single, sticky
    contrast with every other wallet: *they sign for you; we let an AI sign
-   within rails you set.* This is the tweet, the billboard, the pitch.
+   within rails you set.* This is the tweet, the billboard, the pitch — and
+   iWallet now ships it: a **Mandate Console** (Settings → Agent Mandates, both
+   iOS and Android) where a user grants a bounded mandate, monitors spend, and
+   revokes with one tap.
 4. **Builder grants paid in testnet reputation → mainnet CCC at launch.**
    Reward the first agent-commerce apps; their demos become our marketing.
 5. **Every iWallet install ships CreditChain present by default**, so the
