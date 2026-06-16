@@ -130,10 +130,12 @@ Ours writes itself because nobody else can run it:
    Reward the first agent-commerce apps; their demos become our marketing.
 5. **Every iWallet install ships CreditChain present by default**, so the
    network is one tap away for millions of wallet users.
-6. **Standardize it.** Publish `AgentSpendVault` as an open ERC-style standard
-   ("ERC-AGM: Agent Spending Mandate"). If it becomes the way agents spend on
-   *any* EVM chain, CreditChain is its home and reference implementation —
-   the Uniswap-of-agent-finance position.
+6. **Standardize it.** The open standard is written:
+   [`ERC-AGM`](docs/standards/ERC-AGM.md) (Agent Spending Mandate), with the
+   canonical `IAgentSpendMandate` interface and `AgentSpendVault` as the
+   conformance-tested reference implementation. If it becomes the way agents
+   spend on *any* EVM chain, CreditChain is its home and reference
+   implementation — the Uniswap-of-agent-finance position.
 
 ## 5. Honest status
 
