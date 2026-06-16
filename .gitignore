@@ -82,3 +82,6 @@ __pycache__/
 # CreditChain deploy runtime state and secrets
 deploy/**/.env
 deploy/**/secrets/
+contracts/*/lib/
+contracts/*/cache/
+contracts/*/out/
