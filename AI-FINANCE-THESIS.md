@@ -35,7 +35,11 @@ structurally on the wrong side of it.
 
 The thesis is only real if it compiles and the rails hold. They do. See
 [`contracts/agent-finance/src/AgentSpendVault.sol`](contracts/agent-finance/src/AgentSpendVault.sol),
-**13/13 Foundry tests passing** including a repelled reentrancy attack.
+**18 Foundry tests passing** — 13 example tests (including a repelled
+reentrancy attack) plus **4 invariant properties proven over ~12,800
+randomized adversarial call sequences each**: the vault is always solvent
+(its CCC balance equals the sum of all mandate balances), never spends past
+budget, and conserves value across any create/fund/spend/revoke/withdraw order.
 
 `AgentSpendVault` is **programmable spending authority for an AI agent**, with
 every rail enforced by the chain itself, not by trust:
@@ -133,7 +137,8 @@ Ours writes itself because nobody else can run it:
 
 ## 5. Honest status
 
-- **Built and proven:** the AgentSpendVault primitive (13/13 tests), **the
+- **Built and proven:** the AgentSpendVault primitive (18 tests: 13 example +
+  4 invariant properties over ~12.8k randomized sequences each), **the
   flagship agent-commerce demo running live on-chain** (vault deployed to the
   devnet node, agent paying autonomously, every rail enforced — see
   `contracts/agent-finance/demo/SAMPLE-RUN.txt`), the EVM L1 (devnet + testnet
