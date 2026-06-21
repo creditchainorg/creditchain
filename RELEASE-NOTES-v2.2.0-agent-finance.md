@@ -72,8 +72,8 @@ RPC_URL=https://testnet.creditchain.org \
 - **Gated (not in this release):** mainnet launch — pending external audit, a
   PoS testnet stable ≥30 days with ≥5 validators, signed genesis, and an HSM key
   ceremony (see `ECOSYSTEM-MASTERPLAN.md`).
-- **Known post-release items:** `scan.creditchain.org` needs a DNS record (use
-  `explorer.creditchain.org` meanwhile); zero-prompt-after-first-sign confirmed
-  on device pending a hardware smoke test.
+- **Post-release verification:** the on-device send/biometric smoke tests in
+  `iwallet/RELEASE-RUNBOOK.md` §3 are the final hardware pass before a store
+  listing. (The `scan.creditchain.org` explorer is live and TLS-valid.)
 - **Security:** `AgentSpendVault` is invariant-tested and threat-modeled but
   **not yet externally audited** — do not custody value of consequence.
