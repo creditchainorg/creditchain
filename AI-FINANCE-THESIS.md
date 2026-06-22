@@ -97,9 +97,13 @@ one *and* the one primitive that makes AI commerce safe.
 2. **Spending authority, not custody, is the unit of trust.** Humans stop
    "approving transactions" and start "granting mandates." Wallets become
    mandate consoles. (iWallet is already the prototype.)
-3. **Agent reputation becomes collateral.** On-chain payment history +
-   attested execution proofs let agents earn larger mandates and credit —
-   the `CreditAgentFinance` registry + Credit Objects are the substrate.
+3. **Agent reputation becomes collateral.** On-chain payment history lets
+   agents earn larger mandates and credit. The first substrate is built:
+   [`AgentReputation`](contracts/agent-finance/src/AgentReputation.sol) — an
+   agent's record accrues **only** from real `AgentSpendVault` mandates it
+   actually served, attested once each by the real owner (8 tests incl.
+   invariants; deployed + source-verified on testnet). Every reputation point
+   is backed by value the agent provably moved — not a spammable counter.
 4. **The bank is an agent workforce.** OpeniBank's end state: AI agents that
    hold mandates, settle in CCC, earn reputation, and provide financial
    services (treasury, payments, credit) faster and cheaper than any human
