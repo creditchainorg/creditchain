@@ -149,6 +149,45 @@ or upgrade path that can seize balances.
 - **`spendableNow` is mandatory.** Agents and wallets need one honest "how much
   can I spend right now" number that already accounts for every rail.
 
+## Optional Extension: Reputation-Gated Mandates
+
+A compliant implementation MAY be composed with a **reputation gate** so that an
+agent must *earn* the right to spend. This requires no change to the core
+interface and no modification of a deployed implementation.
+
+The pattern: the owner creates a mandate whose `agent` is a gate contract, then
+registers an operator (the real agent) and a minimum reputation score. The
+operator spends through the gate, which checks reputation at call time and
+forwards to `spend`. Because the call still lands in `spend`, **every rail in
+§Specification continues to apply unchanged** — the gate adds a precondition and
+MUST NOT be able to relax any existing limit.
+
+```solidity
+interface IReputationGate {
+    function setPolicy(uint256 mandateId, address operator, uint256 minScore) external;
+    function disablePolicy(uint256 mandateId) external;
+    function spendVia(uint256 mandateId, address recipient, uint256 amount, bytes32 taskRef) external;
+    function isEligible(uint256 mandateId, address operator) external view returns (bool);
+}
+```
+
+Requirements for a conformant gate:
+- It MUST hold no funds; value stays in the mandate until `spend` releases it.
+- `setPolicy` MUST be owner-only and MUST reject a mandate whose `agent` is not
+  the gate itself — otherwise it would record a policy it can never enforce.
+- `spendVia` MUST evaluate reputation **at call time**, so raising the bar takes
+  effect immediately rather than at the next mandate.
+- The mandate owner's `revoke` MUST remain effective and unmediated by the gate.
+
+Reference implementation: `ReputationGate.sol`, composed with `AgentSpendVault`
+and `AgentReputation`; deployed and source-verified on the CreditChain public
+testnet.
+
+Rationale: this makes *"reputation is collateral"* enforceable. An agent with no
+track record can be given a small mandate; as its on-chain record accrues from
+mandates it provably served, owners can extend larger authority — and withdraw it
+instantly if the record stops justifying the trust.
+
 ## Backwards Compatibility
 
 This is a new interface; there is nothing to break. It is EVM-native and works
