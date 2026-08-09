@@ -85,3 +85,4 @@ deploy/**/secrets/
 contracts/*/lib/
 contracts/*/cache/
 contracts/*/out/
+contracts/*/broadcast/

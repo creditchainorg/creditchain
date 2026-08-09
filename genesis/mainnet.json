@@ -24,7 +24,29 @@
   "difficulty": "0x0",
   "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "coinbase": "0x0000000000000000000000000000000000000000",
-  "alloc": {},
+  "alloc": {
+    "0x49faDd05B5c0888c138FC07f022b2CCbd20C6439": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0x3481a64a8C37782cd81BC39197E502697f3bd585": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0x537067af5313773a4864126A9693D7413353003A": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0x493340AdC53e2af1F6D379aebe108D78B68B1ec0": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0x7634f3F5C95d9cF97dc3f7Acf3CA79bE979E71b5": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0xb14b6BA8D8DbF2D32149b613701B9e30100b6D4b": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
+      "balance": "0x3635c9adc5dea00000"
+    }
+  },
   "baseFeePerGas": "0x3b9aca00",
   "blobGasUsed": "0x0",
   "excessBlobGas": "0x0",

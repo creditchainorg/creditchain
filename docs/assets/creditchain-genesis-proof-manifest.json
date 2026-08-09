@@ -1,0 +1,20 @@
+{
+  "schema": "https://creditchain.org/schemas/nft-provenance-v1.json",
+  "collection": "CreditChain Genesis Proofs",
+  "symbol": "CCPROOF",
+  "creator": "CreditChain",
+  "release": "nft-reference-v1",
+  "purpose": "Canonical on-chain launch proofs for CreditChain's provenance-first NFT infrastructure.",
+  "principles": [
+    "ownership with evidence",
+    "content-addressed metadata",
+    "creator-controlled collections",
+    "non-custodial settlement",
+    "agent-ready purchasing"
+  ],
+  "networkPolicy": {
+    "devnet": "demonstration and integration testing",
+    "testnet": "public creator onboarding and market rehearsal",
+    "mainnet": "blocked until protocol audit and production consensus gates pass"
+  }
+}

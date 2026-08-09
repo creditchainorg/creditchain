@@ -1,0 +1,12 @@
+Use case: ads-marketing
+Asset type: 1.91:1 landscape social-preview image for the CreditChain NFT ecosystem and shared NFT proof pages
+Primary request: Create a premium, cutting-edge campaign visual for digital ownership whose core idea is verifiable provenance rather than speculation.
+Scene/backdrop: Deep midnight-navy spatial field with a precise luminous chain of receipt-like blocks and fine cryptographic evidence trails converging into one elegant glass-and-metal digital ownership object.
+Subject: One distinctive abstract ownership artifact, museum-grade and technologically credible, surrounded by subtle provenance markers, content-hash lines, and verified transfer checkpoints. No people, no characters, no coins.
+Style/medium: High-end editorial 3D illustration with restrained cinematic depth, crisp technical detail, sophisticated fintech/infrastructure aesthetic.
+Composition/framing: Wide landscape composition; subject on the right-center, generous clean negative space on the left for headline readability; safe margins for social-card cropping.
+Lighting/mood: Controlled cyan and warm gold rim light, calm confidence, trust, permanence, creative ambition.
+Color palette: CreditChain-like midnight navy, electric cyan, restrained violet, small warm-gold accents, clean white type.
+Text (verbatim): "OWNERSHIP WITH EVIDENCE" as the large headline; "CreditChain NFTs" as the small signature line. Render exactly, clean modern sans-serif, left aligned.
+Constraints: Text must be exact and legible. Visual must feel like open infrastructure for creators, games, brands, and agents. No logos; the website will add brand metadata separately.
+Avoid: cartoon collectibles, apes, profile-picture tropes, casino imagery, token-price charts, money piles, neon overload, fake UI screenshots, watermarks, illegible microtext.
