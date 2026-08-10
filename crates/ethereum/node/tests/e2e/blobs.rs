@@ -147,8 +147,10 @@ async fn blob_conversion_at_osaka() -> eyre::Result<()> {
     let runtime = Runtime::test();
 
     let current_timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-    // Osaka activates in 2 slots
-    let osaka_timestamp = current_timestamp + 24;
+    // Osaka activates two slots after the final Prague payload. Keeping the
+    // conversion trigger behind that payload makes this test independent of
+    // runner speed.
+    let osaka_timestamp = current_timestamp + 26;
 
     let genesis: Genesis = serde_json::from_str(include_str!("../assets/genesis.json")).unwrap();
     let chain_spec = Arc::new(
@@ -227,6 +229,11 @@ async fn blob_conversion_at_osaka() -> eyre::Result<()> {
     // validate sidecar
     TransactionTestContext::validate_sidecar(envelope);
 
+    // Submit the final Prague payload. Its timestamp is exactly two slots
+    // before Osaka, so this canonical update starts background conversion only
+    // after both legacy-sidecar assertions above have completed.
+    node.update_forkchoice(genesis_hash, node.submit_payload(prague_payload).await?).await?;
+
     tokio::time::sleep(Duration::from_secs(6)).await;
 
     // fetch second blob tx from rpc again
@@ -235,9 +242,6 @@ async fn blob_conversion_at_osaka() -> eyre::Result<()> {
     assert!(envelope.as_eip4844().unwrap().tx().sidecar().unwrap().is_eip7594());
     // validate sidecar
     TransactionTestContext::validate_sidecar(envelope);
-
-    // submit the Prague payload
-    node.update_forkchoice(genesis_hash, node.submit_payload(prague_payload).await?).await?;
 
     // Build first Osaka payload
     node.payload.timestamp = osaka_timestamp - 1;
