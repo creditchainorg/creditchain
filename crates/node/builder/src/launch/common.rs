@@ -132,7 +132,7 @@ impl LaunchContext {
         LaunchContextWith { inner: self, attachment }
     }
 
-    /// Loads the CreditChain config with the configured `data_dir` and overrides settings
+    /// Loads the `CreditChain` config with the configured `data_dir` and overrides settings
     /// according to the `config`.
     ///
     /// Attaches both the `NodeConfig` and the loaded `creditchain.toml` config to the launch
@@ -148,7 +148,7 @@ impl LaunchContext {
         Ok(self.with(WithConfigs { config, toml_config }))
     }
 
-    /// Loads the CreditChain config with the configured `data_dir` and overrides settings
+    /// Loads the `CreditChain` config with the configured `data_dir` and overrides settings
     /// according to the `config`.
     ///
     /// This is async because the trusted peers may have to be resolved.

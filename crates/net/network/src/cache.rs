@@ -196,6 +196,8 @@ mod test {
     #[derive(Debug, Hash, PartialEq, Eq, Display, Clone, Copy)]
     struct Key(i8);
 
+    // `Constructor` expands these fields into an explicit struct initializer.
+    #[allow(clippy::redundant_field_names)]
     #[derive(Debug, Eq, Constructor, Clone, Copy)]
     struct CompoundKey {
         // type unique for id

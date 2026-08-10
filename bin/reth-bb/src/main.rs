@@ -1,5 +1,8 @@
 //! reth-bb: a modified reth node for benchmarking big block execution.
 #![allow(missing_docs)]
+// `jsonrpsee` generates boxed `Future` return types and also propagates `#[must_use]`, which
+// triggers Clippy's `double_must_use` on generated code in current nightly.
+#![allow(clippy::double_must_use)]
 
 #[global_allocator]
 static ALLOC: reth_cli_util::allocator::Allocator = reth_cli_util::allocator::new_allocator();

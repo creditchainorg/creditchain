@@ -1,4 +1,4 @@
-//! CreditChain node binary and CLI support.
+//! `CreditChain` node binary and CLI support.
 //!
 //! ## Feature Flags
 //!

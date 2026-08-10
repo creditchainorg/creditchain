@@ -18,6 +18,8 @@ pub trait PeersHandleProvider {
 }
 
 /// A communication channel to the `PeersManager` to apply manual changes to the peer set.
+// `Constructor` expands this field declaration into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Clone, Debug, Constructor)]
 pub struct PeersHandle {
     /// Sender half of command channel back to the `PeersManager`

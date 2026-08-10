@@ -9,7 +9,7 @@ use std::path::PathBuf;
 #[derive(Debug, Args, PartialEq, Eq, Default, Clone)]
 #[command(next_help_heading = "Datadir")]
 pub struct DatadirArgs {
-    /// The path to the data dir for all CreditChain files and subdirectories.
+    /// The path to the data dir for all `CreditChain` files and subdirectories.
     ///
     /// Defaults to the OS-specific data directory:
     ///

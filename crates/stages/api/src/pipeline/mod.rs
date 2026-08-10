@@ -596,15 +596,6 @@ impl<N: ProviderNodeTypes> Pipeline<N> {
 
                         provider_rw.commit()?;
                     }
-
-                    // We unwind because of a validation error. If the unwind itself
-                    // fails, we bail entirely,
-                    // otherwise we restart the execution loop from the
-                    // beginning.
-                    Ok(Some(ControlFlow::Unwind {
-                        target: prev_checkpoint.unwrap_or_default().block_number,
-                        bad_block: block,
-                    }))
                 }
                 BlockErrorKind::Execution(execution_error) => {
                     error!(
@@ -613,17 +604,15 @@ impl<N: ProviderNodeTypes> Pipeline<N> {
                         bad_block = %block.block.number,
                         "Stage encountered an execution error: {execution_error}"
                     );
-
-                    // We unwind because of an execution error. If the unwind itself
-                    // fails, we bail entirely,
-                    // otherwise we restart
-                    // the execution loop from the beginning.
-                    Ok(Some(ControlFlow::Unwind {
-                        target: prev_checkpoint.unwrap_or_default().block_number,
-                        bad_block: block,
-                    }))
                 }
             }
+
+            // We unwind because of a block error. If the unwind itself fails, we bail entirely;
+            // otherwise, we restart the execution loop from the beginning.
+            Ok(Some(ControlFlow::Unwind {
+                target: prev_checkpoint.unwrap_or_default().block_number,
+                bad_block: block,
+            }))
         } else if let StageError::MissingStaticFileData { block, segment } = err {
             error!(
                 target: "sync::pipeline",

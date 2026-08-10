@@ -129,7 +129,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-      - run: cargo build --bin reth --workspace
+      - run: cargo build --bin creditchaind --workspace
         env:
           RUSTFLAGS: -D warnings
 
@@ -192,10 +192,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-      - run: cargo build --bin reth --workspace
+      - run: cargo build --bin creditchaind --workspace
         env:
           RUSTFLAGS: -D warnings
-      - run: ./docs/cli/update.sh target/debug/reth
+      - run: ./docs/cli/update.sh target/debug/creditchaind
       - name: Check docs changes
         run: git diff --exit-code
 

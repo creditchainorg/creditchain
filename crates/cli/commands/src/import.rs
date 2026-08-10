@@ -149,12 +149,10 @@ mod tests {
     fn parse_common_import_command_chain_args() {
         for chain in SUPPORTED_CHAINS {
             let args: ImportCommand<EthereumChainSpecParser> =
-                ImportCommand::parse_from(["reth", "--chain", chain, "."]);
-            assert_eq!(
-                Ok(args.env.chain.chain),
-                chain.parse::<reth_chainspec::Chain>(),
-                "failed to parse chain {chain}"
-            );
+                ImportCommand::parse_from(["creditchaind", "--chain", chain, "."]);
+            let expected =
+                <EthereumChainSpecParser as ChainSpecParser>::parse(chain).unwrap().chain;
+            assert_eq!(args.env.chain.chain, expected, "failed to parse chain {chain}");
         }
     }
 

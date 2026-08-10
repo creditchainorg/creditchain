@@ -36,21 +36,21 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-      - name: Build reth
+      - name: Build CreditChain
         run: |
-          cargo install --locked --path bin/reth
+          cargo install --locked --path bin/reth --bin creditchaind
       - name: Run headers stage
         run: |
-          reth stage run headers --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run headers --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run bodies stage
         run: |
-          reth stage run bodies --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run bodies --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run senders stage
         run: |
-          reth stage run senders --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run senders --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run execution stage
         run: |
-          reth stage run execution --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run execution --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       # NOTE: account-hashing, storage-hashing, and hashing stages are omitted.
       # With storage v2 (now default), these stages are no-ops because the
       # execution stage writes directly to HashedAccounts/HashedStorages.
@@ -59,13 +59,13 @@ jobs:
       # the no-op execute never restores it — causing merkle to fail.
       - name: Run merkle stage
         run: |
-          reth stage run merkle --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run merkle --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run transaction lookup stage
         run: |
-          reth stage run tx-lookup --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run tx-lookup --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run account history stage
         run: |
-          reth stage run account-history --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run account-history --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
       - name: Run storage history stage
         run: |
-          reth stage run storage-history --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints
+          creditchaind stage run storage-history --from ${{ env.FROM_BLOCK }} --to ${{ env.TO_BLOCK }} --commit --checkpoints

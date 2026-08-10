@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         bin:
-          - cargo run --bin reth --features "dev"
+          - cargo run --bin creditchaind --features "dev"
     steps:
       - uses: rui314/setup-mold@v1
       - uses: dtolnay/rust-toolchain@stable

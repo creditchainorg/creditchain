@@ -2,7 +2,7 @@ use reth_chainspec::{ChainSpec, DEV, HOLESKY, HOODI, MAINNET, SEPOLIA};
 use reth_cli::chainspec::{parse_genesis, ChainSpecParser};
 use std::sync::Arc;
 
-/// Chains supported by CreditChain.
+/// Chains supported by `CreditChain`.
 ///
 /// The upstream Ethereum aliases remain available so compatibility testing and shallow-fork
 /// maintenance can continue without bespoke tooling.
@@ -51,7 +51,7 @@ fn creditchain_genesis(environment: &str) -> eyre::Result<Arc<ChainSpec>> {
     Ok(Arc::new(parse_genesis(raw)?.into()))
 }
 
-/// CreditChain chain specification parser.
+/// `CreditChain` chain specification parser.
 #[derive(Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct EthereumChainSpecParser;

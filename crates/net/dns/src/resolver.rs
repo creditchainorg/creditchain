@@ -1,8 +1,8 @@
 //! Perform DNS lookups
 
 use dashmap::DashMap;
-use hickory_resolver::name_server::ConnectionProvider;
-pub use hickory_resolver::{ResolveError, TokioResolver};
+use hickory_resolver::ConnectionProvider;
+pub use hickory_resolver::{net::NetError as ResolveError, TokioResolver};
 use std::future::Future;
 use tracing::trace;
 
@@ -23,9 +23,11 @@ impl<P: ConnectionProvider> Resolver for hickory_resolver::Resolver<P> {
                 None
             }
             Ok(lookup) => {
-                let txt = lookup.into_iter().next()?;
-                let entry = txt.iter().next()?;
-                String::from_utf8(entry.to_vec()).ok()
+                let txt = lookup.answers().iter().find_map(|record| match &record.data {
+                    hickory_resolver::proto::rr::RData::TXT(txt) => Some(txt),
+                    _ => None,
+                })?;
+                String::from_utf8(txt.txt_data.first()?.to_vec()).ok()
             }
         }
     }
@@ -60,7 +62,7 @@ impl DnsResolver {
     ///
     /// This will use `/etc/resolv.conf` on Unix OSes and the registry on Windows.
     pub fn from_system_conf() -> Result<Self, ResolveError> {
-        TokioResolver::builder_tokio().map(|builder| Self::new(builder.build()))
+        TokioResolver::builder_tokio()?.build().map(Self::new)
     }
 }
 

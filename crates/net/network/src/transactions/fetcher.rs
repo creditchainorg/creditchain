@@ -1004,6 +1004,8 @@ impl<T: NetworkPrimitives> Default for TransactionFetcher<T> {
 }
 
 /// Metadata of a transaction hash that is yet to be fetched.
+// `Constructor` expands these fields into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Constructor)]
 pub struct TxFetchMetadata {
     /// The number of times a request attempt has been made for the hash.
@@ -1120,12 +1122,16 @@ impl<T> Future for GetPooledTxRequestFut<T> {
 }
 
 /// Wrapper of unverified [`PooledTransactions`].
+// `Constructor` expands this field into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Constructor, Deref)]
 pub struct UnverifiedPooledTransactions<T> {
     txns: PooledTransactions<T>,
 }
 
 /// [`PooledTransactions`] that have been successfully verified.
+// `Constructor` expands this field into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Constructor, Deref)]
 pub struct VerifiedPooledTransactions<T> {
     txns: PooledTransactions<T>,
@@ -1226,6 +1232,8 @@ pub enum VerificationOutcome {
 }
 
 /// Tracks stats about the [`TransactionFetcher`].
+// `Constructor` expands these fields into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Constructor)]
 pub struct TransactionFetcherInfo {
     /// Max inflight [`GetPooledTransactions`] requests.

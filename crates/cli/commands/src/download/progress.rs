@@ -323,6 +323,8 @@ impl SharedProgress {
 }
 
 fn sub_bytes(counter: &AtomicU64, bytes: u64) {
+    // `AtomicU64::try_update` requires Rust 1.95; keep the equivalent API for the 1.93 MSRV.
+    #[allow(deprecated)]
     let _ = counter.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
         Some(current.saturating_sub(bytes))
     });

@@ -26,7 +26,7 @@ use reth_tracing::{FileWorkerGuard, Layers};
 use std::{ffi::OsString, fmt, future::Future, marker::PhantomData, sync::Arc};
 use tracing::{info, warn};
 
-/// The main CreditChain CLI interface.
+/// The main `CreditChain` CLI interface.
 ///
 /// This is the entrypoint to the executable.
 #[derive(Debug, Parser)]
@@ -406,7 +406,7 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = format!("reth/logs/{}", SUPPORTED_CHAINS[0]);
+        let end = format!("creditchain/logs/{}", SUPPORTED_CHAINS[0]);
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
 
         let mut iter = SUPPORTED_CHAINS.iter();
@@ -417,7 +417,7 @@ mod tests {
                 reth.command.chain_spec().map(|c| c.chain.to_string()).unwrap_or(String::new());
             reth.logs.log_file_directory = reth.logs.log_file_directory.join(chain.clone());
             let log_dir = reth.logs.log_file_directory;
-            let end = format!("reth/logs/{chain}");
+            let end = format!("creditchain/logs/{chain}");
             assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
         }
     }
@@ -432,7 +432,7 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = format!("reth/logs/{}", SUPPORTED_CHAINS[0]);
+        let end = format!("creditchain/logs/{}", SUPPORTED_CHAINS[0]);
         println!("{log_dir:?}");
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
     }
@@ -446,7 +446,7 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = "reth/logs".to_string();
+        let end = "creditchain/logs".to_string();
         println!("{log_dir:?}");
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
     }

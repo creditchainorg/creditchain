@@ -1,4 +1,4 @@
-//! CreditChain CLI implementation.
+//! `CreditChain` CLI implementation.
 
 #![doc(
     html_logo_url = "https://www.creditchain.org",

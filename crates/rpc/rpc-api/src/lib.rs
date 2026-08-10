@@ -6,6 +6,9 @@
 //!
 //! - `client`: Enables JSON-RPC client support.
 
+// `jsonrpsee` generates boxed `Future` return types and also propagates `#[must_use]`, which
+// triggers Clippy's `double_must_use` on generated code in current nightly.
+#![allow(clippy::double_must_use)]
 #![doc(
     html_logo_url = "https://www.creditchain.org",
     html_favicon_url = "https://avatars0.githubusercontent.com/u/97369466?s=256",

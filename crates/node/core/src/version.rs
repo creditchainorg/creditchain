@@ -1,4 +1,4 @@
-//! Version information for CreditChain.
+//! Version information for `CreditChain`.
 use std::{borrow::Cow, sync::OnceLock};
 
 use alloy_primitives::Bytes;
@@ -44,15 +44,15 @@ pub struct RethCliVersionConsts {
     /// The build features.
     pub vergen_cargo_features: Cow<'static, str>,
 
-    /// The short version information for CreditChain.
+    /// The short version information for `CreditChain`.
     pub short_version: Cow<'static, str>,
 
-    /// The long version information for CreditChain.
+    /// The long version information for `CreditChain`.
     pub long_version: Cow<'static, str>,
     /// The build profile name.
     pub build_profile_name: Cow<'static, str>,
 
-    /// The version information for CreditChain formatted for P2P (devp2p).
+    /// The version information for `CreditChain` formatted for P2P (devp2p).
     ///
     /// - The latest version from Cargo.toml
     /// - The target triple
@@ -104,7 +104,7 @@ pub fn version_metadata() -> &'static RethCliVersionConsts {
     VERSION_METADATA.get_or_init(default_reth_version_metadata)
 }
 
-/// Default CreditChain version metadata using compile-time env! macros.
+/// Default `CreditChain` version metadata using compile-time env! macros.
 pub fn default_reth_version_metadata() -> RethCliVersionConsts {
     RethCliVersionConsts {
         name_client: Cow::Borrowed("CreditChain"),

@@ -1,3 +1,5 @@
+//! `CreditChain` node executable.
+
 #![allow(missing_docs)]
 
 #[global_allocator]

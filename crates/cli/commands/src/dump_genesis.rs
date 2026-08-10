@@ -45,12 +45,10 @@ mod tests {
     fn parse_dump_genesis_command_chain_args() {
         for chain in SUPPORTED_CHAINS {
             let args: DumpGenesisCommand<EthereumChainSpecParser> =
-                DumpGenesisCommand::parse_from(["reth", "--chain", chain]);
-            assert_eq!(
-                Ok(args.chain.chain),
-                chain.parse::<reth_chainspec::Chain>(),
-                "failed to parse chain {chain}"
-            );
+                DumpGenesisCommand::parse_from(["creditchaind", "--chain", chain]);
+            let expected =
+                <EthereumChainSpecParser as ChainSpecParser>::parse(chain).unwrap().chain;
+            assert_eq!(args.chain.chain, expected, "failed to parse chain {chain}");
         }
     }
 }

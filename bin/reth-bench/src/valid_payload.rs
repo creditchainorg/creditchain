@@ -19,6 +19,9 @@ use std::time::Duration;
 use tracing::{debug, error};
 
 /// An extension trait for providers that implement the engine API, to wait for a VALID response.
+// `async_trait` generates both boxed `Future` return types and `#[must_use]`, which Clippy's
+// current nightly reports as `double_must_use` in generated code.
+#[allow(clippy::double_must_use)]
 #[async_trait::async_trait]
 pub trait EngineApiValidWaitExt<N>: Send + Sync {
     /// Calls `engine_forkChoiceUpdatedV1` with the given [`ForkchoiceState`] and optional

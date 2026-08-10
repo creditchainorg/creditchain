@@ -10,10 +10,10 @@
 #              source-dir must be checked out at <commit>
 #
 # Outputs:
-#   baseline: <source-dir>/target/profiling/reth (or reth-bb if BENCH_BIG_BLOCKS=true)
-#   feature:  <source-dir>/target/profiling/reth (or reth-bb), reth-bench installed to cargo bin
+#   baseline: <source-dir>/target/profiling/creditchaind (or reth-bb if BENCH_BIG_BLOCKS=true)
+#   feature:  <source-dir>/target/profiling/creditchaind (or reth-bb), reth-bench installed to cargo bin
 #
-# Optional env: BENCH_BIG_BLOCKS (true/false) — build reth-bb instead of reth
+# Optional env: BENCH_BIG_BLOCKS (true/false) — build reth-bb instead of creditchaind
 set -euxo pipefail
 
 MODE="$1"
@@ -21,13 +21,13 @@ SOURCE_DIR="$2"
 COMMIT="$3"
 
 BIG_BLOCKS="${BENCH_BIG_BLOCKS:-false}"
-# The node binary to build: reth-bb for big blocks, reth otherwise
+# The node binary to build: reth-bb for big blocks, creditchaind otherwise
 if [ "$BIG_BLOCKS" = "true" ]; then
   NODE_BIN="reth-bb"
   NODE_PKG="-p reth-bb"
 else
-  NODE_BIN="reth"
-  NODE_PKG="--bin reth"
+  NODE_BIN="creditchaind"
+  NODE_PKG="--bin creditchaind"
 fi
 
 # Tracy support: when BENCH_TRACY is "on" or "full", add Tracy cargo features

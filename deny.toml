@@ -16,6 +16,9 @@ ignore = [
     "RUSTSEC-2026-0002",
     # https://rustsec.org/advisories/RUSTSEC-2026-0097 rand is unsound with a custom logger
     "RUSTSEC-2026-0097",
+    # https://rustsec.org/advisories/RUSTSEC-2026-0173 proc-macro-error2 is unmaintained;
+    # transitive through alloy-sol-macro and aquamarine, with no patched release available.
+    "RUSTSEC-2026-0173",
 ]
 
 # This section is considered when running `cargo deny check bans`.

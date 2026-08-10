@@ -1,4 +1,4 @@
-//! Core CreditChain node utilities and libraries.
+//! Core `CreditChain` node utilities and libraries.
 
 #![doc(
     html_logo_url = "https://www.creditchain.org",

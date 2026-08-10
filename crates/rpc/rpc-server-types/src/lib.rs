@@ -1,4 +1,4 @@
-//! CreditChain RPC server types.
+//! `CreditChain` RPC server types.
 
 #![doc(
     html_logo_url = "https://www.creditchain.org",

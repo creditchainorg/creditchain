@@ -98,6 +98,8 @@ impl FromStr for TransactionPropagationMode {
 }
 
 /// Configuration for fetching transactions.
+// `Constructor` expands these fields into an explicit struct initializer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Constructor, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TransactionFetcherConfig {

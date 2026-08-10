@@ -19,7 +19,7 @@ fn creditchaind_ok(args: &[&str]) -> String {
     stdout.into_owned()
 }
 
-/// Spawns an isolated dev-mode CreditChain node.
+/// Spawns an isolated dev-mode `CreditChain` node.
 ///
 /// Discovery is disabled and peer limits are zeroed so the node is fully
 /// isolated.  Each call gets a unique temporary data directory so that

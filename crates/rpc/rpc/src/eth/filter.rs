@@ -864,6 +864,9 @@ where
 }
 
 /// Helper trait for [`FullTransactionsReceiver`] to erase the `Transaction` type.
+// `async_trait` generates both a boxed `Future` and `#[must_use]` on `drain`, which Clippy's
+// current nightly reports as `double_must_use` in generated code.
+#[allow(clippy::double_must_use)]
 #[async_trait]
 trait FullTransactionsFilter<T>: fmt::Debug + Send + Sync + Unpin + 'static {
     async fn drain(&self) -> FilterChanges<T>;

@@ -821,6 +821,7 @@ impl HandleVersionedMempoolData for ValidAnnouncementData {
 
 /// Hashes to request from a peer.
 #[derive(Debug, Default, Deref, DerefMut, IntoIterator, Constructor)]
+#[allow(clippy::redundant_field_names)]
 pub struct RequestTxHashes {
     #[deref]
     #[deref_mut]

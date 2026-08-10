@@ -956,7 +956,7 @@ impl ParallelSparseTrie {
         #[cfg(not(feature = "std"))]
         {
             let _ = num_nodes;
-            return false;
+            false
         }
 
         #[cfg(feature = "std")]
@@ -971,7 +971,7 @@ impl ParallelSparseTrie {
         #[cfg(not(feature = "std"))]
         {
             let _ = num_changed_keys;
-            return false;
+            false
         }
 
         #[cfg(feature = "std")]
@@ -2116,7 +2116,7 @@ impl ParallelSparseTrie {
         size += self.upper_subtrie.memory_size();
 
         // Lower subtries (both Revealed and Blind with allocation)
-        for subtrie in self.lower_subtries.iter() {
+        for subtrie in self.lower_subtries.as_ref() {
             size += subtrie.memory_size();
         }
 

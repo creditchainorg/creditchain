@@ -1,4 +1,4 @@
-//! CreditChain data directories.
+//! `CreditChain` data directories.
 
 use crate::{args::DatadirArgs, utils::parse_path};
 use reth_chainspec::Chain;
@@ -14,42 +14,42 @@ pub fn config_path_prefix(chain: Chain) -> String {
     chain.to_string()
 }
 
-/// Returns the path to the CreditChain data directory.
+/// Returns the path to the `CreditChain` data directory.
 ///
 /// Refer to [`dirs_next::data_dir`] for cross-platform behavior.
 pub fn data_dir() -> Option<PathBuf> {
     dirs_next::data_dir().map(|root| root.join("creditchain"))
 }
 
-/// Returns the path to the CreditChain database.
+/// Returns the path to the `CreditChain` database.
 ///
 /// Refer to [`dirs_next::data_dir`] for cross-platform behavior.
 pub fn database_path() -> Option<PathBuf> {
     data_dir().map(|root| root.join("db"))
 }
 
-/// Returns the path to the CreditChain configuration directory.
+/// Returns the path to the `CreditChain` configuration directory.
 ///
 /// Refer to [`dirs_next::config_dir`] for cross-platform behavior.
 pub fn config_dir() -> Option<PathBuf> {
     dirs_next::config_dir().map(|root| root.join("creditchain"))
 }
 
-/// Returns the path to the CreditChain cache directory.
+/// Returns the path to the `CreditChain` cache directory.
 ///
 /// Refer to [`dirs_next::cache_dir`] for cross-platform behavior.
 pub fn cache_dir() -> Option<PathBuf> {
     dirs_next::cache_dir().map(|root| root.join("creditchain"))
 }
 
-/// Returns the path to the CreditChain logs directory.
+/// Returns the path to the `CreditChain` logs directory.
 ///
 /// Refer to [`dirs_next::cache_dir`] for cross-platform behavior.
 pub fn logs_dir() -> Option<PathBuf> {
     cache_dir().map(|root| root.join("logs"))
 }
 
-/// Returns the path to the CreditChain data dir.
+/// Returns the path to the `CreditChain` data dir.
 ///
 /// The data dir should contain a subdirectory for each chain, and those chain directories will
 /// include all information for that chain, such as the p2p secret.
@@ -63,7 +63,7 @@ impl XdgPath for DataDirPath {
     }
 }
 
-/// Returns the path to the CreditChain logs directory.
+/// Returns the path to the `CreditChain` logs directory.
 ///
 /// Refer to [`dirs_next::cache_dir`] for cross-platform behavior.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -274,7 +274,7 @@ impl<D> ChainPath<D> {
         Self(path, chain, datadir_args)
     }
 
-    /// Returns the path to the CreditChain data directory for this chain.
+    /// Returns the path to the `CreditChain` data directory for this chain.
     ///
     /// `<DIR>/<CHAIN_ID>`
     pub fn data_dir(&self) -> &Path {

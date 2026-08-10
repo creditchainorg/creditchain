@@ -101,7 +101,7 @@ pub struct TraceArgs {
     /// Service name to use for OTLP tracing export.
     ///
     /// This name will be used to identify the service in distributed tracing systems
-    /// like Jaeger or Zipkin. Useful for differentiating between multiple CreditChain instances.
+    /// like Jaeger or Zipkin. Useful for differentiating between multiple `CreditChain` instances.
     ///
     /// Set via `OTEL_SERVICE_NAME` environment variable. Defaults to "creditchaind" if not
     /// specified.
