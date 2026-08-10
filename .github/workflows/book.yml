@@ -47,9 +47,11 @@ jobs:
           echo "Vocs Build Complete"
 
       - name: Setup Pages
+        if: github.event_name == 'push' && github.ref_name == 'main'
         uses: actions/configure-pages@v6
 
       - name: Upload artifact
+        if: github.event_name == 'push' && github.ref_name == 'main'
         uses: actions/upload-pages-artifact@v5
         with:
           path: "./docs/vocs/docs/dist"
