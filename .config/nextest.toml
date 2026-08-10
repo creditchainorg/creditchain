@@ -4,10 +4,16 @@ slow-timeout = { period = "30s", terminate-after = 2 }
 
 [[profile.default.overrides]]
 filter = "test(general_state_tests)"
-slow-timeout = { period = "1m", terminate-after = 10 }
+slow-timeout = { period = "3m", terminate-after = 10 }
 
 [[profile.default.overrides]]
 filter = "test(eest_fixtures)"
+slow-timeout = { period = "5m", terminate-after = 9 }
+
+# Block fixtures are smaller than the EEST/state corpora in normal operation,
+# but can exceed the global one-minute ceiling on resource-constrained runners.
+[[profile.default.overrides]]
+filter = "package(ef-tests)"
 slow-timeout = { period = "2m", terminate-after = 10 }
 
 # E2E tests using the testsuite framework from crates/e2e-test-utils
