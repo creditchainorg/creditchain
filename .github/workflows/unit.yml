@@ -89,7 +89,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-      - run: cargo nextest run --no-fail-fast --cargo-profile hivetests -p ef-tests --features "asm-keccak ef-tests"
+      # The EF suites are internally large. Limiting outer-suite concurrency
+      # prevents CPU contention from tripping nextest's per-suite timeouts on
+      # the smaller public runner used by this fork.
+      - run: cargo nextest run --no-fail-fast --test-threads 2 --cargo-profile hivetests -p ef-tests --features "asm-keccak ef-tests"
 
   doc:
     name: doc tests
