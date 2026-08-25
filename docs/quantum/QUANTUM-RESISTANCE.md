@@ -19,7 +19,7 @@ with what a cryptographically-relevant quantum computer (CRQC) would do to each.
 | State / receipts / trie | keccak256 | Grover → ~128-bit. **Fine.** No action needed. | EVM semantics |
 | Consensus signatures (PoS staging) | BLS12-381 | **Broken.** Shor. Validator keys forgeable. | creditbeacon (Lighthouse fork) |
 | P2P transport | RLPx over secp256k1 ECIES | Broken. Traffic is public anyway, but node identity becomes spoofable. | devp2p |
-| Public RPC TLS | TLS 1.3, **X25519** key exchange | **Harvest-now-decrypt-later applies today.** `X25519MLKEM768` is *rejected* by the endpoint. | `openssl s_client -groups X25519MLKEM768` → handshake failure |
+| Public RPC TLS | TLS 1.3, **X25519** key exchange | **Harvest-now-decrypt-later applies today.** `X25519MLKEM768` *rejected*; host runs OpenSSL 3.0.13, and hybrid groups need 3.5+. | `openssl s_client -groups X25519MLKEM768` → handshake failure; `openssl version` on host |
 | **Break-glass authority** | **WOTS+ over keccak256** | **Resistant.** Grover only: ~128-bit. | live on testnet, §4 |
 
 **So: CreditChain's base layer is not quantum resistant today, and neither is
@@ -229,17 +229,33 @@ from a PQ public key hash. Full base-layer resistance. Depends on Phase 2 and on
 wallet/tooling support — the ecosystem work dwarfs the protocol work.
 
 **Phase 4 — consensus and transport.**
-Validator keys BLS12-381 → PQ; RLPx handshake; and the one item that needs no fork
-at all and should not wait: **enable `X25519MLKEM768` on the public RPC endpoints**,
-closing the harvest-now-decrypt-later gap measured in §1. This is an nginx/OpenSSL
-configuration change and is the cheapest real win remaining.
+Validator keys BLS12-381 → PQ; RLPx handshake; and closing the
+harvest-now-decrypt-later gap on the public RPC endpoints measured in §1.
+
+> **Correction, from checking rather than assuming.** An earlier draft of this
+> document called the RPC TLS fix "a configuration change and the cheapest real win
+> remaining." That is wrong. The host runs **nginx 1.24.0 with OpenSSL 3.0.13**, and
+> hybrid `X25519MLKEM768` requires **OpenSSL 3.5+** (which shipped it on by default)
+> or an `oqs-provider` build. No amount of `ssl_ecdh_curve` configuration enables a
+> group the linked library does not implement.
+>
+> The real options are:
+> 1. Upgrade the host to a distro carrying OpenSSL 3.5+, or
+> 2. Build OpenSSL 3.5+ and rebuild nginx against it, or
+> 3. Add `oqs-provider` to the existing OpenSSL 3.0, or
+> 4. Terminate TLS at a front proxy that already supports hybrid groups.
+>
+> All four are infrastructure changes on a live public endpoint, not config edits.
+> This is still worth doing — it is the only measured, exploitable-today exposure in
+> §1 — but it must be scheduled and rehearsed, not slipped in.
 
 ### Sequencing rationale
 
 Phases 0 and 1 ship value with **no fork and no ecosystem coordination**, which is
-why they come first. Phase 4's TLS item is out of order on purpose — it is a config
-change addressing a risk that is *live today*, so it should land alongside Phase 1
-rather than waiting for the consensus work it is grouped with.
+why they come first. The Phase 4 TLS item is the exception to phase ordering: it
+addresses the one risk that is *live today* rather than contingent on a CRQC, so it
+should be scheduled as soon as a maintenance window allows — but as an upgrade, with
+a rollback plan, since a botched TLS change takes the public RPC offline.
 
 ---
 
