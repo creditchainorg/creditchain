@@ -68,3 +68,29 @@ Format: `argos` for the release, `argos-testnet` / `argos` for the networks,
 
 Mainnet Argos cannot be built until the offline key ceremony produces its
 addresses. No tooling here generates or reads a mainnet private key.
+
+## DNS convention
+
+Following Ethereum's practice (`sepolia.*`, `holesky.*`), each release gets
+hostnames pinned to that chain, while the generic names track whichever release
+is current:
+
+| Host | Meaning | Moves? |
+|---|---|---|
+| `argos.creditchain.org` | RPC for the Argos chain specifically | never |
+| `argos-scan.creditchain.org` | Explorer for Argos | never |
+| `argos-api.creditchain.org` | Indexer API for Argos | never |
+| `testnet.creditchain.org` | Whatever the current testnet release is | yes, each release |
+
+So an integration pinned to `argos.creditchain.org` keeps pointing at Argos when
+Knossos arrives; one pinned to `testnet.creditchain.org` follows the latest. Both
+are legitimate — the point is that the choice is explicit rather than accidental.
+
+DNS lives in **AWS Route53**, zone `ZQ6USMH7HOKGS`. Records CNAME to
+`<site-dyndns-name>` rather than an IP, because the host's address rotates.
+
+> **Known fragility:** the apex `creditchain.org` is an **A record pinned to
+> <site-host>'s current IP**, while every other name is a CNAME to the DDNS host. When
+> the IP next rotates, every subdomain keeps working and the apex silently breaks.
+> It should become an ALIAS/CNAME-style record or be refreshed by the same updater
+> that maintains the DDNS entry.
