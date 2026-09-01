@@ -134,9 +134,14 @@ Test CCC has **no monetary value**.
 
 | | |
 |---|---|
-| `AgentSpendVault` | `0x446e7636a5Fa9af46c3718719e465B547248bF62` |
-| `QuantumGuard` #1 | `0x505d59ffFd312983Cc0eD114d7F117B91520d742` |
-| break-glass tx | `0x4b717793287abece001628aa4afc236dbe5af8eac779d6ae6aed60adf9238ccc` |
+| `AgentSpendVault` | `0xE50680e68451A07810205d0258eb567470Bdf994` |
+| `QuantumGuard` | `0x63B76f6080f2CdF0bed1bD3999c5A34955956b3a` |
+
+> **Redeployed 2026-09-01.** The Argos re-genesis replaced the testnet chain, so
+> the earlier addresses no longer exist. Both are source-verified on Argos.
+> This is worth noting as a general hazard: a verified contract stays verified
+> while the chain underneath it can be replaced, and nothing in the catalog's
+> guards catches that.
 
 Observed on-chain, not asserted in a test:
 
@@ -272,3 +277,82 @@ The competitive claim we *will* make is narrower and defensible:
 > **CreditChain is the first chain where an AI agent's spending authority has a
 > post-quantum kill switch — live, measured, and reproducible from an independent
 > reference implementation.**
+
+---
+
+## 9. Post-Argos R&D plan (2026-09-01)
+
+### Where this actually stands
+
+Phase 0 is shipped and now redeployed on Argos. **Nothing about the base layer has
+changed**: transactions are still secp256k1, consensus still BLS12-381, and both
+are still broken by Shor. The break-glass authority is a real capability at the
+layer that could ship without a fork — it is not a claim that the chain is
+quantum resistant, and §8's rules still bind.
+
+### On "QEVM"
+
+**I don't have reliable knowledge of a specific project or standard by that name**,
+and I would rather say so than describe something I might be inventing. If you can
+point me at the project I will assess it properly.
+
+What I can say is what a "quantum-resistant EVM" has to solve, because the shape of
+the problem is fixed regardless of whose implementation it is:
+
+1. **Signature verification.** ML-DSA (FIPS 204) verification is NTT-heavy and
+   impractical in Solidity. It needs a **precompile**, which needs a hard fork.
+   That is Phase 2 below and it is unavoidable in any design.
+2. **Account derivation.** A post-quantum account cannot be `keccak(secp256k1
+   pubkey)`. It needs a new address scheme, which means a new transaction type
+   (EIP-2718) and wallets that understand it. That is Phase 3, and the *ecosystem*
+   work dwarfs the protocol work — every wallet, library, hardware signer and
+   explorer has to follow.
+3. **Backward compatibility.** Existing accounts must keep working, or the chain
+   breaks everyone at once. So it is additive: new tx type alongside the old.
+
+Any credible QEVM-style project is solving those three. If one exists and is
+mature, adopting it beats building our own — this is not a place to be original
+for its own sake. Evaluate it on: does it need a fork (yes, necessarily), does it
+keep existing accounts working, is the precompile audited, and is there wallet
+support beyond the project's own.
+
+### Sequencing against the mainnet release
+
+The instinct to defer all of this until after mainnet is mostly right, with one
+exception and one caveat.
+
+**Before mainnet — because it needs no fork:**
+
+- **Phase 1, XMSS.** A Merkle tree over many WOTS+ keys removes the one-time
+  limit, turning break-glass into a general post-quantum account authority. Still
+  keccak-only, still no consensus change. Buildable on Argos now.
+- **The RPC transport fix.** This is the exception, and it matters:
+  harvest-now-decrypt-later applies to RPC traffic **today**, not in some future
+  where a quantum computer exists. The host runs OpenSSL 3.0.13 and hybrid
+  `X25519MLKEM768` needs 3.5+, so it is an upgrade with a maintenance window, not
+  a config edit. It should not wait for a mainnet that has not launched.
+
+**Plan before mainnet, execute after — because they need a fork:**
+
+- **Phase 2, ML-DSA precompile.** The decision that must be made *before* launch is
+  not the implementation but the **upgrade path**: how CreditChain performs a hard
+  fork at all. Governance, the timelock, validator coordination, an activation
+  epoch. If mainnet launches with no rehearsed fork mechanism, the first fork will
+  be both the first PQ change and the first fork — two hard things at once.
+- **Phase 3, native PQ transactions.** Gated on Phase 2 and on wallet support.
+
+**The caveat:** "after mainnet" should not mean "unfunded and unscheduled". The
+genesis governance structure decides how hard a fork will be, so the PQ roadmap
+should shape the governance design now, even though the code lands later.
+
+### What I would do next, concretely
+
+1. **Redeploy and re-verify** the quantum contracts on Argos — done, §4.
+2. **Build XMSS on Argos** (Phase 1). Self-contained, no fork, removes the
+   one-time constraint that limits WOTS+ to break-glass.
+3. **Schedule the OpenSSL upgrade.** It is the only measured, exploitable-today
+   exposure in §1.
+4. **Rehearse a hard fork on Argos** before mainnet — any trivial parameter change
+   is fine. The point is to exercise the mechanism while nothing is at stake.
+5. **Evaluate QEVM or equivalents** against the three requirements above, once we
+   know which project is meant.
