@@ -11,6 +11,7 @@ package installs and no network access.
     ccq arm      --label mykey ...        print the exact `cast send` to arm on-chain
     ccq sign     --label mykey --digest…  sign a break-glass digest OFFLINE
     ccq verify   --sig … --digest …       verify a signature locally
+    ccq networks                          list networks and their chain ids
 
 WHY A SEPARATE WALLET
 ---------------------
@@ -58,6 +59,22 @@ from wotsplus import keygen, compress, sign as wots_sign, verify as wots_verify,
 HOME = pathlib.Path(os.environ.get("CCQ_HOME", pathlib.Path.home() / ".creditchain" / "quantum"))
 KDF_ITERS = 600_000
 DOMAIN = b"CreditChain-QuantumGuard-WOTSPlus-v1"
+
+# The networks a guardian can be armed on. Chain ids are pinned here so `arm`
+# can emit `cast send --chain <id>`: cast then refuses to broadcast if the RPC
+# it reaches disagrees, which turns "I armed against the wrong endpoint" from a
+# silent, permanent mistake into a failed command. Kept as a static table on
+# purpose -- `arm` performs no network I/O, because this tool has to run on an
+# air-gapped machine.
+NETWORKS = {
+    "devnet":  {"chain_id": 2026042403, "rpc": "https://devnet.creditchain.org",
+                "release": "Argos", "live": True},
+    "testnet": {"chain_id": 2026042404, "rpc": "https://testnet.creditchain.org",
+                "release": "Argos", "live": True},
+    "mainnet": {"chain_id": 2026042405, "rpc": None,
+                "release": "Argos", "live": False},
+}
+DEFAULT_NETWORK = "testnet"
 
 C = {"b": "\033[1m", "d": "\033[2m", "g": "\033[32m", "y": "\033[33m", "r": "\033[31m", "x": "\033[0m"}
 if not sys.stdout.isatty():
@@ -156,16 +173,40 @@ def cmd_address(a):
 
 def cmd_arm(a):
     m = load_meta(a.label)
-    print(f"\n{C['b']}Arm this guardian on-chain:{C['x']}\n")
+    net = NETWORKS[a.network]
+
+    if not net["live"]:
+        die(f"{a.network} is not running yet, so there is nothing to arm against.\n"
+            f"       Its genesis has not been signed -- see docs/quantum/LAUNCH.md.\n"
+            f"       Arm on testnet first and rehearse a break-glass there; the same\n"
+            f"       guardian key works on mainnet once it exists.")
+
+    # --rpc overrides the network's default endpoint (a local node, say) but does
+    # NOT override the chain id: the whole point is that the id is what gets checked.
+    rpc = a.rpc or net["rpc"]
+
+    print(f"\n{C['b']}Arm this guardian on {a.network} ({net['release']} release):{C['x']}\n")
     print(f"cast send {a.guard} \\\n"
           f"  'armGuardian(bytes32,bytes32,address,uint256,uint64)' \\\n"
           f"  {m['pkHash']} \\\n"
           f"  {m['pubSeed']} \\\n"
           f"  {a.recovery} \\\n"
           f"  {a.outflow_limit} {a.window} \\\n"
-          f"  --rpc-url {a.rpc} --private-key $CONTROLLER_KEY\n")
+          f"  --chain {net['chain_id']} \\\n"
+          f"  --rpc-url {rpc} --private-key $CONTROLLER_KEY\n")
+    print(f"{C['d']}--chain {net['chain_id']} makes cast refuse if that RPC is a different "
+          f"network.{C['x']}")
     print(f"{C['d']}Only the commitment goes on-chain. The secret stays here.{C['x']}")
     print(f"{C['y']}The recovery address is permanent — it cannot be changed after arming.{C['x']}")
+
+
+def cmd_networks(a):
+    """List known networks. Offline: prints the static table, queries nothing."""
+    for name, n in NETWORKS.items():
+        state = f"{C['g']}live{C['x']}" if n["live"] else f"{C['y']}not launched{C['x']}"
+        default = f"  {C['d']}(default){C['x']}" if name == DEFAULT_NETWORK else ""
+        print(f"  {C['b']}{name:<8}{C['x']} chain {n['chain_id']}  {n['release']:<6} {state}{default}")
+        print(f"           {C['d']}{n['rpc'] or 'no public endpoint yet'}{C['x']}")
 
 
 def cmd_sign(a):
@@ -245,8 +286,14 @@ def main():
     p.add_argument("--recovery", required=True)
     p.add_argument("--outflow-limit", default="10000000000000000000")
     p.add_argument("--window", default="86400")
-    p.add_argument("--rpc", default="https://testnet.creditchain.org")
+    p.add_argument("--network", choices=sorted(NETWORKS), default=DEFAULT_NETWORK,
+                   help=f"network to arm on (default: {DEFAULT_NETWORK})")
+    p.add_argument("--rpc", default=None,
+                   help="override the endpoint; the chain id is still pinned")
     p.set_defaults(fn=cmd_arm)
+
+    p = sub.add_parser("networks", help="list known networks and chain ids")
+    p.set_defaults(fn=cmd_networks)
 
     p = sub.add_parser("sign", help="sign a break-glass digest (offline)")
     p.add_argument("--label", required=True)
