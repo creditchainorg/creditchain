@@ -356,3 +356,68 @@ should shape the governance design now, even though the code lands later.
    is fine. The point is to exercise the mechanism while nothing is at stake.
 5. **Evaluate QEVM or equivalents** against the three requirements above, once we
    know which project is meant.
+
+---
+
+## 10. RPC transport — solved, proven, awaiting a cutover decision (2026-09-01)
+
+§1 records the only exposure on this chain that is exploitable **today** rather
+than contingent on a machine nobody has built: the public RPC negotiates X25519,
+so traffic captured now can be decrypted later by an adversary who eventually has
+a quantum computer. That is harvest-now-decrypt-later, and it applies to every
+request already made.
+
+### Why the obvious fix does not work
+
+Ubuntu 24.04 ships **OpenSSL 3.0.13** and offers nothing newer; hybrid ML-KEM
+groups need **3.5+**. `apt-cache policy openssl` confirms 3.0.13 is both installed
+and the only candidate. No `ssl_ecdh_curve` setting enables a group the linked
+library does not implement, so nginx on this host cannot do it at all.
+
+### What was proven instead
+
+Go 1.24+ implements `X25519MLKEM768` in its standard TLS stack, so a Go-based
+terminator gets hybrid PQ without touching OpenSSL. Caddy 2.11.4 was installed and
+run **on an isolated port with production untouched**, and tested through an SSH
+tunnel using a client new enough to offer the group:
+
+```
+X25519MLKEM768 -> ACCEPTED, negotiated group: X25519MLKEM768
+```
+
+So the capability is real on this host today. What remains is a deployment
+decision, not a technical unknown.
+
+### The three ways to ship it
+
+**A. Move :443 to Caddy, proxy everything else back to nginx.** The complete fix —
+every endpoint gets hybrid PQ. It is also a change to the single port that serves
+every site on the machine, so it needs a maintenance window and a tested rollback.
+**Recommended, but not something to do unannounced.**
+
+**B. A second endpoint on a non-standard port** (e.g. `argos.creditchain.org:8443`)
+serving PQ TLS alongside the existing one. Near-zero risk. Requires opening a port
+on the Site A router, which is physical-access work, and a non-standard port is
+awkward to publish.
+
+**C. `oqs-provider` on the existing OpenSSL 3.0.** Keeps nginx, but adds an
+out-of-tree crypto provider to the box that terminates all production TLS. More
+moving parts in the most sensitive component; hardest to reason about.
+
+### Recommendation
+
+**A, in a scheduled window, rehearsed on the devnet endpoint first.** Caddy is
+installed and its service is left **disabled** so nothing changed on its own.
+Rehearsal order: point devnet's hostname at Caddy, confirm hybrid PQ and that
+ordinary clients still connect, run it for a day, then move testnet, then the
+rest. Anything that only speaks TLS 1.2 must keep working — hybrid PQ is additive,
+and a fix that quietly drops older clients is a worse outage than the risk it
+closes.
+
+### State right now
+
+- Caddy **2.11.4 installed**, service **disabled**, nothing bound.
+- Production nginx **untouched and active**; all endpoints verified healthy after
+  the test.
+- The exposure in §1 is **unchanged until a cutover happens**. Proving the fix is
+  not the same as shipping it, and this section should not be read as if it were.
