@@ -29,7 +29,7 @@ All 60 validators run on five hosts under one operator:
 
 | Host | Validators | Share |
 |---|---|---|
-| <site-host>, <site-host>, <site-host>, <site-host>, <site-host> | 12 each | 20% each |
+| hostA3, hostA2, hostA1, hostB1, hostB2 | 12 each | 20% each |
 
 No node holds ≥1/3, which is a real property — it means no *single machine* can
 halt finality. But every machine has the same operator, so **one person can stop

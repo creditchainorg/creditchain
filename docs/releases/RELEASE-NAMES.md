@@ -86,11 +86,11 @@ So an integration pinned to `argos.creditchain.org` keeps pointing at Argos when
 Knossos arrives; one pinned to `testnet.creditchain.org` follows the latest. Both
 are legitimate — the point is that the choice is explicit rather than accidental.
 
-DNS lives in **AWS Route53**, zone `ZQ6USMH7HOKGS`. Records CNAME to
-`<site-dyndns-name>` rather than an IP, because the host's address rotates.
+DNS lives in **AWS Route53**, zone `<route53-zone-id>`. Records CNAME to
+`siteA-edge.example` rather than an IP, because the host's address rotates.
 
 > **Known fragility:** the apex `creditchain.org` is an **A record pinned to
-> <site-host>'s current IP**, while every other name is a CNAME to the DDNS host. When
+> hostA1's current IP**, while every other name is a CNAME to the DDNS host. When
 > the IP next rotates, every subdomain keeps working and the apex silently breaks.
 > It should become an ALIAS/CNAME-style record or be refreshed by the same updater
 > that maintains the DDNS entry.
