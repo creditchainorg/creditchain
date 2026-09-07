@@ -230,17 +230,42 @@ evaluation rather than arriving as a side effect of a version bump.**
 - [x] All 41 conflicts resolved; no conflict markers remain in tracked files
 - [x] CreditChain chain specs, genesis wiring, contracts, deploy tree intact
 - [x] Branding re-applied (0 remaining `reth::cli` targets or `paradigmxyz/reth` URLs)
+- [x] Every EL flag used by `deploy/` still exists in the merged CLI
 - [x] `.github` workflow YAML parses
-- [ ] `cargo check --workspace --all-targets` — **see below**
+- [x] Resolution self-reviewed: diffing each resolved file against pure `v2.5.2`
+      shows only intentional branding deltas, no stray logic changes
+- [x] **`cargo +stable check --workspace --all-targets --exclude cc-cli` — 0 errors** (5m51s)
+- [x] **`cargo +stable check -p cc-cli --all-targets` without `jit` — 0 errors**
+- [ ] `cc-cli` *with* `jit` — blocked on LLVM 22 (see build requirements above)
 - [ ] `cargo +nightly fmt --all --check`
 - [ ] `cargo clippy --workspace --all-features`
-- [ ] `make update-book-cli` (CLI reference pages need regenerating — the `book`
-      CI job enforces this and will fail until they are)
+- [ ] `cargo deny check` (we dropped two RUSTSEC ignores; confirm they are truly resolved)
+- [ ] `make update-book-cli` — the `book` CI job regenerates the CLI reference
+      pages and runs `git diff --exit-code`; it will fail until they are committed
 - [ ] Testnet soak on a non-validating node before any validator takes this build
 
-**The workspace has not yet been proven to compile.** The declared MSRV is 1.95
-and the machine's default toolchain is 1.92, so builds must use `cargo +stable`
-(1.97.1). Nothing below the compile gate should be treated as done.
+### One real defect the compile caught
+
+`bin/reth/tests/it/main.rs` auto-merged cleanly and was still wrong. CreditChain
+had renamed the test helper `reth_ok` → `creditchaind_ok`; upstream added a new
+`--force` download test that calls `reth_ok`. Git combined our renamed definition
+with upstream's new call site and reported no conflict, because neither side
+touched the same lines.
+
+This is the failure mode a rename-based fork produces, and it is invisible to
+`git status`, to the conflict list, and to any review that reads only the
+conflicted files. Only the compiler found it. Nothing below the compile gate
+should be treated as verified.
+
+The build with all default features minus `jit` is the configuration that has
+actually been proven here, and it is the one to ship until LLVM 22 is a
+deliberate decision:
+
+```bash
+cargo +stable build --release -p cc-cli --no-default-features \
+  --features "jemalloc,otlp,otlp-logs,reth-revm/portable,js-tracer,\
+keccak-cache-global,asm-keccak,gmp,min-trace-logs"
+```
 
 ## Not merged
 

@@ -210,7 +210,7 @@ fn download_force_removes_only_snapshot_paths() {
 
     let datadir_arg = datadir.to_str().expect("datadir should be utf8");
     let archive_url = format!("file://{}", archive_path.display());
-    reth_ok(&["download", "--datadir", datadir_arg, "--url", &archive_url, "--force"]);
+    creditchaind_ok(&["download", "--datadir", datadir_arg, "--url", &archive_url, "--force"]);
 
     assert_eq!(
         fs::read(datadir.join("db/new.snapshot")).expect("missing extracted snapshot file"),
