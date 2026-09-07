@@ -190,7 +190,7 @@ pub struct TraceArgs {
     /// of spans and events sent to the OTLP endpoint. It follows the same
     /// syntax as the `RUST_LOG` environment variable.
     ///
-    /// Example: --tracing-otlp.filter=info,reth=debug,hyper_util=off
+    /// Example: --tracing-otlp.filter=info,creditchaind=debug,hyper_util=off
     ///
     /// Defaults to TRACE if not specified.
     #[arg(
@@ -206,7 +206,7 @@ pub struct TraceArgs {
     /// of logs sent to the OTLP endpoint. It follows the same syntax as the
     /// `RUST_LOG` environment variable.
     ///
-    /// Example: --logs-otlp.filter=info,reth=debug
+    /// Example: --logs-otlp.filter=info,creditchaind=debug
     ///
     /// Defaults to INFO if not specified.
     #[arg(
