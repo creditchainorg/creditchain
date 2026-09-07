@@ -119,6 +119,12 @@ where
         self.notifications.set_with_head(head);
     }
 
+    /// As [`set_notifications_with_head`](Self::set_notifications_with_head), but backfills up to
+    /// the node's current canonical head rather than the head captured at launch.
+    pub fn catch_up_notifications_with_head(&mut self, head: ExExHead) -> eyre::Result<()> {
+        self.notifications.catch_up_with_head(head)
+    }
+
     /// Sends an [`ExExEvent::FinishedHeight`] to the ExEx task manager letting it know that this
     /// ExEx has processed the corresponding block.
     ///
@@ -138,7 +144,7 @@ mod tests {
     use reth_node_api::FullNodeComponents;
     use reth_provider::BlockReader;
 
-    /// <https://github.com/openibank/creditchain/issues/12054>
+    /// <https://github.com/paradigmxyz/reth/issues/12054>
     #[test]
     const fn issue_12054() {
         #[expect(dead_code)]

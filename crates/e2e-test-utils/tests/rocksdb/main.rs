@@ -91,6 +91,7 @@ const fn test_attributes_generator(timestamp: u64) -> PayloadAttributes {
         withdrawals: Some(vec![]),
         parent_beacon_block_root: Some(B256::ZERO),
         slot_number: None,
+        target_gas_limit: None,
     }
 }
 
@@ -189,7 +190,9 @@ async fn test_rocksdb_transaction_queries() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -256,7 +259,9 @@ async fn test_rocksdb_multi_tx_same_block() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -324,7 +329,9 @@ async fn test_rocksdb_txs_across_blocks() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -409,7 +416,9 @@ async fn test_rocksdb_pending_tx_not_in_storage() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -473,7 +482,9 @@ async fn test_rocksdb_reorg_unwind() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -596,7 +607,9 @@ async fn test_rocksdb_historical_account_queries() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .build()
     .await?;
 
@@ -714,7 +727,7 @@ async fn test_rocksdb_historical_account_queries() -> Result<()> {
 }
 
 /// Reproduces the race condition between `save_blocks` and `RocksDB` pruning described in
-/// <https://github.com/openibank/creditchain/pull/23081>.
+/// <https://github.com/paradigmxyz/reth/pull/23081>.
 ///
 /// Both `save_blocks` and the pruner push to `pending_rocksdb_batches` before a single
 /// `commit()`. The pruner reads committed (stale) state that doesn't include `save_blocks`'
@@ -743,7 +756,9 @@ async fn test_rocksdb_account_history_pruning() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .with_node_config_modifier(|mut config| {
         config.pruning.account_history_distance = Some(PRUNE_DISTANCE);
         config.pruning.minimum_distance = Some(PRUNE_DISTANCE);
@@ -840,7 +855,9 @@ async fn test_rocksdb_storage_history_pruning() -> Result<()> {
         test_attributes_generator,
     )
     .with_storage_v2()
-    .with_tree_config_modifier(|config| config.with_persistence_threshold(0))
+    .with_tree_config_modifier(|config| {
+        config.with_persistence_threshold(0).with_memory_block_buffer_target(0)
+    })
     .with_node_config_modifier(|mut config| {
         config.pruning.storage_history_distance = Some(PRUNE_DISTANCE);
         config.pruning.minimum_distance = Some(PRUNE_DISTANCE);

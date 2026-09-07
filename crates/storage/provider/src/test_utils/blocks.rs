@@ -13,8 +13,7 @@ use reth_ethereum_primitives::{BlockBody, Receipt, Transaction, TransactionSigne
 use reth_node_types::NodeTypes;
 use reth_primitives_traits::{Account, RecoveredBlock, SealedBlock, SealedHeader};
 use reth_trie::root::{state_root_unhashed, storage_root_unhashed};
-use revm_database::BundleState;
-use revm_state::AccountInfo;
+use revm::{database::BundleState, state::AccountInfo};
 use std::{str::FromStr, sync::LazyLock};
 
 /// Assert genesis block
@@ -45,7 +44,7 @@ pub fn assert_genesis_block<DB: Database, N: NodeTypes>(
     assert_eq!(tx.table::<tables::PlainStorageState>().unwrap(), vec![]);
     assert_eq!(tx.table::<tables::AccountsHistory>().unwrap(), vec![]);
     assert_eq!(tx.table::<tables::StoragesHistory>().unwrap(), vec![]);
-    // Reorged bytecodes are not reverted per https://github.com/openibank/creditchain/issues/1588
+    // Reorged bytecodes are not reverted per https://github.com/paradigmxyz/reth/issues/1588
     // assert_eq!(tx.table::<tables::Bytecodes>().unwrap(), vec![]);
     assert_eq!(tx.table::<tables::AccountChangeSets>().unwrap(), vec![]);
     assert_eq!(tx.table::<tables::StorageChangeSets>().unwrap(), vec![]);

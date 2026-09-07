@@ -8,6 +8,7 @@
 !/genesis/**
 !/pkg
 !/testing
+!/.github/scripts/install_llvm_ubuntu.sh
 !book.toml
 !Cargo.lock
 !Cargo.toml
@@ -24,6 +25,8 @@
 
 # include licenses
 !LICENSE-*
+!/LICENSES
+!/LICENSES/**
 
 # include example files
 !/examples

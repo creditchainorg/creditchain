@@ -132,9 +132,11 @@ build-deb-%:
 # Create a `.tar.gz` containing a binary for a specific target.
 define tarball_release_binary
 	cp $(CARGO_TARGET_DIR)/$(1)/$(PROFILE)/$(2) $(BIN_DIR)/$(2)
+	cp -R LICENSES $(BIN_DIR)/LICENSES
+	cp README.md $(BIN_DIR)/README.md
 	cd $(BIN_DIR) && \
-		tar -czf creditchaind-$(GIT_TAG)-$(1)$(3).tar.gz $(2) && \
-		rm $(2)
+		tar -czf creditchaind-$(GIT_TAG)-$(1)$(3).tar.gz $(2) LICENSES README.md && \
+		rm -r $(2) LICENSES README.md
 endef
 
 # The current git tag will be used as the version in the output file names. You
@@ -191,18 +193,6 @@ $(EEST_TESTS_DIR):
 .PHONY: ef-tests
 ef-tests: $(EF_TESTS_DIR) $(EEST_TESTS_DIR) ## Runs Legacy and EEST tests.
 	cargo nextest run --no-fail-fast -p ef-tests --release --features ef-tests
-
-##@ reth-bench
-
-.PHONY: reth-bench
-reth-bench: ## Build the reth-bench binary into the `target` directory.
-	cargo build --manifest-path bin/reth-bench/Cargo.toml --features "$(FEATURES)" --profile "$(PROFILE)"
-
-.PHONY: install-reth-bench
-install-reth-bench: ## Build and install the reth-bench binary under `$(CARGO_HOME)/bin`.
-	cargo install --path bin/reth-bench --bin reth-bench --force --locked \
-		--features "$(FEATURES)" \
-		--profile "$(PROFILE)"
 
 ##@ Other
 

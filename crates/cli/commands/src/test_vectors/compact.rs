@@ -114,7 +114,7 @@ compact_types!(
         StaticFileBlockWithdrawals,
         // Manual implementations
         TransactionSigned,
-        // Bytecode, // todo revm arbitrary
+        // Bytecode, // todo bytecode arbitrary
         StorageEntry,
         // MerkleCheckpoint, // todo storedsubnode -> branchnodecompact arbitrary
         AccountBeforeTx,
@@ -280,7 +280,7 @@ where
 
 /// Returns the type name for the given type.
 pub fn type_name<T>() -> String {
-    // With alloy type transition <https://github.com/openibank/creditchain/pull/15768> the types are renamed, we map them here to the original name so that test vector files remain consistent
+    // With alloy type transition <https://github.com/paradigmxyz/reth/pull/15768> the types are renamed, we map them here to the original name so that test vector files remain consistent
     let name = std::any::type_name::<T>();
     match name {
         "alloy_consensus::transaction::envelope::EthereumTypedTransaction<alloy_consensus::transaction::eip4844::TxEip4844>" => "Transaction".to_string(),

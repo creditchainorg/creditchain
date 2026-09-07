@@ -9,7 +9,7 @@ use reth_db::init_db;
 use reth_node_builder::NodeBuilder;
 use reth_node_core::{
     args::{
-        DatabaseArgs, DatadirArgs, DebugArgs, DevArgs, EngineArgs, EraArgs, MetricArgs,
+        DatabaseArgs, DatadirArgs, DebugArgs, DevArgs, EngineArgs, EraArgs, JitArgs, MetricArgs,
         NetworkArgs, PayloadBuilderArgs, PruningArgs, RpcServerArgs, StaticFilesArgs, StorageArgs,
         TxPoolArgs,
     },
@@ -119,6 +119,10 @@ pub struct NodeCommand<C: ChainSpecParser, Ext: clap::Args + fmt::Debug = NoArgs
     #[command(flatten, next_help_heading = "Storage")]
     pub storage: StorageArgs,
 
+    /// All JIT related arguments with --jit prefix
+    #[command(flatten, next_help_heading = "JIT")]
+    pub jit: JitArgs,
+
     /// Additional cli arguments
     #[command(flatten, next_help_heading = "Extension")]
     pub ext: Ext,
@@ -175,6 +179,7 @@ where
             era,
             static_files,
             storage,
+            jit,
             ext,
         } = self;
 
@@ -199,13 +204,15 @@ where
             era,
             static_files,
             storage,
+            jit,
         };
 
         let data_dir = node_config.datadir();
         let db_path = data_dir.db();
 
         tracing::info!(target: "creditchaind::cli", path = ?db_path, "Opening database");
-        let database = init_db(db_path.clone(), self.db.database_args())?.with_metrics();
+        let database = init_db(db_path.clone(), self.db.database_args())?
+            .with_metrics_if(self.db.metrics_enabled());
 
         if with_unused_ports {
             node_config = node_config.with_unused_ports();
@@ -223,6 +230,31 @@ impl<C: ChainSpecParser, Ext: clap::Args + fmt::Debug> NodeCommand<C, Ext> {
     /// Returns the underlying chain being used to run this command
     pub fn chain_spec(&self) -> Option<&Arc<C::ChainSpec>> {
         Some(&self.chain)
+    }
+}
+
+impl<C, Ext> NodeCommand<C, Ext>
+where
+    C: ChainSpecParser,
+    C::ChainSpec: EthChainSpec,
+    Ext: clap::Args + fmt::Debug,
+{
+    /// Loads (or generates) the p2p secret key from the datadir of the configured chain.
+    ///
+    /// This resolves the datadir for the configured chain and reads the secret key from its
+    /// default location, without starting the network.
+    pub fn p2p_secret_key(&self) -> eyre::Result<secp256k1::SecretKey> {
+        let data_dir = self.datadir.clone().resolve_datadir(self.chain.chain());
+        Ok(self.network.secret_key(data_dir.p2p_secret())?)
+    }
+
+    /// Derives the peer id from the configured p2p secret key without starting the network.
+    ///
+    /// Loads the p2p secret key via [`p2p_secret_key`](Self::p2p_secret_key) and returns the
+    /// corresponding [`PeerId`](reth_network_peers::PeerId).
+    pub fn peer_id(&self) -> eyre::Result<reth_network_peers::PeerId> {
+        let sk = self.p2p_secret_key()?;
+        Ok(reth_network_peers::pk2id(&sk.public_key(secp256k1::SECP256K1)))
     }
 }
 
@@ -252,10 +284,8 @@ mod tests {
     fn parse_common_node_command_chain_args() {
         for chain in SUPPORTED_CHAINS {
             let args: NodeCommand<EthereumChainSpecParser> =
-                NodeCommand::parse_from(["creditchaind", "--chain", chain]);
-            let expected =
-                <EthereumChainSpecParser as ChainSpecParser>::parse(chain).unwrap().chain;
-            assert_eq!(args.chain.chain, expected, "failed to parse chain {chain}");
+                NodeCommand::parse_from(["reth", "--chain", chain]);
+            assert_eq!(args.chain.chain, chain.parse::<reth_chainspec::Chain>().unwrap());
         }
     }
 
@@ -322,24 +352,20 @@ mod tests {
 
     #[test]
     fn parse_config_path() {
-        let cmd: NodeCommand<EthereumChainSpecParser> = NodeCommand::try_parse_args_from([
-            "creditchaind",
-            "--config",
-            "my/path/to/creditchain.toml",
-        ])
-        .unwrap();
-        // always store creditchain.toml in the data dir, not the chain specific data dir
+        let cmd: NodeCommand<EthereumChainSpecParser> =
+            NodeCommand::try_parse_args_from(["reth", "--config", "my/path/to/reth.toml"]).unwrap();
+        // always store reth.toml in the data dir, not the chain specific data dir
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
         let config_path = cmd.config.unwrap_or_else(|| data_dir.config());
-        assert_eq!(config_path, Path::new("my/path/to/creditchain.toml"));
+        assert_eq!(config_path, Path::new("my/path/to/reth.toml"));
 
         let cmd: NodeCommand<EthereumChainSpecParser> =
-            NodeCommand::try_parse_args_from(["creditchaind"]).unwrap();
+            NodeCommand::try_parse_args_from(["reth"]).unwrap();
 
-        // always store creditchain.toml in the data dir, not the chain specific data dir
+        // always store reth.toml in the data dir, not the chain specific data dir
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
         let config_path = cmd.config.clone().unwrap_or_else(|| data_dir.config());
-        let end = format!("{}/creditchain.toml", SUPPORTED_CHAINS[0]);
+        let end = format!("{}/reth.toml", SUPPORTED_CHAINS[0]);
         assert!(config_path.ends_with(end), "{:?}", cmd.config);
     }
 
@@ -350,7 +376,7 @@ mod tests {
         let data_dir = cmd.datadir.resolve_datadir(cmd.chain.chain);
 
         let db_path = data_dir.db();
-        let end = format!("creditchain/{}/db", SUPPORTED_CHAINS[0]);
+        let end = format!("reth/{}/db", SUPPORTED_CHAINS[0]);
         assert!(db_path.ends_with(end), "{:?}", cmd.config);
 
         let cmd: NodeCommand<EthereumChainSpecParser> =
@@ -431,6 +457,6 @@ mod tests {
         assert_eq!(cmd.network.discovery.port, 0);
 
         // make sure the ipc path is not the default
-        assert_ne!(cmd.rpc.ipcpath, String::from("/tmp/creditchaind.ipc"));
+        assert_ne!(cmd.rpc.ipcpath, String::from("/tmp/reth.ipc"));
     }
 }

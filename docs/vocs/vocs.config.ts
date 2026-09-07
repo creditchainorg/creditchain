@@ -1,5 +1,4 @@
-import React from 'react'
-import { defineConfig } from 'vocs'
+import { defineConfig } from 'vocs/config'
 import { sidebar } from './sidebar'
 import { basePath } from './redirects.config'
 
@@ -9,6 +8,10 @@ export default defineConfig({
   logoUrl: '/logo.png',
   iconUrl: '/logo.png',
   ogImageUrl: '/logo.png',
+  accentColor: 'light-dark(#1f1f1f, #ffffff)',
+  srcDir: 'docs',
+  outDir: 'docs/dist',
+  renderStrategy: 'full-static',
   sidebar,
   basePath,
   search: {
@@ -22,7 +25,7 @@ export default defineConfig({
     },
     { text: 'GitHub', link: 'https://github.com/openibank/creditchain' },
     {
-      text: 'v2.1.0',
+      text: 'v2.5.2',
       items: [
         {
           text: 'Releases',
