@@ -264,6 +264,44 @@ explicitly or it is silently dropped.
       pages and runs `git diff --exit-code`; it will fail until they are committed
 - [ ] Testnet soak on a non-validating node before any validator takes this build
 
+### Runtime verification (2026-09-07)
+
+Static checks cannot see a state-root divergence, and this merge rewrote the
+sparse trie into an arena representation. So the merged binary was run.
+
+**It produces blocks, and it does so through the rewritten trie:**
+
+```
+INFO engine::tree::payload_validator: State root job finished
+     strategy="sparse-trie" state_root=0xf09d8f7d… elapsed=5.125µs
+INFO reth_node_events::node: Canonical chain committed number=19 …
+```
+
+**It executes the full application workload.** `AgentClearing` and
+`AgentSpendVault` were deployed to a node running this binary and driven through
+the complete lifecycle at 5,000 payments:
+
+| Step | Result |
+|---|---|
+| EIP-712 digest, offline vs on-chain | identical |
+| Deposit, channel open | ok |
+| 5,000 off-chain payments | 25.9 s, 0 transactions, 0 gas |
+| Redemption of the whole run | one transaction, 93,303 gas |
+| Two channels netted | one transaction, 102,322 gas |
+| Close window enforced | `closeChannel` reverted inside the hour |
+| Withdraw and solvency | held ≥ owed at every step |
+
+Sustained multi-agent load (`demo/agent_load.sh`) then ran the same shape of
+traffic across independent agents paying each other round-robin, asserting each
+payee was credited exactly its voucher total and checking contract solvency
+across the whole population.
+
+**Still not proven by any of this:** that the binary agrees with the *existing*
+Argos chain. Joining it requires the generator's genesis, and
+`genesis/testnet.json` produces a different chain (see below) — so a
+sync-from-network soak needs the authoritative genesis file first. That remains
+the last gate before a validator takes this build.
+
 ### One real defect the compile caught
 
 `bin/reth/tests/it/main.rs` auto-merged cleanly and was still wrong. CreditChain
