@@ -130,11 +130,28 @@ or verification TXT records — which is most domains — and truncated any ENR 
 entry over 255 bytes. This matters because CreditChain's node discovery is
 DNS-based.
 
-**`deny.toml` — took upstream's advisory list.** Ours still ignored
-`RUSTSEC-2026-0002` (lru) and `RUSTSEC-2026-0097` (rand unsoundness); upstream
-has since resolved both by dependency upgrade and dropped the ignores. Keeping
-ours would have suppressed advisories that no longer need suppressing.
-`cargo deny` should be re-run to confirm.
+**`deny.toml` — took upstream's advisory list, and it checks out.** Ours ignored
+`RUSTSEC-2026-0002` (lru) and `RUSTSEC-2026-0097` (rand unsoundness); upstream's
+list drops both and adds `RUSTSEC-2026-0247` (bitmaps, via imbl).
+
+Verified against the RustSec database rather than assumed, because the merged
+lockfile still contains `lru 0.16.4` (pulled by `alloy-provider 2.3.0` — our old
+comment blamed discv5 and was already stale) and moved `rand` 0.10.2 → 0.10.1:
+
+| Advisory | Patched versions | Ours | Affected? |
+|---|---|---|---|
+| RUSTSEC-2026-0002 (lru) | `>= 0.16.3` | 0.16.4, 0.18.0 | no |
+| RUSTSEC-2026-0097 (rand) | `>= 0.10.1`, `>= 0.9.3`, `>= 0.8.6` | 0.8.6, 0.9.4, 0.10.1 | no |
+
+Both dropped ignores were genuinely unnecessary — `0.16.4` was already past the
+lru fix, and every `rand` in the tree sits on a patched line. The old entries
+were suppressing advisories that no longer applied.
+
+`cargo deny check advisories` itself **cannot run on this workspace**:
+cargo-deny 0.20.2 panics inside `krates` with `unable to locate
+serde-bincode-compat for alloy-genesis@2.3.0`. That is a tooling bug against this
+dependency graph, not a finding. The table above is the manual substitute and
+should be replaced by a real run once cargo-deny handles the graph.
 
 **`crates/node/core/src/args/trace.rs`** — upstream replaced hard-coded trace
 defaults with a configurable `DefaultTraceValues`. Took the feature; changed the
@@ -185,45 +202,48 @@ validator runs this build:
 
 ## New build requirement: LLVM
 
-**This sync adds a hard dependency on LLVM to build the node binary.**
+`v2.5.2` introduces `revmc` — an EVM JIT — and puts the `jit` feature in the
+**default** feature set of the `creditchaind` binary (package `cc-cli`).
+`revmc-llvm` shells out to `llvm-config`, and `llvm-sys-221` requires **LLVM 22**.
+Pre-merge `Cargo.lock` had **0** revmc entries; `v2.5.2` has **37**.
 
-`v2.5.2` introduces `revmc` — an EVM JIT compiler — and puts the `jit` feature in
-the **default** feature set of the `creditchaind` binary
-(`bin/reth/Cargo.toml`, package `cc-cli`). `revmc-llvm`'s build script shells out
-to `llvm-config`, so the build now fails without LLVM present:
+**Upstream shipped the build-environment change along with the feature, and the
+merge brought it with them.** `.github/scripts/install_llvm.sh` (default version
+22, with `ubuntu` and `macos` paths) arrived in `feat: integrate revmc JIT
+(#23230)`, is invoked by the `book`, `compact`, `check-alloy` and bench
+workflows, and all three Dockerfiles install it. So CI and container builds
+handle this on their own.
 
+What is *not* handled is a developer machine, which needs a one-off:
+
+```bash
+.github/scripts/install_llvm.sh macos     # or: ubuntu
 ```
-error: failed to run custom build command for `revmc-llvm v0.1.0`
-  failed to run llvm-config: No such file or directory (os error 2)
-  failed to run llvm-config-22: No such file or directory (os error 2)
-  no llvm-config found
+
+**The `jit` feature gates EVM internals only** (`crates/ethereum/evm/src/lib.rs`,
+`factory.rs`) — it adds no CLI arguments. A binary built without it produces
+byte-identical CLI reference documentation, so `make update-book-cli` can be run
+from a no-jit build without diverging from what CI generates.
+
+### Should the JIT be enabled?
+
+The build environment is a solved problem, so this reduces to a real engineering
+question rather than a blocker: **a JIT compiles consensus-critical code paths at
+runtime.** It arrived here as a default-feature flip inside a version bump, not
+as a deliberate adoption. It deserves its own soak on a non-validating testnet
+node, with execution results compared against an interpreter build, before a
+validator runs it.
+
+Until that soak happens, the conservative build is every default except `jit`:
+
+```bash
+cargo +stable build --release -p cc-cli --no-default-features \
+  --features "jemalloc,otlp,otlp-logs,reth-revm/portable,js-tracer,\
+keccak-cache-global,asm-keccak,gmp,min-trace-logs"
 ```
 
-Pre-merge `Cargo.lock` contained **0** revmc entries; `v2.5.2` contains **37**.
-The build script probes `llvm-config` then `llvm-config-22`, so it wants LLVM 22.
-
-This affects every build surface and must be handled before this branch is used
-to produce a node binary:
-
-- **Docker images** (`Dockerfile`, `Dockerfile.reproducible`) need LLVM installed
-- **CI** needs LLVM installed
-- **Developer machines** need LLVM
-
-Two options, and the choice is a real one:
-
-1. **Install LLVM 22 and keep the JIT.** It is a genuine performance feature and
-   upstream made it default deliberately. Costs a heavier build environment.
-2. **Build with `--no-default-features` and re-add every default except `jit`.**
-   Keeps the toolchain light; forgoes the JIT. The other defaults
-   (`jemalloc`, `otlp`, `otlp-logs`, `reth-revm/portable`, `js-tracer`,
-   `keccak-cache-global`, `asm-keccak`, `gmp`, `min-trace-logs`) must be listed
-   explicitly or they are silently lost.
-
-Option 2 is the conservative choice for a chain approaching mainnet: it changes
-nothing about execution semantics, and the JIT can be adopted separately once
-the build environment is deliberately upgraded and the JIT is soak-tested. **A
-JIT compiles consensus-critical code paths at runtime; it deserves its own
-evaluation rather than arriving as a side effect of a version bump.**
+Note the `--no-default-features` form means every other default must be listed
+explicitly or it is silently dropped.
 
 ## Verification status
 
