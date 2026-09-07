@@ -42,9 +42,6 @@
     },
     "0xb14b6BA8D8DbF2D32149b613701B9e30100b6D4b": {
       "balance": "0xd3c21bcecceda1000000"
-    },
-    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
-      "balance": "0x3635c9adc5dea00000"
     }
   },
   "baseFeePerGas": "0x3b9aca00",
