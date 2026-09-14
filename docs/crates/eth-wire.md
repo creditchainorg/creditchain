@@ -221,7 +221,7 @@ pub(crate) enum PingState {
 
 State transitions are then implemented like a future, with the `poll_ping` function advancing the state of the pinger.
 
-[File: crates/net/eth-wire/src/pinger.rs](https://github.com/openibank/creditchain/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/pinger.rs)
+[File: crates/net/eth-wire/src/pinger.rs](https://github.com/paradigmxyz/reth/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/eth-wire/src/pinger.rs)
 ```rust, ignore
 pub(crate) fn poll_ping(
     &mut self,

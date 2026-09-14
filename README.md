@@ -5,7 +5,7 @@ AI-native financial infrastructure. The primary node binary is `creditchaind`.
 
 - Official website: https://www.creditchain.org
 - Documentation: https://docs.creditchain.org
-- Canonical repository: https://github.com/openibank/creditchain
+- Canonical repository: https://github.com/creditchainorg/creditchain
 - Copyright: CreditChain Research Team
 
 ## Status

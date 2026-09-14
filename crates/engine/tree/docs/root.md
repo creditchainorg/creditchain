@@ -27,16 +27,16 @@ It all starts with the `engine_newPayload` request coming from the [Consensus Cl
 
 We extract the block from the payload, and eventually pass it to the `EngineApiTreeHandler::insert_block_inner`
 method that executes the block and calculates the state root. 
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2359-L2362
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2359-L2362
 
 Let's walk through the steps involved in the process.
 
 First, we spawn the [State Root Task](#state-root-task) thread, which will receive the updates from
-execution and calculate the state root. https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2449-L2458
+execution and calculate the state root. https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2449-L2458
 
 Then, we do two things with the block:
 1. Start prewarming each transaction in a separate thread ("Prewarming thread" on the above diagram).
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2490-L2507
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2490-L2507
     - Each transaction is optimistically executed in parallel with each other on top of the previous block,
     but the results are not committed to the database.
     - All accounts and storage slots that were accessed are cached in memory, so that the actual execution
@@ -47,7 +47,7 @@ https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a092
     It doesn't matter, because we only care about optimistically prewarming the accounts and storage slots
     that are accessed, and transactions will be executed in the correct order later anyway.
 2. Execute transactions sequentially.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2523
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/mod.rs#L2523
     - Transactions are executed one after another. Accounts and storage slots accessed during the execution
     are looked up in the cache from the previous prewarming step. 
     - All modified accounts and storage slots are sent as `StateRootMessage::StateUpdate`
@@ -68,10 +68,10 @@ updating the sparse trie using the [Sparse Trie Task](#sparse-trie-task),
 and finally sending the state root back to the [Engine](#engine).
 
 At its core, it's a state machine that receives messages from other components, and handles them accordingly.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L726
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L726
 
 When the State Root Task is spawned, it also spawns the [Sparse Trie Task](#sparse-trie-task) in a separate thread.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L542-L544
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L542-L544
 
 ### Generating proof targets
 
@@ -87,11 +87,11 @@ and first used to form the proofs targets.
 
 Proof targets are a list of accounts and storage slots that we send to
 the [MultiProof Manager](#multiproof-manager) to generate the MPT proofs.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/trie/common/src/proofs.rs#L20-L21
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/trie/common/src/proofs.rs#L20-L21
 
 Before sending them, we first deduplicate the list of targets according to a list of proof targets
 that were already fetched.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1022-L1028 
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1022-L1028 
 
 This deduplication step is important, because if two transactions modify the same account or storage slot,
 we only need to fetch the MPT proof once.
@@ -115,7 +115,7 @@ of proof targets, and also some non-determinism in the database caching.
 The issue with this is that we need to ensure that the proofs are sent
 to the [Sparse Trie Task](#sparse-trie-task) in the order that they were requested. Because of this,
 we introduced a `ProofSequencer` that we add new proofs to.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L666-L672
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L666-L672
 
 `ProofSequencer` acts in the following way:
 1. Each proof has an associated "sequence number" that determines the original order of state updates.
@@ -138,7 +138,7 @@ the following conditions:
 3. Are all proofs that were sent to the [`MultiProofManager::spawn_or_queue`](#multiproof-manager) finished
 calculating and were sent to the [Sparse Trie Task](#sparse-trie-task)?
 
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L935-L944
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L935-L944
 
 When all conditions are met, we close the [State Root Task](#state-root-task) receiver channel,
 signaling that no proofs or state updates are coming anymore, and the state root calculation should be finished.
@@ -154,14 +154,14 @@ and sending them back to the [State Root Task](#state-root-task).
 ### Spawning new proof calculations
 
 The entrypoint is the `spawn_or_queue` method
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L355-L357
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L355-L357
 
 It has the following responsibilities:
 1. On empty proof targets, immediately send `StateRootMessage::EmptyProof` to the [State Root Task](#state-root-task).
 2. If the number of maximum concurrent proof calculations is reached, push the proof request to the pending queue.
     - Maximum concurrency is determined as `NUM_THREADS / 2 - 2`.
     - For a system with 64 threads, the maximum number of concurrent proof calculations will be `64 / 2 - 2 = 30`.
-3. If we can spawn a new proof calculation thread, spawn it using [`ParallelProof`](https://github.com/openibank/creditchain/blob/09a6aab9f7dc283e42fd00ce8f179542f8558580/crates/trie/parallel/src/proof.rs#L85),
+3. If we can spawn a new proof calculation thread, spawn it using [`ParallelProof`](https://github.com/paradigmxyz/reth/blob/09a6aab9f7dc283e42fd00ce8f179542f8558580/crates/trie/parallel/src/proof.rs#L85),
 and send `StateRootMessage::ProofCalculated` to the [State Root Task](#state-root-task) once it's done.
 
 ### Exhausting the pending queue
@@ -169,7 +169,7 @@ and send `StateRootMessage::ProofCalculated` to the [State Root Task](#state-roo
 To exhaust the pending queue from step 2 of the `spawn_or_queue` described above,
 the [State Root Task](#state-root-task) calls into another method `on_calculation_complete` every time
 a proof is calculated.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L379-L387
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L379-L387
 
 Its main purpose is to spawn a new proof calculation thread and do the same as step 3 of the `spawn_or_queue` method
 described above.
@@ -209,7 +209,7 @@ along with the other nodes that need to be modified in the process of leaf updat
     - Child of the branch node at path `0x0001` under the nibble `0` is revealed, and it's a leaf node placed on the path `0x00010`.
 
 
-For the implementation details, see [crates/trie/sparse/src/trie.rs](https://github.com/openibank/creditchain/blob/09a6aab9f7dc283e42fd00ce8f179542f8558580/crates/trie/sparse/src/trie.rs).
+For the implementation details, see [crates/trie/sparse/src/trie.rs](https://github.com/paradigmxyz/reth/blob/09a6aab9f7dc283e42fd00ce8f179542f8558580/crates/trie/sparse/src/trie.rs).
 
 ### Sparse Trie updates
 
@@ -217,21 +217,21 @@ For the implementation details, see [crates/trie/sparse/src/trie.rs](https://git
 
 The messages to the sparse trie are sent from the [State Root Task](#state-root-task),
 and consist of the proof that needs to be revealed, and a list of updates that need to be applied.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L66-L74
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L66-L74
 
 We do not reveal the proofs and apply the updates immediately,
 but instead accumulate them until the messages channel is empty, and then reveal and apply in bulk.
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L991-L994
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L991-L994
 
 When messages are accumulated, we update the Sparse Trie:
 1. Reveal the proof
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1090-L1091
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1090-L1091
 2. For each modified storage trie, apply updates and calculate the roots in parallel
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1093
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1093
 3. Update accounts trie
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1133
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1133
 4. Calculate keccak hashes of the nodes below a certain level
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1139
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1139
 
 As you can see, we do not calculate the state root hash of the accounts trie
 (the one that will be the result of the whole task), but instead calculate only certain hashes.
@@ -246,6 +246,6 @@ only when we're finishing the calculation.
 
 Once the messages channel is closed by the [State Root Task](#state-root-task),
 we exhaust it, reveal proofs and apply updates, and then calculate the full state root hash
-https://github.com/openibank/creditchain/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1014
+https://github.com/paradigmxyz/reth/blob/2ba54bf1c1f38c7173838f37027315a09287c20a/crates/engine/tree/src/tree/root.rs#L1014
 
 This state root is eventually sent as `StateRootMessage::RootCalculated` to the [Engine](#engine).

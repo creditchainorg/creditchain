@@ -5,11 +5,11 @@ edition = "2024"
 
 [dependencies]
 # reth
-reth = { git = "https://github.com/openibank/creditchain.git" }
-reth-exex = { git = "https://github.com/openibank/creditchain.git", features = ["serde"] }
-reth-node-ethereum = { git = "https://github.com/openibank/creditchain.git" }
-reth-node-api = { git = "https://github.com/openibank/creditchain.git" }
-reth-tracing = { git = "https://github.com/openibank/creditchain.git" }
+reth = { git = "https://github.com/creditchainorg/creditchain.git" }
+reth-exex = { git = "https://github.com/creditchainorg/creditchain.git", features = ["serde"] }
+reth-node-ethereum = { git = "https://github.com/creditchainorg/creditchain.git" }
+reth-node-api = { git = "https://github.com/creditchainorg/creditchain.git" }
+reth-tracing = { git = "https://github.com/creditchainorg/creditchain.git" }
 
 # async
 tokio = { version = "1", features = ["full"] }

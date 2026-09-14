@@ -8,7 +8,7 @@ The database is a central component to Reth, enabling persistent storage for dat
 
 Within Reth, the database is organized via "tables". A table is any struct that implements the `Table` trait.
 
-[File: crates/storage/db-api/src/table.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/table.rs#L87-L101)
+[File: crates/storage/db-api/src/table.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/table.rs#L87-L101)
 
 ```rust ignore
 pub trait Table: Send + Sync + Debug + 'static {
@@ -34,7 +34,7 @@ pub trait Value: Compress + Decompress + Serialize {}
 
 The `Table` trait has two generic values, `Key` and `Value`, which need to implement the `Key` and `Value` traits, respectively. The `Encode` trait is responsible for transforming data into bytes so it can be stored in the database, while the `Decode` trait transforms the bytes back into their original form. Similarly, the `Compress` and `Decompress` traits transform the data to and from a compressed format when storing or reading data from the database.
 
-There are many tables within the node, all used to store different types of data from `Headers` to `Transactions` and more. Below is a list of all of the tables. You can follow [this link](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/tables/mod.rs) if you would like to see the table definitions for any of the tables below.
+There are many tables within the node, all used to store different types of data from `Headers` to `Transactions` and more. Below is a list of all of the tables. You can follow [this link](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/tables/mod.rs) if you would like to see the table definitions for any of the tables below.
 
 - CanonicalHeaders
 - HeaderTerminalDifficulties (deprecated)
@@ -70,9 +70,9 @@ There are many tables within the node, all used to store different types of data
 
 ## Database
 
-Reth's database design revolves around its main [Database trait](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/database.rs#L8-L52), which implements the database's functionality across many types. Let's take a quick look at the `Database` trait and how it works.
+Reth's database design revolves around its main [Database trait](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/database.rs#L8-L52), which implements the database's functionality across many types. Let's take a quick look at the `Database` trait and how it works.
 
-[File: crates/storage/db-api/src/database.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/database.rs#L8-L52)
+[File: crates/storage/db-api/src/database.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/database.rs#L8-L52)
 
 ```rust ignore
 /// Main Database trait that can open read-only and read-write transactions.
@@ -134,11 +134,11 @@ tx.commit()?;
 
 The `Database` defines two associated types `TX` and `TXMut`.
 
-[File: crates/storage/db-api/src/database.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/database.rs)
+[File: crates/storage/db-api/src/database.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/database.rs)
 
 The `TX` type can be any type that implements the `DbTx` trait, which provides a set of functions to interact with read only transactions.
 
-[File: crates/storage/db-api/src/transaction.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/transaction.rs#L11-L40)
+[File: crates/storage/db-api/src/transaction.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/transaction.rs#L11-L40)
 
 ```rust ignore
 /// Read only transaction
@@ -173,7 +173,7 @@ pub trait DbTx: Debug + Send + Sync {
 
 The `TXMut` type can be any type that implements the `DbTxMut` trait, which provides a set of functions to interact with read/write transactions and the associated cursor types.
 
-[File: crates/storage/db-api/src/transaction.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/transaction.rs)
+[File: crates/storage/db-api/src/transaction.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/transaction.rs)
 
 ```rust ignore
 /// Read write transaction that allows writing to database
@@ -210,7 +210,7 @@ Let's take a look at the `DbTx` and `DbTxMut` traits in action.
 
 Revisiting the `DatabaseProvider<Tx>` struct as an example, the `DatabaseProvider<Tx>::header_by_number()` function currently delegates to the static-file provider:
 
-[File: crates/storage/provider/src/providers/database/mod.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/provider/src/providers/database/mod.rs#L280-L282)
+[File: crates/storage/provider/src/providers/database/mod.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/provider/src/providers/database/mod.rs#L280-L282)
 
 ```rust ignore
 impl<TX: DbTx> HeaderProvider for DatabaseProvider<TX> {
@@ -226,7 +226,7 @@ impl<TX: DbTx> HeaderProvider for DatabaseProvider<TX> {
 
 Notice that the function uses a [turbofish](https://techblog.tonsser.com/posts/what-is-rusts-turbofish) to define which table to use when passing in the `key` to the `DbTx::get()` function. Taking a quick look at the function definition, a generic `T` is defined that implements the `Table` trait mentioned at the beginning of this chapter.
 
-[File: crates/storage/db-api/src/transaction.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/db-api/src/transaction.rs)
+[File: crates/storage/db-api/src/transaction.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/db-api/src/transaction.rs)
 
 ```rust ignore
 fn get<T: Table>(&self, key: T::Key) -> Result<Option<T::Value>, DatabaseError>;
@@ -236,7 +236,7 @@ This design pattern is very powerful and allows Reth to use the methods availabl
 
 Let's take a look at a couple of examples before moving on. In the snippet below, the `DbTxMut::put()` method is used to insert values into the `CanonicalHeaders`, `Headers` and `HeaderNumbers` tables.
 
-[File: crates/storage/provider/src/providers/database/provider.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/provider/src/providers/database/provider.rs)
+[File: crates/storage/provider/src/providers/database/provider.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/provider/src/providers/database/provider.rs)
 
 ```rust ignore
 self.tx.put::<tables::CanonicalHeaders>(block_number, block.hash())?;
@@ -249,7 +249,7 @@ The `DatabaseProviderRW<DB: Database>` struct implements the `Deref` and `DerefM
 
 This next example shows reading headers from static files using the static-file provider.
 
-[File: crates/storage/provider/src/providers/static_file/manager.rs](https://github.com/openibank/creditchain/blob/main/crates/storage/provider/src/providers/static_file/manager.rs#L1680-L1690)
+[File: crates/storage/provider/src/providers/static_file/manager.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/storage/provider/src/providers/static_file/manager.rs#L1680-L1690)
 
 ```rust ignore
 // Read headers for a specific block range from static files
@@ -258,7 +258,7 @@ let headers = provider.static_file_provider().headers_range(block_range.clone())
 
 Let's look at an example of how cursors are used. The code snippet below contains the `unwind` method from the `BodyStage` defined in the `stages` crate. This function is responsible for unwinding any changes to the database if there is an error when executing the body stage within the Reth pipeline.
 
-[File: crates/stages/stages/src/stages/bodies.rs](https://github.com/openibank/creditchain/blob/main/crates/stages/stages/src/stages/bodies.rs)
+[File: crates/stages/stages/src/stages/bodies.rs](https://github.com/creditchainorg/creditchain/blob/main/crates/stages/stages/src/stages/bodies.rs)
 
 ```rust ignore
 /// Unwind the stage.

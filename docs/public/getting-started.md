@@ -308,7 +308,7 @@ sync, discovery — is at
 
 ## 11. Get help
 
-- **Issues & feature requests:** [github.com/openibank/creditchain/issues](https://github.com/openibank/creditchain/issues)
+- **Issues & feature requests:** [github.com/creditchainorg/creditchain/issues](https://github.com/creditchainorg/creditchain/issues)
 - **General questions:** [docs.creditchain.org](https://docs.creditchain.org)
 - **Status:** [status.creditchain.org](https://status.creditchain.org)
 - **Security disclosures:** [`SECURITY.md`](../../SECURITY.md)

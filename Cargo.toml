@@ -4,7 +4,7 @@ edition = "2024"
 rust-version = "1.95"
 license = "MIT OR Apache-2.0"
 homepage = "https://www.creditchain.org"
-repository = "https://github.com/openibank/creditchain"
+repository = "https://github.com/creditchainorg/creditchain"
 exclude = [".github/"]
 
 [workspace]

@@ -233,7 +233,7 @@ _Adapted from the [Foundry contributing guide][foundry-contributing]_.
 
 [dev-tg]: https://t.me/paradigm_reth
 
-[reth-docs]: https://github.com/openibank/creditchain/tree/main/docs
+[reth-docs]: https://github.com/creditchainorg/creditchain/tree/main/docs
 
 [mcve]: https://stackoverflow.com/help/mcve
 

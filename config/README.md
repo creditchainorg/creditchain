@@ -9,4 +9,4 @@ secrets into the repository.
 
 Use these files as release inputs for `creditchaind`, packaging, infra modules,
 and smoke tests. The canonical source repository is
-`https://github.com/openibank/creditchain`.
+`https://github.com/creditchainorg/creditchain`.

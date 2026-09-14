@@ -8,7 +8,7 @@ description = "A book on CreditChain node, protocol, and operator workflows"
 
 [output.html]
 theme = "book/theme"
-git-repository-url = "https://github.com/openibank/creditchain"
+git-repository-url = "https://github.com/creditchainorg/creditchain"
 default-theme = "ayu"
 no-section-label = true
 

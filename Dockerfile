@@ -3,7 +3,7 @@
 FROM lukemathwalker/cargo-chef:latest-rust-1.95-trixie AS chef
 WORKDIR /app
 
-LABEL org.opencontainers.image.source=https://github.com/openibank/creditchain
+LABEL org.opencontainers.image.source=https://github.com/creditchainorg/creditchain
 LABEL org.opencontainers.image.licenses="MIT OR Apache-2.0"
 
 # Install system dependencies

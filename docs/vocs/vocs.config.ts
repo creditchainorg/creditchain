@@ -23,17 +23,17 @@ export default defineConfig({
     {
       element: React.createElement('a', { href: '/docs', target: '_self' }, 'Rustdocs')
     },
-    { text: 'GitHub', link: 'https://github.com/openibank/creditchain' },
+    { text: 'GitHub', link: 'https://github.com/creditchainorg/creditchain' },
     {
       text: 'v2.5.2',
       items: [
         {
           text: 'Releases',
-          link: 'https://github.com/openibank/creditchain/releases'
+          link: 'https://github.com/creditchainorg/creditchain/releases'
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/openibank/creditchain/blob/main/CONTRIBUTING.md'
+          link: 'https://github.com/creditchainorg/creditchain/blob/main/CONTRIBUTING.md'
         }
       ]
     }
@@ -41,7 +41,7 @@ export default defineConfig({
   socials: [
     {
       icon: 'github',
-      link: 'https://github.com/openibank/creditchain',
+      link: 'https://github.com/creditchainorg/creditchain',
     },
     {
       icon: 'telegram',
@@ -75,7 +75,7 @@ export default defineConfig({
     }
   },
   editLink: {
-    pattern: "https://github.com/openibank/creditchain/edit/main/docs/vocs/docs/pages/:path",
+    pattern: "https://github.com/creditchainorg/creditchain/edit/main/docs/vocs/docs/pages/:path",
   },
   vite: {
     plugins: [

@@ -93,7 +93,7 @@ build-native-%:
 # When cross compiling, we must compile jemalloc with a large page size,
 # otherwise it will use the current system's page size which may not work
 # on other systems. JEMALLOC_SYS_WITH_LG_PAGE=16 tells jemalloc to use 64-KiB
-# pages. See: https://github.com/openibank/creditchain/issues/6742
+# pages. See: https://github.com/paradigmxyz/reth/issues/6742
 build-aarch64-unknown-linux-gnu: export JEMALLOC_SYS_WITH_LG_PAGE=16
 build-native-aarch64-unknown-linux-gnu: export JEMALLOC_SYS_WITH_LG_PAGE=16
 

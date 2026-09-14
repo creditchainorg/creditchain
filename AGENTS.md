@@ -51,7 +51,7 @@ Reth is a high-performance Ethereum execution client written in Rust, focusing o
 Based on actual recent PRs, here are typical contribution patterns:
 
 #### 1. Small Bug Fixes (1-10 lines)
-Real example: Fixing beacon block root handling ([#16767](https://github.com/openibank/creditchain/pull/16767))
+Real example: Fixing beacon block root handling ([#16767](https://github.com/paradigmxyz/reth/pull/16767))
 ```rust
 // Changed a single line to fix logic error
 - parent_beacon_block_root: parent.parent_beacon_block_root(),
@@ -59,7 +59,7 @@ Real example: Fixing beacon block root handling ([#16767](https://github.com/ope
 ```
 
 #### 2. Integration with Upstream Changes
-Real example: Integrating revm updates ([#16752](https://github.com/openibank/creditchain/pull/16752))
+Real example: Integrating revm updates ([#16752](https://github.com/paradigmxyz/reth/pull/16752))
 ```rust
 // Update code to use new APIs from dependencies
 - if self.fork_tracker.is_shanghai_activated() {
@@ -69,7 +69,7 @@ Real example: Integrating revm updates ([#16752](https://github.com/openibank/cr
 ```
 
 #### 3. Adding Comprehensive Tests
-Real example: ETH69 protocol tests ([#16759](https://github.com/openibank/creditchain/pull/16759))
+Real example: ETH69 protocol tests ([#16759](https://github.com/paradigmxyz/reth/pull/16759))
 ```rust
 #[tokio::test(flavor = "multi_thread")]
 async fn test_eth69_peers_can_connect() {
@@ -80,7 +80,7 @@ async fn test_eth69_peers_can_connect() {
 ```
 
 #### 4. Making Components Generic
-Real example: Making EthEvmConfig generic over chainspec ([#16758](https://github.com/openibank/creditchain/pull/16758))
+Real example: Making EthEvmConfig generic over chainspec ([#16758](https://github.com/paradigmxyz/reth/pull/16758))
 ```rust
 // Before: Hardcoded to ChainSpec
 - pub struct EthEvmConfig<EvmFactory = EthEvmFactory> {
@@ -95,7 +95,7 @@ Real example: Making EthEvmConfig generic over chainspec ([#16758](https://githu
 ```
 
 #### 5. Resource Management Improvements
-Real example: ETL directory cleanup ([#16770](https://github.com/openibank/creditchain/pull/16770))
+Real example: ETL directory cleanup ([#16770](https://github.com/paradigmxyz/reth/pull/16770))
 ```rust
 // Add cleanup logic on startup
 + if let Err(err) = fs::remove_dir_all(&etl_path) {
@@ -104,7 +104,7 @@ Real example: ETL directory cleanup ([#16770](https://github.com/openibank/credi
 ```
 
 #### 6. Feature Additions
-Real example: Sharded mempool support ([#16756](https://github.com/openibank/creditchain/pull/16756))
+Real example: Sharded mempool support ([#16756](https://github.com/paradigmxyz/reth/pull/16756))
 ```rust
 // Add new filtering policies for transaction announcements
 pub struct ShardedMempoolAnnouncementFilter<T> {
@@ -189,7 +189,7 @@ This builds `creditchaind` in debug mode and runs `docs/cli/update.sh` to regene
 
 The `book` CI job (`.github/workflows/lint.yml`) enforces this by regenerating the docs and running `git diff --exit-code`. If the committed docs don't match the generated output, CI fails. Manually editing these pages is never productive — always use `make update-book-cli`.
 
-### Opening PRs against <https://github.com/openibank/creditchain>
+### Opening PRs against <https://github.com/creditchainorg/creditchain>
 
 #### Titles
 
@@ -435,7 +435,7 @@ struct InternalState { ... }
 fn validate_input() { ... }
 ```
 
-❌ **Bad**: Adding new traits and auxiliary types **above** the file's primary type (see [#22133](https://github.com/openibank/creditchain/pull/22133)):
+❌ **Bad**: Adding new traits and auxiliary types **above** the file's primary type (see [#22133](https://github.com/paradigmxyz/reth/pull/22133)):
 
 ```rust
 use ...;
