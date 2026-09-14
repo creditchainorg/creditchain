@@ -217,14 +217,14 @@ expiry as a reason to stop extending service.
 
 ## Reference Implementation
 
-- Contract: [`contracts/agent-finance/src/AgentClearing.sol`](../../contracts/agent-finance/src/AgentClearing.sol)
+- Contract: [`agent-finance/src/AgentClearing.sol`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/src/AgentClearing.sol)
 - Tests: 19 example tests plus 4 invariants
-  ([`test/AgentClearing.t.sol`](../../contracts/agent-finance/test/AgentClearing.t.sol),
-  [`test/AgentClearing.invariants.t.sol`](../../contracts/agent-finance/test/AgentClearing.invariants.t.sol))
+  ([`test/AgentClearing.t.sol`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/test/AgentClearing.t.sol),
+  [`test/AgentClearing.invariants.t.sol`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/test/AgentClearing.invariants.t.sol))
 - Off-chain client, zero dependencies:
-  [`demo/voucher_client.py`](../../contracts/agent-finance/demo/voucher_client.py)
+  [`demo/voucher_client.py`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/demo/voucher_client.py)
 - On-chain proof:
-  [`demo/prove_clearing_against_deployed.sh`](../../contracts/agent-finance/demo/prove_clearing_against_deployed.sh)
+  [`demo/prove_clearing_against_deployed.sh`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/demo/prove_clearing_against_deployed.sh)
 
 The invariants held over 12,800 randomised calls each: the contract holds at
 least what its books owe; value is conserved across deposits and withdrawals; no

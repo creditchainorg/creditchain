@@ -355,7 +355,7 @@ must never be the sole definition of traction.
 - load/reorg/chaos tests;
 - product analytics with privacy-minimized events;
 - third-party SDK examples;
-- mainnet launch checklist integrated with `deploy/MAINNET-READINESS.md`.
+- mainnet launch checklist integrated with the mainnet readiness gates.
 
 ## 9. What is not claimed yet
 

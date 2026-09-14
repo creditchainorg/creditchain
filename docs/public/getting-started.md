@@ -1,5 +1,12 @@
 # Get Started on CreditChain
 
+> **Superseded.** This page describes the retired devnet and the testnet before
+> Argos. For Argos testnet, the live network, use
+> [docs.creditchain.org](https://docs.creditchain.org):
+> [connect](https://docs.creditchain.org/developers/connect/) ·
+> [run a node](https://docs.creditchain.org/nodes/run-a-node/). Contracts live in
+> [creditchainorg/contracts](https://github.com/creditchainorg/contracts).
+
 Welcome to **CreditChain**, the EVM-compatible L1 for AI-native financial
 infrastructure. This page is the single source of truth for joining the
 public **Devnet** and **Testnet** as a developer, wallet user, or node
@@ -21,8 +28,7 @@ Native gas currency on every public CreditChain network: **`CCC`**, 18
 decimals. CCC pays transaction fees and is displayed in MetaMask / Frame /
 Rabby as `CCC`.
 
-Institutional forks can customize the native token metadata in
-`deploy/shared/networks.json` and the two typed mirrors. See
+Institutional forks can customize the native token metadata; see
 [`docs/native-token-and-wallet.md`](../native-token-and-wallet.md).
 
 > **Devnet** resets at each release tag. **Testnet** is stable — never
@@ -140,16 +146,14 @@ curl -L https://foundry.paradigm.xyz | bash && foundryup
 # 1) New project
 forge init hello-creditchain && cd hello-creditchain
 
-# 2) Sample contract — uses the well-known Foundry test mnemonic account[1]
-#    (the faucet key) as a deployer; this account is prefunded on devnet
-#    and testnet.
-export ANVIL_PRIVATE_KEY=0x<funded-test-key>
+# 2) A deployer key you control, funded from the faucet (step 2)
+export PRIVATE_KEY=0x<your-funded-key>
 export RPC=https://testnet.creditchain.org
 
 # 3) Deploy
 forge create src/Counter.sol:Counter \
   --rpc-url $RPC \
-  --private-key $ANVIL_PRIVATE_KEY \
+  --private-key $PRIVATE_KEY \
   --broadcast
 
 # 4) Read back
@@ -159,34 +163,24 @@ cast call <DEPLOYED_ADDR> "number()(uint256)" --rpc-url $RPC
 ## 5. Deploy the Agent Finance protocol (operators)
 
 If you're standing up a private CreditChain network — or you just want to
-re-deploy on a fresh devnet/testnet release — the
-[`CreditAgentFinance.sol`](https://github.com/openibank/creditchain/blob/main/contracts/agent-finance/src/CreditAgentFinance.sol)
+re-deploy on a fresh release — the
+[`CreditAgentFinance.sol`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/src/CreditAgentFinance.sol)
 contract is the event-first MVP that emits the `SpendPermit`,
 `PaymentIntent`, `TaskReceipt`, `SettlementReceipt`, and `CreditObject`
 events the Browser indexes.
 
 ```bash
-git clone https://github.com/openibank/creditchain
-cd creditchain
-./deploy/scripts/deploy-agent-finance.sh devnet     # or testnet, local-single, ...
+git clone https://github.com/creditchainorg/contracts
+cd contracts/agent-finance
+cast chain-id --rpc-url testnet          # confirm the network before deploying
+forge script script/Deploy.s.sol:Deploy \
+  --rpc-url testnet \
+  --private-key "$PRIVATE_KEY" \
+  --broadcast
 ```
 
-What the script does:
-
-1. Resolves the RPC URL + chain id from `deploy/shared/networks.json`.
-2. Sanity-checks the RPC's `eth_chainId` matches the registry.
-3. Runs `forge script Deploy.s.sol:Deploy` inside a one-shot
-   `ghcr.io/foundry-rs/foundry` container, signing with the OpeniBank
-   operator key (Foundry account[2], prefunded in genesis).
-4. Captures the deployed address and writes it to
-   `deploy/<network>/secrets/credit-agent-finance.address`.
-5. Prints the snippet to paste into the typed registry mirrors
-   (`shared/networks.json`, `iwallet/crates/iwallet-core/src/creditchain.rs`,
-   `app/browser-web/lib/networks.ts`) so wallets and the Browser can
-   reference the contract.
-
-Operators running their own network can override `OPERATOR_PRIVATE_KEY`
-to deploy under a different prefunded address.
+The script prints the deployed address. Record it, with the chain id and the
+deploy transaction, wherever your wallets and indexer read contract addresses.
 
 ## 6. Use iWallet
 
@@ -285,28 +279,18 @@ Full operator guide: [`creditchain-browser/deploy/README.md`](https://github.com
 
 ## 9. Run your own node (peer with us)
 
+Argos testnet is built into both clients, bootnodes included:
+
 ```bash
-git clone https://github.com/openibank/creditchain
-cd creditchain
-docker build -t creditchain:local .
-
-# Devnet (single node, auto-mining in dev mode)
-cd deploy/devnet && ./scripts/init.sh && docker compose --env-file .env up -d --build
-
-# Testnet (peers with our sealer via static enode)
-cd deploy/testnet && cp .env.example .env
-# edit .env: set PUBLIC_HOST=<your IP>, paste our published enode into TRUSTED_PEERS
-./scripts/init.sh && docker compose --env-file .env up -d --build
+creditchaind node --chain argos-testnet --authrpc.jwtsecret jwt.hex
+creditbeacon bn --network argos-testnet \
+  --execution-endpoint http://127.0.0.1:8551 --execution-jwt jwt.hex \
+  --checkpoint-sync-url <checkpoint endpoint>
 ```
 
-Our published testnet enode (any node operator can use this as a trusted
-peer):
-```
-enode://<published-on-https://docs.creditchain.org/testnet/enode>@testnet.creditchain.org:30303
-```
-
-See [`creditchain/deploy/README.md`](../../deploy/README.md) for the full
-hardening checklist before exposing your node publicly.
+A checkpoint-sync URL is required. The full walkthrough — ports, checkpoint
+sync, discovery — is at
+[docs.creditchain.org/nodes/run-a-node](https://docs.creditchain.org/nodes/run-a-node/).
 
 ## 10. Known limitations (devnet + testnet)
 

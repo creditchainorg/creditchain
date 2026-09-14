@@ -8,11 +8,7 @@ in wallets. It has 18 decimals, like ETH.
 
 ## Registry-First Token Metadata
 
-Every network declares its native currency in:
-
-```text
-deploy/shared/networks.json
-```
+Every network declares its native currency in its network registry entry.
 
 The canonical CreditChain entry is:
 
@@ -54,9 +50,9 @@ Recommended customization points:
 
 | Surface | What to change |
 |---|---|
-| `deploy/shared/networks.json` | `display_name`, `chain_id`, RPC URLs, `native_currency` |
+| Network registry | `display_name`, `chain_id`, RPC URLs, `native_currency` |
 | `genesis/*.json` | `config.chainId`, `extraData`, preallocated balances |
-| `deploy/*/.env` | `NATIVE_TOKEN_NAME`, `NATIVE_TOKEN_SYMBOL`, `NATIVE_TOKEN_DECIMALS` |
+| Service environment | `NATIVE_TOKEN_NAME`, `NATIVE_TOKEN_SYMBOL`, `NATIVE_TOKEN_DECIMALS` |
 | Browser mirror | `nativeCurrency` in `lib/networks.ts` |
 | iWallet mirror | `native_currency` in `creditchain.rs` |
 

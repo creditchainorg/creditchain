@@ -53,7 +53,10 @@ import pathlib
 import stat
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "contracts/agent-finance/reference"))
+# wotsplus.py is a byte-identical copy of agent-finance/reference/wotsplus.py in
+# creditchainorg/contracts, kept beside this file so ccq runs from one directory on an
+# air-gapped machine. `cmp` the two before trusting either.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from wotsplus import keygen, compress, sign as wots_sign, verify as wots_verify, keccak  # noqa: E402
 
 HOME = pathlib.Path(os.environ.get("CCQ_HOME", pathlib.Path.home() / ".creditchain" / "quantum"))

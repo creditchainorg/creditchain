@@ -14,10 +14,11 @@ It introduces event-first financial primitives for the agentic economy:
 - SettlementReceipt
 - CreditObject
 
-The first implementation lives in:
+The first implementation lives in
+[creditchainorg/contracts](https://github.com/creditchainorg/contracts):
 
 ```text
-contracts/agent-finance/src/CreditAgentFinance.sol
+agent-finance/src/CreditAgentFinance.sol
 ```
 
 ## Design Principle

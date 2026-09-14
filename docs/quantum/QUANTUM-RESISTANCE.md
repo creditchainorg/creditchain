@@ -168,7 +168,7 @@ A verifier tested only against a signer written by the same author proves the tw
 agree — not that either implements WOTS+. So the chain of evidence is deliberately
 broken into independent links:
 
-1. **`reference/wotsplus.py`** — written from RFC 8391, independent of the
+1. **[`reference/wotsplus.py`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/reference/wotsplus.py)** — written from RFC 8391, independent of the
    Solidity. Includes a pure-Python Keccak so it depends on no wheel; validated
    against the known `keccak256("") = 0xc5d2460186f7233c…`.
 2. **`WOTSPlus.t.sol`** — the Solidity verifier accepts the *Python signer's*
@@ -182,8 +182,8 @@ broken into independent links:
 
 **85/85 tests pass**, including the pre-existing suite (no regressions).
 
-> **Unaudited.** This code has had no external security review. The audit RFP in
-> `deploy/audit/AUDIT-RFP.md` should be extended to cover `src/quantum/`.
+> **Unaudited.** This code has had no external security review. Any audit scope
+> should be extended to cover `src/quantum/`.
 
 ---
 

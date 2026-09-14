@@ -1,9 +1,7 @@
 # CreditChain — The AI-Era Finance Thesis
 
 *The higher-dimensional case for why CreditChain wins a category the incumbents
-cannot, and the concrete plan to make it viral. Companion to
-[`ECOSYSTEM-MASTERPLAN.md`](ECOSYSTEM-MASTERPLAN.md) (execution) and
-[`deploy/GA-READINESS.md`](deploy/GA-READINESS.md) (proof of what's built).*
+cannot, and the concrete plan to make it viral.*
 
 ---
 
@@ -34,7 +32,7 @@ structurally on the wrong side of it.
 ## 1. The breakthrough, made concrete (not a slogan)
 
 The thesis is only real if it compiles and the rails hold. They do. See
-[`contracts/agent-finance/src/AgentSpendVault.sol`](contracts/agent-finance/src/AgentSpendVault.sol),
+[`agent-finance/src/AgentSpendVault.sol`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/src/AgentSpendVault.sol),
 **18 Foundry tests passing** — 13 example tests (including a repelled
 reentrancy attack) plus **4 invariant properties proven over ~12,800
 randomized adversarial call sequences each**: the vault is always solvent
@@ -99,7 +97,7 @@ one *and* the one primitive that makes AI commerce safe.
    mandate consoles. (iWallet is already the prototype.)
 3. **Agent reputation becomes collateral.** On-chain payment history lets
    agents earn larger mandates and credit. The first substrate is built:
-   [`AgentReputation`](contracts/agent-finance/src/AgentReputation.sol) — an
+   [`AgentReputation`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/src/AgentReputation.sol) — an
    agent's record accrues **only** from real `AgentSpendVault` mandates it
    actually served, attested once each by the real owner (8 tests incl.
    invariants; deployed + source-verified on testnet). Every reputation point
@@ -115,7 +113,7 @@ Crypto goes viral on **a demo people can't stop sharing**, not a whitepaper.
 Ours writes itself because nobody else can run it:
 
 1. **The "agent that pays its own bills" demo (the hook).** Already runs
-   end-to-end against a live node — `contracts/agent-finance/demo/`
+   end-to-end against a live node — [`agent-finance/demo/`](https://github.com/creditchainorg/contracts/tree/main/agent-finance/demo)
    (`agent_commerce_demo.sh`, captured `SAMPLE-RUN.txt`): an agent holds a
    mandate and autonomously pays a metered API per task while the chain
    rejects every over-rail payment by name (`PerTxExceeded`, `BudgetExceeded`,
@@ -150,7 +148,7 @@ Ours writes itself because nobody else can run it:
   4 invariant properties over ~12.8k randomized sequences each), **the
   flagship agent-commerce demo running live on-chain** (vault deployed to the
   devnet node, agent paying autonomously, every rail enforced — see
-  `contracts/agent-finance/demo/SAMPLE-RUN.txt`), the EVM L1 (devnet + testnet
+  [`SAMPLE-RUN.txt`](https://github.com/creditchainorg/contracts/blob/main/agent-finance/demo/SAMPLE-RUN.txt)), the EVM L1 (devnet + testnet
   validated, 10 defects fixed), explorer indexing real txs, the multi-chain
   wallet with vector-proven signing, the server layer.
 - **Gated (operator action):** fleet SSH key install → public testnet; store

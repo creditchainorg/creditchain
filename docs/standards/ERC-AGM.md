@@ -197,7 +197,7 @@ wallet can make.
 
 ## Reference Implementation
 
-`AgentSpendVault.sol` (CreditChain `contracts/agent-finance/`) implements this
+`AgentSpendVault.sol` ([creditchainorg/contracts](https://github.com/creditchainorg/contracts/tree/main/agent-finance)) implements this
 interface. It is covered by 13 example tests, 4 invariant properties proven over
 ~12,800 randomized sequences each (solvency, budget, conservation), and a
 conformance test that exercises the whole lifecycle *through* `IAgentSpendMandate`.

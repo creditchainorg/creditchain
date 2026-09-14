@@ -24,18 +24,14 @@ CreditChain's differentiating protocol layer is Agent Finance: AgentID,
 SpendPermit, PaymentIntent, TaskReceipt, SettlementReceipt, and CreditObject
 events for AI-native financial trust.
 
-The first event-first MVP lives in:
-
-```text
-contracts/agent-finance/
-```
-
-See `docs/agent-finance.md`.
+The contracts live in their own repository,
+[creditchainorg/contracts](https://github.com/creditchainorg/contracts) (`agent-finance/`). See
+`docs/agent-finance.md`.
 
 ## Public Manuals
 
+- [Documentation site](https://docs.creditchain.org) — Argos testnet, running a node, connecting
 - [User manual](docs/public/user-manual.md)
-- [Enterprise Ubuntu deployment](deploy/REMOTE_UBUNTU.md)
 - [Native token and self-custody wallet model](docs/native-token-and-wallet.md)
 
 ## Build

@@ -1,5 +1,9 @@
 # CreditChain User Manual
 
+> **Superseded in part.** Network details here predate Argos testnet. Current
+> network, wallet, and node instructions are at
+> [docs.creditchain.org](https://docs.creditchain.org).
+
 This manual is for developers, wallet users, and enterprise teams adopting or
 forking CreditChain.
 
@@ -127,12 +131,13 @@ mainnet or private production networks.
 
 ## 8. Agent Finance
 
-Operators can deploy the Agent Finance MVP contract:
+Operators can deploy the Agent Finance MVP contract from
+[creditchainorg/contracts](https://github.com/creditchainorg/contracts):
 
 ```bash
-git clone https://github.com/openibank/creditchain
-cd creditchain
-./deploy/scripts/deploy-agent-finance.sh testnet
+git clone https://github.com/creditchainorg/contracts
+cd contracts/agent-finance
+forge script script/Deploy.s.sol:Deploy --rpc-url testnet --private-key "$PRIVATE_KEY" --broadcast
 ```
 
 The contract emits the event model that CreditChain Browser indexes:
@@ -149,7 +154,7 @@ The contract emits the event model that CreditChain Browser indexes:
 Before launching a fork:
 
 - Pick unique chain ids.
-- Customize `deploy/shared/networks.json`.
+- Customize the network registry (chain ids, RPC URLs, native currency).
 - Customize native token metadata.
 - Update genesis balances and prefunded operator accounts.
 - Replace public faucet keys with institution-controlled keys.
@@ -161,10 +166,7 @@ Core customization files:
 
 | File | Purpose |
 |---|---|
-| `deploy/shared/networks.json` | canonical network metadata |
-| `deploy/shared/networks.schema.json` | registry validation contract |
 | `genesis/*.json` | chain id, genesis metadata, prealloc |
-| `deploy/*/.env.example` | operator env knobs |
 | `docs/native-token-and-wallet.md` | token and wallet model |
 
 ## 10. Compliance Posture

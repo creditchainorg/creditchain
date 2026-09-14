@@ -1,7 +1,8 @@
 # CreditChain Public-Test Prealloc
 
-Devnet (chain `2026042403`) and Testnet (chain `2026042404`) share the same
-prealloc table. **All addresses below derive from the publicly known
+Devnet (chain `2026042403`) and the testnet before Argos (chain `2026042404`)
+shared this prealloc table. **Argos testnet's genesis
+(`genesis/argos-testnet.json`) does not contain it.** **All addresses below derive from the publicly known
 Foundry / Anvil / Hardhat test mnemonic:**
 
 ```
@@ -31,11 +32,9 @@ reuse this mnemonic or any address below on a network that holds real value
 | `2`   | `0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a` |
 | `3`   | `0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6` |
 
-The faucet container reads index `1`'s private key from
-`deploy/<env>/secrets/faucet.key` (a hex string, no `0x` prefix). The
-`deploy/<env>/scripts/init.sh` script writes this file with the value above
-if it does not already exist; operators are free to swap it for a
-different prefunded key on private test networks.
+The faucet service reads index `1`'s private key from a key file (a hex
+string, no `0x` prefix). Operators are free to swap it for a different
+prefunded key on private test networks.
 
 ## Why these specific accounts?
 

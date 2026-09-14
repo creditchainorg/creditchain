@@ -67,7 +67,8 @@ be strangers — other teams, an infrastructure partner, a friendly project.
 
 ## 4. How governance actually works, mechanically
 
-The contracts already exist (`contracts/treasury/`, 35 tests). They are not
+The contracts already exist ([`treasury/`](https://github.com/creditchainorg/contracts/tree/main/treasury) in
+creditchainorg/contracts, 37 tests). They are not
 theoretical:
 
 | Layer | Contract | What it decides |

@@ -12,8 +12,8 @@
 #     committed genesis/testnet.json -> 0xe984f667…c294
 #     live Argos testnet             -> 0xcbb0f12e…42c9
 #
-# The live network was created by ethpandaops/ethereum-genesis-generator via
-# deploy/testnet-pos/gen-genesis.sh, which injects the deposit contract and sets
+# The live network was created by ethpandaops/ethereum-genesis-generator, which
+# injects the deposit contract and sets
 # a different gasLimit, timestamp, nonce and extraData. The committed file is a
 # hand-written approximation of it and cannot join the network.
 #
@@ -106,11 +106,8 @@ PY
 cat <<'EOF'
 
   The authoritative genesis for a PoS CreditChain network is the generator's
-  output, not a hand-written file:
-
-    deploy/testnet-pos/gen-genesis.sh  ->  ~/testnet-pos/gen/output/genesis.json
-
-  deploy-node.sh mounts that file directly. Commit it, or point deployments at
-  it — do not maintain a second copy by hand.
+  output (ethpandaops/ethereum-genesis-generator), not a hand-written file.
+  Commit that output, or point deployments at it — do not maintain a second
+  copy by hand.
 EOF
 exit 1
