@@ -17,7 +17,7 @@
 # a different gasLimit, timestamp, nonce and extraData. The committed file is a
 # hand-written approximation of it and cannot join the network.
 #
-#   tools/verify-genesis.sh genesis/testnet.json https://testnet.creditchain.org
+#   tools/verify-genesis.sh genesis/argos-testnet.json https://testnet.creditchain.org
 #   BIN=target/release/creditchaind tools/verify-genesis.sh <file> <rpc>
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"

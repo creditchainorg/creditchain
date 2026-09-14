@@ -45,7 +45,7 @@ use reth_network::{
     },
     HelloMessageWithProtocols, NetworkConfigBuilder, NetworkPrimitives,
 };
-use reth_network_peers::{mainnet_nodes, TrustedPeer};
+use reth_network_peers::{creditchain_bootnodes, is_creditchain_chain_id, mainnet_nodes, TrustedPeer};
 use reth_tasks::Runtime;
 use secp256k1::SecretKey;
 use std::str::FromStr;
@@ -575,7 +575,7 @@ impl NetworkArgs {
                         .collect()
                 })
             })
-            .unwrap_or_else(|| chain_spec.bootnodes().unwrap_or_else(mainnet_nodes));
+            .unwrap_or_else(|| default_bootnodes(&chain_spec));
         let peers_file = self.peers_file.clone().unwrap_or(default_peers_file);
 
         // Configure peer connections
@@ -1165,6 +1165,30 @@ fn parse_block_num_hash(s: &str) -> Result<BlockNumHash, String> {
         let hash = B256::from_str(s).map_err(|_| format!("Invalid hash: {}", s))?;
         Ok(BlockNumHash::new(0, hash))
     }
+}
+
+
+/// Bootnodes when none were given on the command line or in the config file.
+///
+/// Upstream falls back to Ethereum mainnet's bootnodes for any chain without its own. For a
+/// CreditChain network that sends a new node into a different network's discovery table:
+/// it announces itself there and finds nobody it can sync with. CreditChain networks get
+/// their own bootstrap peers, resolved from hostnames now; a CreditChain network without
+/// public bootnodes (local, devnet) gets none. Every other chain keeps upstream behaviour.
+fn default_bootnodes(chain_spec: &impl EthChainSpec) -> Vec<NodeRecord> {
+    if let Some(nodes) = chain_spec.bootnodes() {
+        return nodes;
+    }
+    let chain_id = chain_spec.chain().id();
+    if !is_creditchain_chain_id(chain_id) {
+        return mainnet_nodes();
+    }
+    creditchain_bootnodes(chain_id)
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|peer| peer.parse::<TrustedPeer>().ok())
+        .filter_map(|peer| peer.resolve_blocking().ok())
+        .collect()
 }
 
 #[cfg(test)]

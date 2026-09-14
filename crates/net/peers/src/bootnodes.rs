@@ -36,6 +36,39 @@ pub static HOODI_BOOTNODES: [&str; 3] = [
     "enode://8ae4a48101b2299597341263da0deb47cc38aa4d3ef4b7430b897d49bfa10eb1ccfe1655679b1ed46928ef177fbf21b86837bd724400196c508427a6f41602cd@134.199.184.23:30303",
 ];
 
+/// Chain ids reserved by CreditChain: local-single, local-multinode, devnet, Argos testnet,
+/// and mainnet.
+pub const fn is_creditchain_chain_id(chain_id: u64) -> bool {
+    matches!(chain_id, 2026042401..=2026042405)
+}
+
+/// Argos testnet chain id.
+pub const ARGOS_TESTNET_CHAIN_ID: u64 = 2026042404;
+
+/// CreditChain Argos testnet bootstrap peers.
+///
+/// Hostnames, not addresses. These hosts sit on residential links whose addresses change
+/// without notice; a hostname is resolved each time a node starts, so a reassignment does
+/// not strand every client built before it. Resolve with `TrustedPeer::resolve_blocking`.
+///
+/// The discovery-only bootnode comes first. The two full nodes after it also run discovery
+/// and accept inbound connections, which a fresh node needs while the bootnode's table is
+/// still filling: a discv4 bootnode cannot be seeded, it only learns nodes that contact it.
+/// Mainnet must list dedicated bootnodes and sentries only -- never validator hosts.
+pub static ARGOS_TESTNET_BOOTNODES: [&str; 3] = [
+    "enode://ea7d7881ed7012a4a50239b1f301a72cf5aeab9ee190952c08791608dae290a0d1e88b3066a60aa4d2dff0b6d503ca0b80c42501cceab5406424f9f2d81a6e7f@boot-b.nodes.creditchain.org:30301",
+    "enode://b2259e480498e2765060af2e8aefc7b297f882a224d938e64c9d4e8b0392b534a76f3df7fb085d7c0b7b48021c397a38c21269fa3754799df70f39e903e13ce3@n-b1.nodes.creditchain.org:30303",
+    "enode://1066e7ee9b14dfa76dcc1516b24c4689190d7050efd9acf5c64c529a753f7b6809601feb709a142c84592de30374bde1b47ecf5cbd8eb05fcc3946201b02c334@n-b2.nodes.creditchain.org:39304",
+];
+
+/// Bootstrap peers for a CreditChain network, by chain id, as unresolved hostnames.
+pub fn creditchain_bootnodes(chain_id: u64) -> Option<&'static [&'static str]> {
+    match chain_id {
+        ARGOS_TESTNET_CHAIN_ID => Some(&ARGOS_TESTNET_BOOTNODES[..]),
+        _ => None,
+    }
+}
+
 /// Returns parsed mainnet nodes
 pub fn mainnet_nodes() -> Vec<NodeRecord> {
     parse_nodes(&MAINNET_BOOTNODES[..])

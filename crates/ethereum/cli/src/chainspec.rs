@@ -15,9 +15,17 @@ pub const SUPPORTED_CHAINS: &[&str] = &[
     "local-single",
     "local-multinode",
     "devnet",
+    "argos-testnet",
     "testnet",
+    "argos",
     "creditchain-mainnet",
 ];
+
+/// Mainnet names that exist but have no genesis yet. Argos mainnet's allocation and
+/// withdrawal addresses come from the offline key ceremony; until that record exists there
+/// is nothing honest to start, and a placeholder genesis would be a real chain that nobody
+/// intended.
+pub const UNPUBLISHED_CHAINS: &[&str] = &["argos", "creditchain-mainnet"];
 
 /// Clap value parser for [`ChainSpec`]s.
 ///
@@ -33,8 +41,15 @@ pub fn chain_value_parser(s: &str) -> eyre::Result<Arc<ChainSpec>, eyre::Error> 
         "local-single" => creditchain_genesis("local-single")?,
         "local-multinode" => creditchain_genesis("local-multinode")?,
         "devnet" => creditchain_genesis("devnet")?,
-        "testnet" => creditchain_genesis("testnet")?,
-        "creditchain-mainnet" => creditchain_genesis("mainnet")?,
+        // `testnet` follows the current testnet release (docs/releases/RELEASE-NAMES.md).
+        // It used to read a hand-written genesis/testnet.json that shares Argos's chain id
+        // but hashes to a different genesis, so a node started with the obvious name could
+        // never sync with the network it was named after.
+        "argos-testnet" | "testnet" => creditchain_genesis("argos-testnet")?,
+        "argos" | "creditchain-mainnet" => eyre::bail!(
+            "`{s}` has no genesis yet: Argos mainnet's allocation and withdrawal addresses are \
+             produced by the offline key ceremony, which has not run. Use `argos-testnet`."
+        ),
         _ => Arc::new(parse_genesis(s)?.into()),
     })
 }
@@ -44,8 +59,8 @@ fn creditchain_genesis(environment: &str) -> eyre::Result<Arc<ChainSpec>> {
         "local-single" => include_str!("../../../../genesis/local-single.json"),
         "local-multinode" => include_str!("../../../../genesis/local-multinode.json"),
         "devnet" => include_str!("../../../../genesis/devnet.json"),
-        "testnet" => include_str!("../../../../genesis/testnet.json"),
-        "mainnet" => include_str!("../../../../genesis/mainnet.json"),
+        // The generator's output for the live chain, not a hand-written file.
+        "argos-testnet" => include_str!("../../../../genesis/argos-testnet.json"),
         _ => unreachable!("unknown built-in CreditChain environment"),
     };
     Ok(Arc::new(parse_genesis(raw)?.into()))
@@ -74,7 +89,31 @@ mod tests {
     #[test]
     fn parse_known_chain_spec() {
         for &chain in EthereumChainSpecParser::SUPPORTED_CHAINS {
-            assert!(<EthereumChainSpecParser as ChainSpecParser>::parse(chain).is_ok());
+            if UNPUBLISHED_CHAINS.contains(&chain) {
+                continue;
+            }
+            assert!(<EthereumChainSpecParser as ChainSpecParser>::parse(chain).is_ok(), "{chain}");
+        }
+    }
+
+    /// The hash of block 0 on the live Argos testnet, read from the running network.
+    const ARGOS_TESTNET_GENESIS_HASH: &str =
+        "0xcbb0f12e2a67c07a59218baefb4eb8211d9867b52b716fb190e4df12628042c9";
+
+    #[test]
+    fn argos_testnet_is_the_live_chain() {
+        for name in ["argos-testnet", "testnet"] {
+            let spec = <EthereumChainSpecParser as ChainSpecParser>::parse(name).unwrap();
+            assert_eq!(spec.chain.id(), 2026042404, "{name}");
+            assert_eq!(format!("{:#x}", spec.genesis_hash()), ARGOS_TESTNET_GENESIS_HASH, "{name}");
+        }
+    }
+
+    #[test]
+    fn mainnet_names_refuse_until_the_ceremony() {
+        for &name in UNPUBLISHED_CHAINS {
+            let err = <EthereumChainSpecParser as ChainSpecParser>::parse(name).unwrap_err();
+            assert!(err.to_string().contains("key ceremony"), "{name}: {err}");
         }
     }
 

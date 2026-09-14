@@ -3,7 +3,7 @@ name = "testnet"
 display_name = "CreditChain Testnet"
 chain_id = 2026042404
 reset_policy = "stable-no-casual-resets"
-genesis = "genesis/testnet.json"
+genesis = "genesis/argos-testnet.json"
 binary = "creditchaind"
 
 [rpc]
