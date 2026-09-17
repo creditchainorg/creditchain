@@ -71,9 +71,9 @@ CreditChain treats environments as first-class release artifacts:
 
 - `local-single`: one-node local developer network.
 - `local-multinode`: local bootnode, validators, and RPC integration network.
-- `devnet`: public resettable network by release.
-- `testnet`: public stable network with no casual resets.
-- `mainnet`: public production network.
+- `devnet`: retired as a public network; its genesis stays built in for local testing.
+- `testnet` (`argos-testnet`): the public Argos testnet, stable with no casual resets.
+- `mainnet` (`argos`): planned; it has no genesis until the offline key ceremony runs.
 
 Environment manifests live in `config/environments/`. Genesis files live in
 `genesis/`.

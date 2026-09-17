@@ -6,8 +6,8 @@ These genesis files define the first CreditChain environment set:
 
 - `local-single`: one-node developer network.
 - `local-multinode`: local bootnode, validator, and RPC integration network.
-- `devnet`: public resettable network for release validation.
-- `testnet`: public stable network with no casual resets.
+- `devnet`: retired as a public network; kept for local release validation.
+- `argos-testnet`: the public Argos testnet, stable with no casual resets.
 - `mainnet`: production network manifest.
 
 The chain IDs are reserved for this repository until a public network launch

@@ -26,7 +26,7 @@ import { HomePage } from "vocs/components";
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-14">
     <a href="/run/overview" className="border border-black/10 dark:border-white/15 rounded-lg p-5 no-underline">
       <div className="text-xl font-medium text-black dark:text-white">Operator Ready</div>
-      <p className="text-[#737373]">Predictable environments for local-single, local-multinode, devnet, testnet, and mainnet.</p>
+      <p className="text-[#737373]">Predictable environments for local-single, local-multinode, testnet, and mainnet.</p>
     </a>
     <a href="/jsonrpc/intro" className="border border-black/10 dark:border-white/15 rounded-lg p-5 no-underline">
       <div className="text-xl font-medium text-black dark:text-white">Ethereum Compatible</div>
@@ -48,7 +48,7 @@ import { HomePage } from "vocs/components";
     ```
 
     ```bash [Inspect genesis]
-    cargo run --bin creditchaind -- dump-genesis --chain devnet
+    cargo run --bin creditchaind -- dump-genesis --chain argos-testnet
     ```
 
     :::
