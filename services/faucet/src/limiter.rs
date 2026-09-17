@@ -2,17 +2,18 @@
 //!
 //! Two policies:
 //!   1. **Per-IP**: at most `per_ip_limit` drips within a rolling 1-hour window.
-//!   2. **Per-recipient**: at most one drip per `per_address_cooldown` per
-//!      EVM address.
+//!   2. **Per-recipient**: at most one drip per `per_address_cooldown` per EVM address.
 //!
 //! Both are in-memory + tokio-Mutex protected. Sufficient for a single faucet
 //! instance fronted by a sticky load balancer; swap for a Redis-backed
 //! impl when you horizontally scale.
 
-use std::collections::HashMap;
-use std::net::IpAddr;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    net::IpAddr,
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use alloy_primitives::Address;
 use tokio::sync::Mutex;
@@ -42,20 +43,12 @@ pub enum LimiterError {
 
 impl RateLimiter {
     pub fn new(per_ip_limit: u32, per_address_cooldown: Duration) -> Self {
-        Self {
-            inner: Arc::new(Mutex::new(Inner::default())),
-            per_ip_limit,
-            per_address_cooldown,
-        }
+        Self { inner: Arc::new(Mutex::new(Inner::default())), per_ip_limit, per_address_cooldown }
     }
 
     /// Try to register a drip from `ip` to `address`. Atomic: either records
     /// both or rejects both.
-    pub async fn check_and_record(
-        &self,
-        ip: IpAddr,
-        address: Address,
-    ) -> Result<(), LimiterError> {
+    pub async fn check_and_record(&self, ip: IpAddr, address: Address) -> Result<(), LimiterError> {
         let now = Instant::now();
         let mut guard = self.inner.lock().await;
 
@@ -64,10 +57,7 @@ impl RateLimiter {
         history.retain(|t| now.duration_since(*t) <= IP_WINDOW);
         let hits = history.len() as u32;
         if hits >= self.per_ip_limit {
-            return Err(LimiterError::IpExceeded {
-                hits,
-                max: self.per_ip_limit,
-            });
+            return Err(LimiterError::IpExceeded { hits, max: self.per_ip_limit });
         }
 
         // Per-recipient cooldown.
@@ -123,10 +113,7 @@ mod tests {
     async fn address_cooldown_blocks() {
         let l = RateLimiter::new(100, Duration::from_secs(60));
         l.check_and_record(ip("3.3.3.3"), addr_n(9)).await.unwrap();
-        let err = l
-            .check_and_record(ip("4.4.4.4"), addr_n(9))
-            .await
-            .unwrap_err();
+        let err = l.check_and_record(ip("4.4.4.4"), addr_n(9)).await.unwrap_err();
         assert!(matches!(err, LimiterError::AddressCooldown { .. }));
     }
 
@@ -142,5 +129,4 @@ mod tests {
         // 5.5.5.5 should still have 1 drip left.
         l.check_and_record(ip("5.5.5.5"), addr_n(11)).await.unwrap();
     }
-
 }

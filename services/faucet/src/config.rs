@@ -31,12 +31,13 @@ impl Config {
         let rpc_url = url::Url::parse(&rpc_url)
             .map_err(|e| anyhow::anyhow!("FAUCET_RPC_URL is not a valid URL: {e}"))?;
 
-        let public_rpc_url = match std::env::var("FAUCET_PUBLIC_RPC_URL") {
-            Ok(v) if !v.trim().is_empty() => Some(url::Url::parse(v.trim()).map_err(|e| {
-                anyhow::anyhow!("FAUCET_PUBLIC_RPC_URL is not a valid URL: {e}")
-            })?),
-            _ => None,
-        };
+        let public_rpc_url =
+            match std::env::var("FAUCET_PUBLIC_RPC_URL") {
+                Ok(v) if !v.trim().is_empty() => Some(url::Url::parse(v.trim()).map_err(|e| {
+                    anyhow::anyhow!("FAUCET_PUBLIC_RPC_URL is not a valid URL: {e}")
+                })?),
+                _ => None,
+            };
 
         let chain_id: u64 = require_env("FAUCET_CHAIN_ID")?
             .parse()

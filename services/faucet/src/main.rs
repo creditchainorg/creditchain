@@ -22,33 +22,33 @@
 //!   FAUCET_DRIP_AMOUNT           — decimal native token per drip (default "1.0")
 //!   FAUCET_DRIP_AMOUNT_CCC       — backwards-compatible alias
 //!   FAUCET_PER_IP_LIMIT          — drips per IP per hour (default 5)
-//!   FAUCET_PER_ADDRESS_COOLDOWN  — seconds before the same recipient may drip again (default 86400)
-//!   FAUCET_BIND                  — listen address (default 0.0.0.0:8080)
+//!   FAUCET_PER_ADDRESS_COOLDOWN  — seconds before the same recipient may drip again (default
+//! 86400)   FAUCET_BIND                  — listen address (default 0.0.0.0:8080)
 //!   FAUCET_NETWORK_NAME          — display label (default "creditchain"); used in /info + logs
 //!
 //! Hardening notes:
 //!   - The private key never leaves memory; we never log it.
 //!   - Tower-http imposes a 1MB request body limit + 30s timeout.
-//!   - Rate-limits are sliding-window in-memory; sufficient for a single
-//!     instance. For multi-instance deployments, front with sticky LB or
-//!     swap `RateLimiter` for a Redis-backed implementation.
+//!   - Rate-limits are sliding-window in-memory; sufficient for a single instance. For
+//!     multi-instance deployments, front with sticky LB or swap `RateLimiter` for a Redis-backed
+//!     implementation.
 
 mod config;
 mod limiter;
 mod routes;
 mod state;
 
-use std::net::SocketAddr;
-use std::time::Duration;
+use std::{net::SocketAddr, time::Duration};
 
 use axum::http::StatusCode;
-use tower_http::cors::{Any, CorsLayer};
-use tower_http::limit::RequestBodyLimitLayer;
-use tower_http::timeout::TimeoutLayer;
-use tower_http::trace::TraceLayer;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    limit::RequestBodyLimitLayer,
+    timeout::TimeoutLayer,
+    trace::TraceLayer,
+};
 
-use crate::config::Config;
-use crate::state::FaucetState;
+use crate::{config::Config, state::FaucetState};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -75,10 +75,7 @@ async fn main() -> anyhow::Result<()> {
 
     let app = routes::router(state)
         .layer(RequestBodyLimitLayer::new(1024 * 1024))
-        .layer(TimeoutLayer::with_status_code(
-            StatusCode::REQUEST_TIMEOUT,
-            Duration::from_secs(30),
-        ))
+        .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
         .layer(CorsLayer::new().allow_methods(Any).allow_headers(Any).allow_origin(Any))
         .layer(TraceLayer::new_for_http());
 

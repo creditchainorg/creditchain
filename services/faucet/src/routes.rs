@@ -19,8 +19,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::limiter::LimiterError;
-use crate::state::FaucetState;
+use crate::{limiter::LimiterError, state::FaucetState};
 
 pub fn router(state: FaucetState) -> Router {
     Router::new()

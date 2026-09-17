@@ -9,8 +9,10 @@ use alloy_primitives::{Address, U256};
 use alloy_provider::{Provider, ProviderBuilder};
 use alloy_signer_local::PrivateKeySigner;
 
-use crate::config::{format_base_units, Config};
-use crate::limiter::RateLimiter;
+use crate::{
+    config::{format_base_units, Config},
+    limiter::RateLimiter,
+};
 
 #[derive(Clone)]
 pub struct FaucetState {
