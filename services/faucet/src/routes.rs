@@ -35,7 +35,8 @@ struct InfoResponse {
     network: String,
     chain_id: u64,
     native_currency: NativeCurrencyResponse,
-    rpc_url: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    rpc_url: Option<String>,
     faucet_address: String,
     drip_amount: String,
     drip_amount_base_units: String,
@@ -60,13 +61,19 @@ async fn info(State(s): State<FaucetState>) -> Json<InfoResponse> {
             symbol: cfg.native_token_symbol.clone(),
             decimals: cfg.native_token_decimals,
         },
-        rpc_url: cfg.rpc_url.to_string(),
+        rpc_url: advertised_rpc_url(cfg),
         faucet_address: format!("{:#x}", s.faucet_address()),
         drip_amount: format!("{} {}", cfg.drip_amount, cfg.native_token_symbol),
         drip_amount_base_units: cfg.drip_amount_base_units.to_string(),
         per_ip_limit_per_hour: cfg.per_ip_limit,
         per_address_cooldown_seconds: cfg.per_address_cooldown.as_secs(),
     })
+}
+
+/// The RPC URL `/info` may publish. The URL the faucet signs through is frequently an
+/// internal node address; publishing it tells the internet where the operator's nodes sit.
+fn advertised_rpc_url(cfg: &crate::config::Config) -> Option<String> {
+    cfg.public_rpc_url.as_ref().map(|u| u.to_string())
 }
 
 #[derive(Serialize)]
@@ -253,5 +260,44 @@ impl ErrorResponse {
 impl IntoResponse for ErrorResponse {
     fn into_response(self) -> axum::response::Response {
         (self.status, Json(self.body)).into_response()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::advertised_rpc_url;
+    use crate::config::Config;
+    use alloy_primitives::U256;
+    use std::time::Duration;
+
+    fn cfg(public: Option<&str>) -> Config {
+        Config {
+            rpc_url: url::Url::parse("http://10.0.0.5:8545/").unwrap(),
+            public_rpc_url: public.map(|p| url::Url::parse(p).unwrap()),
+            chain_id: 2026042404,
+            private_key_hex: "11".repeat(32),
+            native_token_name: "CreditChain Token".into(),
+            native_token_symbol: "CCC".into(),
+            native_token_decimals: 18,
+            drip_amount: "1.0".into(),
+            drip_amount_base_units: U256::from(1u64),
+            per_ip_limit: 5,
+            per_address_cooldown: Duration::from_secs(86400),
+            bind: "0.0.0.0:8080".into(),
+            network_name: "creditchain-testnet".into(),
+        }
+    }
+
+    #[test]
+    fn info_never_publishes_the_signing_rpc() {
+        assert_eq!(advertised_rpc_url(&cfg(None)), None);
+    }
+
+    #[test]
+    fn info_publishes_the_configured_public_rpc() {
+        assert_eq!(
+            advertised_rpc_url(&cfg(Some("https://testnet.creditchain.org"))).as_deref(),
+            Some("https://testnet.creditchain.org/")
+        );
     }
 }

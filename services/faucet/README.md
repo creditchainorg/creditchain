@@ -17,8 +17,9 @@ cargo build --release
 ## Run
 
 ```bash
-export FAUCET_RPC_URL=https://devnet.creditchain.org
-export FAUCET_CHAIN_ID=2026042403
+export FAUCET_RPC_URL=http://127.0.0.1:8545
+export FAUCET_PUBLIC_RPC_URL=https://testnet.creditchain.org
+export FAUCET_CHAIN_ID=2026042404
 export FAUCET_PRIVATE_KEY_FILE=/run/secrets/faucet.key
 export FAUCET_NATIVE_TOKEN_SYMBOL=CCC
 ./target/release/creditchain-faucet
@@ -32,7 +33,8 @@ deploys fail loudly.
 
 | Env var | Required | Default | Notes |
 |---|---|---|---|
-| `FAUCET_RPC_URL` | ✓ | — | JSON-RPC HTTP URL of a CreditChain node |
+| `FAUCET_RPC_URL` | ✓ | — | JSON-RPC HTTP URL the faucet signs through (may be internal; never published) |
+| `FAUCET_PUBLIC_RPC_URL` |   | — | RPC URL that `/info` shows users; unset means `/info` omits `rpc_url` |
 | `FAUCET_CHAIN_ID` | ✓ | — | Decimal chain id; must match RPC |
 | `FAUCET_PRIVATE_KEY_FILE` | ✓ | — | Path to a file containing the 32-byte hex private key (optional `0x` prefix) |
 | `FAUCET_NATIVE_TOKEN_NAME` |   | `CreditChain Token` | Native gas token display name |
@@ -55,31 +57,32 @@ Liveness + chain id + on-chain faucet balance.
 ```json
 {
   "ok": true,
-  "chain_id": 2026042403,
+  "chain_id": 2026042404,
   "native_currency": { "name": "CreditChain Token", "symbol": "CCC", "decimals": 18 },
-  "faucet_address": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
-  "balance": "100000000.0"
+  "faucet_address": "0x…",
+  "balance": "10000.0"
 }
 ```
 
 ### `GET /info`
 
 Human-readable info card. Useful for the public Browser to render
-"Faucet: drips 1.0 CCC per recipient per day".
+"Faucet: drips 1.0 CCC per recipient per day". It includes `rpc_url` only when
+`FAUCET_PUBLIC_RPC_URL` is set; the URL the faucet signs through is never shown.
 
 ### `POST /drip`
 
 ```bash
 curl -fsS -H 'content-type: application/json' \
   --data '{"address":"0x000…1234"}' \
-  https://faucet.creditchain.org/devnet/drip
+  https://faucet.creditchain.org/testnet/drip
 ```
 
 Success → `200`:
 ```json
 {
-  "network": "creditchain-devnet",
-  "chain_id": 2026042403,
+  "network": "creditchain-testnet",
+  "chain_id": 2026042404,
   "tx": "0xabc…",
   "to":  "0x000…1234",
   "amount":    "1.0 CCC",
@@ -115,8 +118,9 @@ The bundled multi-stage `Dockerfile` produces a ~20 MB distroless image:
 ```bash
 docker build -t creditchain-faucet:local .
 docker run --rm \
-  -e FAUCET_RPC_URL=https://devnet.creditchain.org \
-  -e FAUCET_CHAIN_ID=2026042403 \
+  -e FAUCET_RPC_URL=http://node:8545 \
+  -e FAUCET_PUBLIC_RPC_URL=https://testnet.creditchain.org \
+  -e FAUCET_CHAIN_ID=2026042404 \
   -e FAUCET_PRIVATE_KEY_FILE=/secrets/faucet.key \
   -e FAUCET_NATIVE_TOKEN_SYMBOL=CCC \
   -v $PWD/secrets:/secrets:ro \
@@ -124,6 +128,5 @@ docker run --rm \
   creditchain-faucet:local
 ```
 
-This is the image consumed by the `faucet` service in
-`creditchain/deploy/devnet/docker-compose.yml` and
-`creditchain/deploy/testnet/docker-compose.yml`.
+Run it next to a node the faucet can reach, with the key file mounted read-only and
+never baked into the image.

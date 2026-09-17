@@ -6,7 +6,10 @@ use alloy_primitives::U256;
 
 #[derive(Debug, Clone)]
 pub struct Config {
+    /// Where the faucet sends transactions. Often an internal address; never published.
     pub rpc_url: url::Url,
+    /// The RPC URL `/info` tells users about. Unset means `/info` names no RPC at all.
+    pub public_rpc_url: Option<url::Url>,
     pub chain_id: u64,
     pub private_key_hex: String,
     pub native_token_name: String,
@@ -27,6 +30,13 @@ impl Config {
         let rpc_url = require_env("FAUCET_RPC_URL")?;
         let rpc_url = url::Url::parse(&rpc_url)
             .map_err(|e| anyhow::anyhow!("FAUCET_RPC_URL is not a valid URL: {e}"))?;
+
+        let public_rpc_url = match std::env::var("FAUCET_PUBLIC_RPC_URL") {
+            Ok(v) if !v.trim().is_empty() => Some(url::Url::parse(v.trim()).map_err(|e| {
+                anyhow::anyhow!("FAUCET_PUBLIC_RPC_URL is not a valid URL: {e}")
+            })?),
+            _ => None,
+        };
 
         let chain_id: u64 = require_env("FAUCET_CHAIN_ID")?
             .parse()
@@ -83,6 +93,7 @@ impl Config {
 
         Ok(Self {
             rpc_url,
+            public_rpc_url,
             chain_id,
             private_key_hex,
             native_token_name,
