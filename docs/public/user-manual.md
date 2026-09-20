@@ -18,7 +18,7 @@ The native gas token on public CreditChain networks is:
 
 | Field | Value |
 |---|---|
-| Name | `CreditChain Token` |
+| Name | `CreditChain Coin` |
 | Symbol | `CCC` |
 | Decimals | `18` |
 
@@ -59,7 +59,7 @@ await window.ethereum.request({
     chainId: "0x78c2f424",
     chainName: "CreditChain Testnet",
     nativeCurrency: {
-      name: "CreditChain Token",
+      name: "CreditChain Coin",
       symbol: "CCC",
       decimals: 18
     },

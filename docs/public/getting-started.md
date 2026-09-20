@@ -56,7 +56,7 @@ await window.ethereum.request({
   params: [{
     chainId: "0x78c2f423",                          // devnet (0x78c2f424 for testnet)
     chainName: "CreditChain Devnet",
-    nativeCurrency: { name: "CreditChain Token", symbol: "CCC", decimals: 18 },
+    nativeCurrency: { name: "CreditChain Coin", symbol: "CCC", decimals: 18 },
     rpcUrls: ["https://devnet.creditchain.org"],
     blockExplorerUrls: ["https://explorer.creditchain.org/devnet"]
   }]

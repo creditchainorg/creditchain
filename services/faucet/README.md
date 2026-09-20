@@ -37,7 +37,7 @@ deploys fail loudly.
 | `FAUCET_PUBLIC_RPC_URL` |   | — | RPC URL that `/info` shows users; unset means `/info` omits `rpc_url` |
 | `FAUCET_CHAIN_ID` | ✓ | — | Decimal chain id; must match RPC |
 | `FAUCET_PRIVATE_KEY_FILE` | ✓ | — | Path to a file containing the 32-byte hex private key (optional `0x` prefix) |
-| `FAUCET_NATIVE_TOKEN_NAME` |   | `CreditChain Token` | Native gas token display name |
+| `FAUCET_NATIVE_TOKEN_NAME` |   | `CreditChain Coin` | Native gas token display name |
 | `FAUCET_NATIVE_TOKEN_SYMBOL` |   | `CCC` | Native gas token symbol; use this for institutional forks |
 | `FAUCET_NATIVE_TOKEN_DECIMALS` |   | `18` | Native gas token decimals |
 | `FAUCET_DRIP_AMOUNT` |   | `1.0` | Decimal native token per drip |
@@ -58,7 +58,7 @@ Liveness + chain id + on-chain faucet balance.
 {
   "ok": true,
   "chain_id": 2026042404,
-  "native_currency": { "name": "CreditChain Token", "symbol": "CCC", "decimals": 18 },
+  "native_currency": { "name": "CreditChain Coin", "symbol": "CCC", "decimals": 18 },
   "faucet_address": "0x…",
   "balance": "10000.0"
 }

@@ -60,7 +60,7 @@ impl Config {
         }
 
         let native_token_name = std::env::var("FAUCET_NATIVE_TOKEN_NAME")
-            .unwrap_or_else(|_| "CreditChain Token".to_string());
+            .unwrap_or_else(|_| "CreditChain Coin".to_string());
         let native_token_symbol =
             std::env::var("FAUCET_NATIVE_TOKEN_SYMBOL").unwrap_or_else(|_| "CCC".to_string());
         validate_symbol(&native_token_symbol)?;

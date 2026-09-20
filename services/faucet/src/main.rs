@@ -16,7 +16,7 @@
 //!   FAUCET_RPC_URL               — JSON-RPC HTTP URL of a CreditChain node
 //!   FAUCET_CHAIN_ID              — decimal chain id (must match RPC's eth_chainId)
 //!   FAUCET_PRIVATE_KEY_FILE      — path to a file containing the 32-byte hex private key (no `0x`)
-//!   FAUCET_NATIVE_TOKEN_NAME     — display name (default "CreditChain Token")
+//!   FAUCET_NATIVE_TOKEN_NAME     — display name (default "CreditChain Coin")
 //!   FAUCET_NATIVE_TOKEN_SYMBOL   — gas token symbol (default "CCC")
 //!   FAUCET_NATIVE_TOKEN_DECIMALS — native token decimals (default 18)
 //!   FAUCET_DRIP_AMOUNT           — decimal native token per drip (default "1.0")

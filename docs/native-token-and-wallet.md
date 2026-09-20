@@ -14,7 +14,7 @@ The canonical CreditChain entry is:
 
 ```json
 "native_currency": {
-  "name": "CreditChain Token",
+  "name": "CreditChain Coin",
   "symbol": "CCC",
   "decimals": 18
 }

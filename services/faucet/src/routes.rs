@@ -275,7 +275,7 @@ mod tests {
             public_rpc_url: public.map(|p| url::Url::parse(p).unwrap()),
             chain_id: 2026042404,
             private_key_hex: "11".repeat(32),
-            native_token_name: "CreditChain Token".into(),
+            native_token_name: "CreditChain Coin".into(),
             native_token_symbol: "CCC".into(),
             native_token_decimals: 18,
             drip_amount: "1.0".into(),
