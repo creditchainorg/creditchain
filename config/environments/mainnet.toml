@@ -3,7 +3,9 @@ name = "mainnet"
 display_name = "CreditChain Mainnet"
 chain_id = 2026042405
 reset_policy = "production-no-resets"
-genesis = "genesis/mainnet.json"
+# No genesis yet. It is produced by the offline key ceremony and published, with its hash,
+# before launch; `--chain creditchain-mainnet` refuses to start until then.
+genesis = ""
 binary = "creditchaind"
 
 [rpc]
