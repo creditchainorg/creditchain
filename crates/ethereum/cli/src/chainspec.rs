@@ -1,4 +1,5 @@
-use reth_chainspec::{ChainSpec, DEV, HOLESKY, HOODI, MAINNET, SEPOLIA};
+use alloy_genesis::Genesis;
+use reth_chainspec::{ChainSpec, ForkCondition, DEV, HOLESKY, HOODI, MAINNET, SEPOLIA};
 use reth_cli::chainspec::{parse_genesis, ChainSpecParser};
 use std::sync::Arc;
 
@@ -50,7 +51,7 @@ pub fn chain_value_parser(s: &str) -> eyre::Result<Arc<ChainSpec>, eyre::Error> 
             "`{s}` has no genesis yet: Argos mainnet's allocation and withdrawal addresses are \
              produced by the offline key ceremony, which has not run. Use `argos-testnet`."
         ),
-        _ => Arc::new(parse_genesis(s)?.into()),
+        _ => Arc::new(creditchain_spec(parse_genesis(s)?)?),
     })
 }
 
@@ -63,7 +64,22 @@ fn creditchain_genesis(environment: &str) -> eyre::Result<Arc<ChainSpec>> {
         "argos-testnet" => include_str!("../../../../genesis/argos-testnet.json"),
         _ => unreachable!("unknown built-in CreditChain environment"),
     };
-    Ok(Arc::new(parse_genesis(raw)?.into()))
+    Ok(Arc::new(creditchain_spec(parse_genesis(raw)?)?))
+}
+
+/// Build a chain spec from a genesis file, including `CreditChain`'s own scheduled forks.
+///
+/// A fork scheduled in `config.creditchain` is added to the spec's hardforks, so the fork id
+/// (EIP-2124/EIP-6122) announces it and peers that have not upgraded are told apart, and it is
+/// registered for the EVM factory, which adds the fork's precompiles from the scheduled block on.
+fn creditchain_spec(genesis: Genesis) -> eyre::Result<ChainSpec> {
+    let mldsa_time = cc_precompiles::schedule::mldsa_time(&genesis).map_err(|e| eyre::eyre!(e))?;
+    let mut spec: ChainSpec = genesis.into();
+    if let Some(time) = mldsa_time {
+        spec.hardforks.insert(cc_precompiles::schedule::MlDsaFork, ForkCondition::Timestamp(time));
+        cc_precompiles::schedule::register_mldsa(spec.chain.id(), time);
+    }
+    Ok(spec)
 }
 
 /// `CreditChain` chain specification parser.
@@ -107,6 +123,43 @@ mod tests {
             assert_eq!(spec.chain.id(), 2026042404, "{name}");
             assert_eq!(format!("{:#x}", spec.genesis_hash()), ARGOS_TESTNET_GENESIS_HASH, "{name}");
         }
+    }
+
+    /// Argos's genesis file with the ML-DSA fork scheduled at `time`.
+    fn argos_with_mldsa(time: &str) -> String {
+        let raw = include_str!("../../../../genesis/argos-testnet.json");
+        let mut value: serde_json::Value = serde_json::from_str(raw).unwrap();
+        value["config"]["creditchain"] =
+            serde_json::from_str(&format!(r#"{{"mlDsaTime":{time}}}"#)).unwrap();
+        value.to_string()
+    }
+
+    #[test]
+    fn scheduling_the_mldsa_fork_leaves_the_genesis_hash_alone() {
+        let spec = chain_value_parser(&argos_with_mldsa("4102444800")).unwrap();
+        assert_eq!(format!("{:#x}", spec.genesis_hash()), ARGOS_TESTNET_GENESIS_HASH);
+    }
+
+    #[test]
+    fn the_mldsa_fork_is_announced_in_the_fork_id() {
+        use reth_chainspec::Head;
+        let time = 4_102_444_800u64; // 2100-01-01
+        let plain = chain_value_parser("argos-testnet").unwrap();
+        let forked = chain_value_parser(&argos_with_mldsa(&time.to_string())).unwrap();
+        let head = Head { timestamp: time - 1, ..Default::default() };
+        assert_eq!(plain.fork_id(&head).next, 0, "nothing scheduled on plain Argos");
+        assert_eq!(forked.fork_id(&head).next, time, "the scheduled fork is the next one");
+        assert_eq!(plain.fork_id(&head).hash, forked.fork_id(&head).hash, "same chain until then");
+        let after = Head { timestamp: time, ..Default::default() };
+        assert_ne!(plain.fork_id(&after).hash, forked.fork_id(&after).hash, "distinct after");
+        assert!(cc_precompiles::schedule::mldsa_active(2026042404, time));
+        assert!(!cc_precompiles::schedule::mldsa_active(2026042404, time - 1));
+    }
+
+    #[test]
+    fn a_malformed_schedule_stops_the_node() {
+        let err = chain_value_parser(&argos_with_mldsa(r#""tomorrow""#)).unwrap_err();
+        assert!(err.to_string().contains("mlDsaTime"), "{err}");
     }
 
     #[test]

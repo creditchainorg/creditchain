@@ -93,7 +93,7 @@ NIST standardised three post-quantum signature schemes. For an EVM chain today:
 
 | Scheme | On-chain verification | Why not / why yes |
 |---|---|---|
-| ML-DSA (FIPS 204, Dilithium) | needs a **precompile** — NTT-heavy, impractical in Solidity | Best long-term answer. Requires a hard fork. **Phase 2.** |
+| ML-DSA (FIPS 204, Dilithium) | needs a **precompile** — NTT-heavy, impractical in Solidity | Best long-term answer. **Implemented (EIP-8355, §11); live once the network upgrade is scheduled.** |
 | SLH-DSA (FIPS 205, SPHINCS+) | ~7–30 KB signatures | Hash-based and conservative, but signature size is punishing on-chain. |
 | **WOTS+** (SLH-DSA's own internal OTS) | **2,144 bytes, ~253k gas, keccak256 only** | Ships **today, with no consensus change**. |
 
@@ -223,10 +223,10 @@ A Merkle tree over many WOTS+ keys gives ~2^10–2^20 signatures per key with an
 authentication path (~`h × 32` extra bytes). Still keccak-only, still no fork.
 Turns break-glass into a general-purpose post-quantum account authority.
 
-**Phase 2 — ML-DSA precompile.** *Requires a hard fork.*
-FIPS 204 verification at a reserved precompile address, bringing PQ signature
-checks to ~ordinary-transaction cost and letting contracts verify signatures from
-standard PQ libraries. This is the real long-term answer.
+**Phase 2 — ML-DSA precompile.** *Requires a network upgrade.* **Implemented
+2026-10-20 (§11)**, following EIP-8355: ML-DSA-44/65/87 at `0x12`–`0x14`, activated by a
+fork scheduled in genesis config, no new genesis. Not active on any public network until
+that upgrade is scheduled and every node runs a release that carries it.
 
 **Phase 3 — native PQ transaction type.**
 An EIP-2718 typed transaction carrying an ML-DSA signature, with accounts derived
@@ -421,3 +421,61 @@ closes.
   the test.
 - The exposure in §1 is **unchanged until a cutover happens**. Proving the fix is
   not the same as shipping it, and this section should not be read as if it were.
+
+---
+
+## 11. Phase 2 implemented: ML-DSA verification precompiles (2026-10-20)
+
+Contracts on CreditChain can now verify FIPS 204 ML-DSA signatures natively, once the network
+upgrade carrying them is scheduled. The interface is EIP-8355's, unchanged, so a key from an HSM,
+a cloud key service or OpenSSL works without conversion.
+
+| Address | Scheme | Public key | Signature | Gas |
+|---|---|---|---|---|
+| `0x12` | ML-DSA-44 | 1,312 B | 2,420 B | 6,500 + 6 per 32-byte word of message |
+| `0x13` | ML-DSA-65 | 1,952 B | 3,309 B | 9,000 + 6/word |
+| `0x14` | ML-DSA-87 | 2,592 B | 4,627 B | 13,500 + 6/word |
+
+Input `pubkey ++ signature ++ message`; output always exactly 32 bytes, `1` valid and `0` anything
+else, so a contract can tell "invalid" (32 zero bytes) from "this chain has no such precompile"
+(empty). Empty FIPS 204 context. The precompile never reverts except for running out of gas.
+
+**Activation is configuration, not a new genesis.** A chain's genesis `config` carries
+`"creditchain": {"mlDsaTime": <unix seconds>}`. The field changes no genesis hash; the node adds
+the upgrade to its hardforks, so the fork id announces it (peers that have not upgraded are told
+apart at activation rather than silently following another chain), and the EVM factory adds the
+precompiles for every block at or after that time — block execution, block building, `eth_call`
+and re-execution alike. A malformed value stops the node at start-up instead of being ignored.
+
+**Implementation.** `crates/creditchain/precompiles` (`cc-precompiles`), using RustCrypto
+`ml-dsa` 0.1.1, wired into `RethEvmFactory` and the chain-spec parser.
+
+**How correctness was established.**
+- All 45 NIST ACVP sigVer vectors for the external, pure interface (9 valid, 36 deliberately
+  broken in specific ways) give the expected answer; the empty-context ones also through the
+  precompile itself; signatures made under a context do not verify without it.
+- Signatures from **OpenSSL 3.6.3**, an independent implementation, verify at all three levels;
+  tampering with the message, the signature, the key, or appending a byte makes them fail; a valid
+  input at the wrong level fails.
+- 1,200 random and half-random inputs per run: no panic (a panicking precompile would take the
+  node down), every answer 32 bytes.
+- Gas matches EIP-8355 exactly, including the too-short case and out-of-gas before any work.
+- Fork id: scheduling the upgrade on Argos's genesis leaves its genesis hash unchanged, announces
+  the upgrade as the next fork, and changes the fork hash only from that time.
+- **End to end on a running node** (dev chain, upgrade scheduled 90 s after start): before the
+  time `0x13` is not a precompile; after it a real OpenSSL ML-DSA-65 signature returns `1` and a
+  tampered one `0`; `eth_config` moved from fork id `0x481ef787` to `0xa7592c7c` at the scheduled
+  block. `QuantumEscapeRegistry` registered an ML-DSA-65 key and rotated it on-chain with a
+  signature the precompile verified (235,360 gas for the whole transaction, ~6 KB of key and
+  signature included), and refused a signature over a different digest.
+
+**Cost on this hardware** (Apple M-series, one core): 97 µs (ML-DSA-44), 156 µs (65), 178 µs (87)
+per verification. At a 30M gas limit a block made of nothing but ML-DSA-65 verifications takes
+about half a second to validate — inside a 12-second slot, and the bound an attacker faces. A
+SIMD implementation (libcrux) would roughly halve it; worth revisiting before raising the gas
+limit.
+
+**Not yet done.** Scheduling the upgrade on Argos needs every Argos node on a release carrying
+it, then a time chosen and announced (`deploy/NETWORK-UPGRADES.md`). EIP-8355 and EIP-8051 are
+competing drafts that both claim `0x12`; CreditChain follows EIP-8355 and will revisit if Ethereum
+standardises otherwise.

@@ -457,18 +457,19 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = format!("reth/logs/{}", SUPPORTED_CHAINS[0]);
+        let end = format!("creditchain/logs/{}", SUPPORTED_CHAINS[0]);
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
 
         let mut iter = SUPPORTED_CHAINS.iter();
         iter.next();
-        for chain in iter {
+        // Mainnet names refuse to start until the key ceremony has produced a genesis.
+        for chain in iter.filter(|c| !crate::chainspec::UNPUBLISHED_CHAINS.contains(c)) {
             let mut reth = Cli::try_parse_args_from(["reth", "node", "--chain", chain]).unwrap();
             let chain =
                 reth.command.chain_spec().map(|c| c.chain.to_string()).unwrap_or(String::new());
             reth.logs.log_file_directory = reth.logs.log_file_directory.join(chain.clone());
             let log_dir = reth.logs.log_file_directory;
-            let end = format!("reth/logs/{chain}");
+            let end = format!("creditchain/logs/{chain}");
             assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
         }
     }
@@ -483,7 +484,7 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = format!("reth/logs/{}", SUPPORTED_CHAINS[0]);
+        let end = format!("creditchain/logs/{}", SUPPORTED_CHAINS[0]);
         println!("{log_dir:?}");
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
     }
@@ -497,7 +498,7 @@ mod tests {
                 reth.logs.log_file_directory.join(chain_spec.chain.to_string());
         }
         let log_dir = reth.logs.log_file_directory;
-        let end = "reth/logs".to_string();
+        let end = "creditchain/logs".to_string();
         println!("{log_dir:?}");
         assert!(log_dir.as_ref().ends_with(end), "{log_dir:?}");
     }

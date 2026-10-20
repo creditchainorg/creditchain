@@ -20,6 +20,7 @@ reth-ethereum-primitives.workspace = true
 revm.workspace = true
 reth-evm.workspace = true
 reth-storage-errors.workspace = true
+cc-precompiles.workspace = true
 
 # Alloy
 alloy-primitives.workspace = true
@@ -56,6 +57,7 @@ std = [
     "reth-ethereum-primitives/std",
     "alloy-rpc-types-engine/std",
     "reth-storage-errors/std",
+    "cc-precompiles/std",
 ]
 jit = [
     "std",
