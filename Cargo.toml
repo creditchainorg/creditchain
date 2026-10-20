@@ -11,6 +11,7 @@ exclude = [".github/"]
 members = [
     "bin/reth-bb/",
     "bin/reth/",
+    "crates/creditchain/precompiles/",
     "crates/storage/rpc-provider/",
     "crates/chain-state/",
     "crates/chainspec/",
@@ -358,6 +359,7 @@ reth-ethereum-cli = { path = "crates/ethereum/cli", default-features = false }
 reth-ethereum-consensus = { path = "crates/ethereum/consensus", default-features = false }
 reth-ethereum-engine-primitives = { path = "crates/ethereum/engine-primitives", default-features = false }
 reth-ethereum-forks = { path = "crates/ethereum/hardforks", default-features = false }
+cc-precompiles = { path = "crates/creditchain/precompiles", default-features = false }
 reth-ethereum-primitives = { path = "crates/ethereum/primitives", default-features = false }
 reth-ethereum = { path = "crates/ethereum/reth" }
 reth-etl = { path = "crates/etl" }
@@ -450,6 +452,9 @@ alloy-rlp = { version = "0.3.16", default-features = false, features = ["core-ne
 alloy-trie = { version = "0.9.4", default-features = false }
 
 alloy-hardforks = "0.4.7"
+
+# post-quantum signatures (FIPS 204)
+ml-dsa = { version = "0.1.1", default-features = false }
 
 alloy-consensus = { version = "2.3.0", default-features = false }
 alloy-contract = { version = "2.3.0", default-features = false }

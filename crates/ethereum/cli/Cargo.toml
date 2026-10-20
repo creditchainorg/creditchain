@@ -16,6 +16,8 @@ reth-cli.workspace = true
 reth-cli-commands.workspace = true
 reth-cli-runner.workspace = true
 reth-chainspec.workspace = true
+cc-precompiles.workspace = true
+alloy-genesis.workspace = true
 reth-db.workspace = true
 reth-node-builder.workspace = true
 reth-node-core.workspace = true
@@ -32,6 +34,7 @@ eyre.workspace = true
 tracing.workspace = true
 
 [dev-dependencies]
+serde_json = { workspace = true, features = ["std"] }
 # fs
 tempfile.workspace = true
 

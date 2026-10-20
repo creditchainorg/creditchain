@@ -5,7 +5,7 @@
 
 #[cfg(feature = "jit")]
 use alloc::string::String;
-use alloy_evm::{Database, EvmEnv, EvmFactory};
+use alloy_evm::{Database, Evm, EvmEnv, EvmFactory};
 use revm::{
     context::{BlockEnv, DBErrorMarker},
     context_interface::result::{EVMError, HaltReason},
@@ -180,18 +180,17 @@ impl EvmFactory for RethEvmFactory {
     type Precompiles = <Inner as EvmFactory>::Precompiles;
 
     fn create_evm<DB: Database>(&self, db: DB, input: EvmEnv) -> Self::Evm<DB, NoOpInspector> {
+        let (chain_id, timestamp) = creditchain_fork_point(&input);
         #[cfg(feature = "jit")]
-        {
-            if self.jit_support {
-                self.inner.create_evm(db, input)
-            } else {
-                JitEvmFactory::new(self.disabled.clone()).create_evm(db, input)
-            }
-        }
-        #[cfg(not(feature = "jit"))]
-        {
+        let mut evm = if self.jit_support {
             self.inner.create_evm(db, input)
-        }
+        } else {
+            JitEvmFactory::new(self.disabled.clone()).create_evm(db, input)
+        };
+        #[cfg(not(feature = "jit"))]
+        let mut evm = self.inner.create_evm(db, input);
+        cc_precompiles::apply(evm.precompiles_mut(), chain_id, timestamp);
+        evm
     }
 
     fn create_evm_with_inspector<DB: Database, I: Inspector<Self::Context<DB>>>(
@@ -200,20 +199,26 @@ impl EvmFactory for RethEvmFactory {
         input: EvmEnv,
         inspector: I,
     ) -> Self::Evm<DB, I> {
+        let (chain_id, timestamp) = creditchain_fork_point(&input);
         #[cfg(feature = "jit")]
-        {
-            if self.jit_support {
-                self.inner.create_evm_with_inspector(db, input, inspector)
-            } else {
-                JitEvmFactory::new(self.disabled.clone())
-                    .create_evm_with_inspector(db, input, inspector)
-            }
-        }
-        #[cfg(not(feature = "jit"))]
-        {
+        let mut evm = if self.jit_support {
             self.inner.create_evm_with_inspector(db, input, inspector)
-        }
+        } else {
+            JitEvmFactory::new(self.disabled.clone())
+                .create_evm_with_inspector(db, input, inspector)
+        };
+        #[cfg(not(feature = "jit"))]
+        let mut evm = self.inner.create_evm_with_inspector(db, input, inspector);
+        cc_precompiles::apply(evm.precompiles_mut(), chain_id, timestamp);
+        evm
     }
+}
+
+/// The chain and block time that decide which `CreditChain` precompiles an EVM gets. Every EVM —
+/// block execution, payload building, `eth_call`, tracing, re-execution — comes through this
+/// factory, so they all agree on what is callable at a given block.
+fn creditchain_fork_point(input: &EvmEnv) -> (u64, u64) {
+    (input.cfg_env.chain_id, input.block_env.timestamp.saturating_to::<u64>())
 }
 
 /// Prometheus metrics for revmc JIT runtime stats.

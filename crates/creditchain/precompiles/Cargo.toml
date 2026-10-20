@@ -1,0 +1,36 @@
+[package]
+name = "cc-precompiles"
+description = "CreditChain precompiles: ML-DSA (FIPS 204) signature verification per EIP-8355, switched on by a scheduled fork"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+alloy-evm.workspace = true
+alloy-genesis.workspace = true
+alloy-hardforks.workspace = true
+alloy-primitives.workspace = true
+revm.workspace = true
+serde_json.workspace = true
+ml-dsa.workspace = true
+
+[dev-dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["std"] }
+alloy-primitives = { workspace = true, features = ["std"] }
+
+[features]
+default = ["std"]
+std = [
+    "alloy-evm/std",
+    "alloy-genesis/std",
+    "alloy-primitives/std",
+    "revm/std",
+    "serde_json/std",
+]
